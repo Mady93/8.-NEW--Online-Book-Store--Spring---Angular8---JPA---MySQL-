@@ -1,5 +1,12 @@
-<h1>Add User</h1>
+<div style="text-align: center;">
+  <h1>Add User</h1>
+</div>
+
 <form #recievedUser="ngForm">
+  <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
+    <span aria-hidden="true">&times;</span>
+  </button>
+  
 
   <label for="name">Name</label>
   <input type="text" class="form-control" id="name" placeholder="user name" [(ngModel)]="user.name" name="name">
@@ -7,9 +14,25 @@
   <label for="type">Type</label>
   <input type="text" class="form-control" id="type" placeholder="type name" [(ngModel)]="user.type" name="name">
 
+<!--   <select>
+    <option disabled default>Seleziona..</option>
+    <option>User</option>
+    <option>Admin</option>
+  </select> -->
+
+  <label for="email">Email</label>
+  <input type="email" class="form-control" id="email" placeholder="email" [(ngModel)]="user.email" name="email">
+
+
   <label for="password">Password</label>
   <input type="password" class="form-control" id="password" placeholder="password" [(ngModel)]="user.password" name="password">
 
    <br>
-  <button type="button" class="btn btn-success" (click)="addUser()">Save</button>
+ 
+   <div style="text-align: center;">
+    <button type="button" class="btn btn-success" (click)="addUser()">Save</button>
+   </div>
+
+   <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+
 </form>

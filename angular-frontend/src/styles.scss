@@ -1,1 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.paragraph {
+    margin-top: 2rem;
+    color: rgb(255, 0, 0);
+    font-size: 15px;
+    text-align: center;
+}

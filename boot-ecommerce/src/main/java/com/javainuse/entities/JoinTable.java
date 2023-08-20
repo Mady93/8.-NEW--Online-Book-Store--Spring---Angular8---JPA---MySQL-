@@ -22,10 +22,11 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "join_table")
-@NamedQuery(name = "JoinTable.countJoinTablesByCompositeId", query = "SELECT COUNT(jt) FROM JoinTable jt WHERE jt.id = :joinTableId")
-@NamedQuery(name = "JoinTable.countBooksByOrderId", query = "SELECT COUNT(jt.book) FROM JoinTable jt WHERE jt.id.orderId = :orderId")
-@NamedQuery(name = "JoinTable.findJoinTablesByCompositeId", query = "SELECT jt FROM JoinTable jt WHERE jt.id = :joinTableId")
-@NamedQuery(name = "JoinTable.findJoinTablesListByCompositeId", query = "SELECT jt FROM JoinTable jt WHERE jt.id = :joinTableId")
+
+//@NamedQuery(name = "JoinTable.emptyJoinTable", query = "DELETE FROM JoinTable")
+//@NamedQuery(name = "JoinTable.deleteJoinTablesByBookId", query = "DELETE FROM JoinTable jt WHERE jt.id.bookId = :bookId")
+@NamedQuery(name = "JoinTable.getJoinTablesByOrderId", query = "SELECT jt FROM JoinTable jt WHERE jt.id.orderId = :orderId")
+
 public class JoinTable {
 
 	// istanza inner class senza argomenti

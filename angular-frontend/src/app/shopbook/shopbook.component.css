@@ -1,0 +1,31 @@
+.custom-margin {
+    margin-top: 30px;
+}
+
+.custom-dropdown-container {
+    width: 500px;
+  }
+
+  .offset-md-8 {
+    margin-top: 30px;
+    margin-left: 30%;
+  }
+
+  .paddingM {
+    margin-left: 40px;
+  }
+
+  .paddingM2 {
+    margin-left: 15px;
+  }
+
+  .m {
+   background-color: rgb(238, 231, 231);
+  }
+
+  .paragraph {
+    margin-top: 2rem;
+    color: rgb(255, 0, 0);
+    font-size: 15px;
+    text-align: center;
+}

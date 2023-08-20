@@ -1,0 +1,43 @@
+.close {
+    all: unset;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    margin-top: -55px;
+    color: red;
+    font-weight: 800;
+    font-size: 32px;
+    cursor: pointer;
+}
+
+form {
+    position: relative;
+}
+
+.btn {
+    width: 15vh;
+}
+
+
+form input {
+    opacity: 0.8;
+}
+
+form {
+    padding: 10px;
+    /*background-image: url()*/
+    background-size: cover;
+    width: 40vh;
+    height: 60vh;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 0px 0px 10px 5px gray;
+}
+
+.paragraphh {
+    margin-top: 2rem;
+    color: red;
+    font-size: 15px;
+    text-align: center;
+    background: rgba(0,0,0,0.8);
+  }

@@ -1,0 +1,60 @@
+
+
+# @name login
+@token = {{login.response.headers.Authorization}}
+
+POST http://127.0.0.1:3000/login
+Content-Type: application/json
+
+{
+    "email": "pippo@gmail.com",
+    "password": "11111111"
+}
+
+
+
+
+
+###
+
+
+GET http://127.0.0.1:3000/users/get?page=0&size=6
+Authorization: Bearer {{token}}
+
+
+
+
+
+
+
+
+###
+
+
+POST http://127.0.0.1:8080/users/saveToken
+Content-Type: application/json
+
+{
+    "uid": 1,
+    "token": "scottona"
+}
+
+
+###
+
+
+
+GET http://127.0.0.1:8080/users/1/getTokenTime
+
+
+###
+
+
+POST http://127.0.0.1:3000/users/register
+Content-Type: application/json
+
+{
+    "name": "cataldo",
+    "email": "cat95@gmail.com",
+    "password": "banana33"
+}

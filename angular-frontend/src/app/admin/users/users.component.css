@@ -1,0 +1,15 @@
+.paragraph {
+    margin-top: 2rem;
+    color: rgb(255, 0, 0);
+    font-size: 15px;
+    text-align: center;
+}
+
+td:nth-child(2) {
+    /* background: red; */
+    width: 100vh;
+}
+
+.btn {
+    width: 15vh;
+}

@@ -1,26 +1,54 @@
 <h1>Users Admin</h1>
-<a class="btn btn-primary mb-3" (click)="addUser()">add</a>
-<div class="container row">
-    <div   class="col-md-6">
-    <table class="table">
+
+<div style="margin-top: 60px; margin-left: 5%;">
+  <a class="btn btn-primary mb-3" (click)="addUser()">Add New User</a>
+  <a *ngIf="allUsers>0" style ="margin-left: 5%;" class="btn btn-danger mb-3" (click)="deleteAll()">Delete All Users</a>
+</div>
+
+<div class="container row" style="max-width: 100%;">
+  <div class="col-md-6">
+    <table class="table" *ngIf="allUsers > 0">
       <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th></th>
-      </tr>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th style="min-width: 140px"></th>
+        </tr>
       </thead>
+      
       <tbody>
-      <tr *ngFor="let user of users" >
-        <td>{{user.id}}</td>
-        <td>{{user.name}}</td>
-        <td><button type="button" class="btn btn-primary" (click)="viewUser(user.id)">Show Details</button></td>
-      </tr>
+        <tr *ngFor="let user of users | paginate: { itemsPerPage: size, currentPage: page, totalItems: allUsers}">
+          <td>{{user.id}}</td>
+          <td>{{user.name}}</td>
+          <td><button type="button" class="btn btn-primary" (click)="viewUser(user.id)">Show Details</button></td>
+        </tr>
       </tbody>
     </table>
+
+    <div class="d-flex justify-content-center" style="margin-top: 20px;" *ngIf="allUsers>0">
+      <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
+    </div>
+
+    <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+
   </div>
-  <div   class="col-md-6">
-    <app-adduser *ngIf="action === 'add'"  [user]="selectedUser"  (userAddedEvent)="refreshData()"></app-adduser>
-    <app-viewuser *ngIf="action === 'view'" [user]="selectedUser" (userDeletedEvent)="refreshData()"></app-viewuser>
+
+ 
+  
+
+
+
+  <div class="col-md-6">
+
+    <div style=" margin-top: -45px;">
+      <app-adduser *ngIf="action === 'add' && allUsers > 0" [user]="selectedUser"
+        (userAddedEvent)="refreshData()"></app-adduser>
+    </div>
+   
+    <div style=" margin-top: 40px;">
+      <app-viewuser *ngIf="selectedUser!=null && action === 'view' && allUsers > 0" [user]="selectedUser"
+        (userDeletedEvent)="refreshData()"></app-viewuser>
+    </div>
+   
   </div>
 </div>

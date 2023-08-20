@@ -3,6 +3,7 @@ package com.javainuse.repositories;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.javainuse.entities.Book;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
 
@@ -17,4 +18,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	long countOrdersByUserId(Long userId);
 	//List<Order>findOrdersByUser(Long userId);	
 	List<Order> findOrdersByUser(User user);
+	List<Book> getOrderBooksById(Long orderId);
 }

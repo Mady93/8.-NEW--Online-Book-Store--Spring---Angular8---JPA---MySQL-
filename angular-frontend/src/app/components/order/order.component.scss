@@ -1,0 +1,31 @@
+details {
+    background-color: aquamarine;
+    padding: 5px;
+    margin: 30px;
+    margin-bottom: 0px;
+}
+
+details table {
+    margin-bottom: 0px;
+}
+
+img {
+    width: 128px;
+}
+
+label {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-weight: bold;
+    padding: 5px;
+    width: 100%;
+}
+
+
+th,
+td {
+    text-align: center;
+}

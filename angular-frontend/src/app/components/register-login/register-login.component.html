@@ -1,0 +1,113 @@
+
+
+<div style="text-align: center;">
+  <div class="animate-div">
+    <div *ngIf="isLogin">
+      <mat-icon>login</mat-icon>
+      <h1 style="color: rgb(226, 181, 47);">Login</h1>
+    </div>
+
+    <div *ngIf="!isLogin">
+      <mat-icon>person_add</mat-icon>
+      <h1 style="color: rgb(226, 181, 47);">Register</h1>
+    </div>
+  </div>
+</div>
+
+
+<div class="form-container">
+
+  <form [formGroup]="form" (submit)="submitForm()">
+
+    <mat-form-field appearance="fill" [hidden]="isLogin">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" type="text" placeholder="Name" />
+      <mat-icon matSuffix>person</mat-icon>
+  
+      <mat-error>
+        <ul>
+          <li *ngFor="let err of namedErr">{{err}}</li>
+        </ul>
+      </mat-error>
+  
+    </mat-form-field>
+  
+   <mat-form-field appearance="fill">
+    <mat-label>Email</mat-label>
+    <input matInput formControlName="email" type="email" placeholder="Email" value="pippo@gmail.com"/>
+    <mat-icon matSuffix>email</mat-icon>
+  
+    <mat-error>
+      <ul>
+        <li *ngFor="let err of emailErr">{{err}}</li>
+      </ul>
+    </mat-error>
+  </mat-form-field>
+  
+  
+  
+  
+    <mat-form-field appearance="fill">
+      <mat-label>Password</mat-label>
+      <input matInput formControlName="password" type="{{ showPassword[0] ? 'text' : 'password' }}" placeholder="Password" value="11111111"/>
+
+      <button mat-icon-button matSuffix type="button" (click)="toggleShowPassword(0)">
+        <mat-icon>{{ showPassword[0] ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      
+      <mat-error>
+        <ul>
+          <li *ngFor="let err of passwordErr">{{err}}</li>
+        </ul>
+      </mat-error>
+    
+      <div matSuffix class="mat-input-underline"></div>
+    </mat-form-field>
+    
+    
+  
+    <mat-form-field appearance="fill" [hidden]="isLogin">
+      <mat-label>Repeat Password</mat-label>
+      <input matInput formControlName="repeatPassword" type="password" type="{{ showPassword[1] ? 'text' : 'password' }}" placeholder="Repeat Password" />
+      <!--<mat-icon matSuffix>lock</mat-icon>-->
+
+      <button mat-icon-button matSuffix type="button" (click)="toggleShowPassword(1)">
+        <mat-icon>{{ showPassword[1] ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+  
+      <mat-error *ngIf="form.get('repeatPassword').hasError('passwordMismatch')">
+        Passwords don't match
+      </mat-error>
+
+      <div matSuffix class="mat-input-underline"></div>
+  
+    </mat-form-field>
+  
+    <div class="dvBut">
+      <button class="but" mat-raised-button color="primary" type="button" (click)="action()">
+        {{ isLogin ? 'Login' : 'Register' }}
+      </button>
+    </div>
+   
+    
+  
+    <div style="margin-top: 10px;">
+  
+      <div class="div" *ngIf="isLogin">
+        <span style="color: rgb(226, 181, 47);">Don't have an account?   <a routerLink="/register">Register</a></span>
+        </div>
+    
+        <div class="div" *ngIf="!isLogin">
+          <span style="color: rgb(226, 181, 47);">Do you've already an account?   <a routerLink="/login">Login</a></span>
+          </div>
+  
+    </div>
+  
+    <div *ngIf='msg' [innerHTML]="msg">
+      <p style="color: rgb(255, 0, 0); font-size: 15px; text-align: center;"></p>
+    </div>
+  
+  </form>
+  
+
+</div>

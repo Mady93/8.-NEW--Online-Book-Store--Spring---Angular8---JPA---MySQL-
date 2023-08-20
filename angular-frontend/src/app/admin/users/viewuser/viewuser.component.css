@@ -3,3 +3,33 @@ table, th, td {
 	border: 1px solid black;
 	border-collapse: collapse;
 }
+
+
+.close{
+    all: unset;
+    position: absolute;
+	right: 0px;
+	top: 0px;
+	margin-top: -20px;
+	margin-right: -20px;
+	color: red;
+	font-weight: 800;
+	font-size: 32px;
+	cursor: pointer;
+}
+
+.userDetails{
+    position: relative;
+	display: inline-block;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+td:nth-child(2){
+    /* background: red; */
+    width: 25vh;
+}
+
+.btn {
+	width: 15vh;
+}

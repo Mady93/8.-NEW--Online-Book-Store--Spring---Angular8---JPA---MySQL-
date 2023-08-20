@@ -1,0 +1,12 @@
+
+
+
+
+td:nth-child(2) {
+    /* background: red; */
+    width: 100vh;
+}
+
+.btn {
+    width: 15vh;
+}

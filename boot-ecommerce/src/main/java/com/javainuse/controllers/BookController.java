@@ -112,7 +112,7 @@ public class BookController {
 		this.bytes = null;
 	}*/
 	 
-	 @PostMapping(path = "/create", consumes = "application/json")
+	 @PostMapping(path = "/add", consumes = "application/json")
 		public ResponseEntity<Object> postBook(@RequestBody @Valid Book book)
 				throws MethodArgumentNotValidException, IllegalArgumentException {
 		 
@@ -149,7 +149,7 @@ public class BookController {
 		}*/
 		
 		
-		@PutMapping(path = "/{id:\\d+}/put", consumes = "application/json")
+		@PutMapping(path = "/update/{id:\\d+}", consumes = "application/json")
 		public ResponseEntity<Object> putBook(@PathVariable("id") Long id, @RequestBody @Valid Book book)
 				throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
 
@@ -189,12 +189,13 @@ public class BookController {
 	}*/
 	
 	
-		@DeleteMapping(path = "/{id:\\d+}/delete/one")
+		@DeleteMapping(path = "/{id:\\d+}/delete")
 		public ResponseEntity<Object> deleteBook(@PathVariable("id") Long id)
 				throws ResourceNotFoundException, IllegalArgumentException {
 
 			Optional<Book> optional = bookRepository.findById(id);
 			if (optional.isPresent()) {
+
 				bookRepository.deleteById(id);
 
 				String message = "Book deleted successfully";
@@ -207,7 +208,7 @@ public class BookController {
 		}
 
 		// Aggiunto perche mancante
-		@DeleteMapping(path = "/delete/all")
+		@DeleteMapping(path = "/deleteAll")
 		public ResponseEntity<ApiResponse> deleteBooks() throws ResourceNotFoundException, IllegalArgumentException {
 
 			List<Book> list = (List<Book>) bookRepository.findAll();

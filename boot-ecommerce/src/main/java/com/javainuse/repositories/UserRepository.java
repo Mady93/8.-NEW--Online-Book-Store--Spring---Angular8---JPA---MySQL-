@@ -9,4 +9,9 @@ import com.javainuse.entities.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 	
 	boolean existsByEmail(String email);
+
+	// aggiunti
+    User findUserByEmail(String email);
+
+    User findUserByType(String code);
 }

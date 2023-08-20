@@ -1,4 +1,14 @@
-<h1>Book Details</h1>
+<div class="bookDetails">
+
+    <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
+        <span aria-hidden="true">&times;</span>
+    </button>
+
+    <div style="text-align: center;">
+        <h1>Book Details</h1>
+    </div>
+
+
 
     <table>
         <tr>
@@ -15,11 +25,24 @@
         </tr>
         <tr>
             <td>Book Price</td>
-            <td>{{book.price}}</td>
+            <td>{{book.price | currency:'USD'}}</td>
         </tr>
     </table>
+
     <br>
-    <img src="{{book.retrievedImage}}" height="200" width="200">
-    <br><br>
-    <a class="btn btn-small btn-warning" (click)="editBook()">edit</a>  
-    <a class="btn btn-small btn-danger" (click)="deleteBook()">delete</a>
+
+    <div style="text-align: center;">
+        <img src="{{book.retrievedImage}}" height="380" width="280">
+    </div>
+
+    <br>
+    <br>
+
+    <div style="text-align: center; margin-top: -30px;">
+        <a class="btn btn-small btn-warning" (click)="editBook()">Edit</a>
+        <a style="margin-left: 30px;" class="btn btn-small btn-danger" (click)="deleteBook()">Delete</a>
+    </div>
+
+    <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+
+</div>

@@ -1,0 +1,50 @@
+form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    width: 50%;
+  }
+
+  .form-container {
+    margin-top: 30px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    height: 100vh; /* Opzionale: per occupare l'altezza completa della finestra */
+  }
+
+  .dvBut {
+    text-align: end;
+  }
+
+  .but {
+    width: 25%;
+    border-radius: 50px 0px 50px 0;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    background-color: rgb(255, 255, 255);
+    color: rgb(226, 181, 47);
+    font-weight: bold;
+  }
+  
+  .animate-div {
+    display: inline-block;
+    animation: moveLeftAndRight 2s linear infinite alternate;
+    margin-top: 20px;
+  }
+  
+  @keyframes moveLeftAndRight {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    50% {
+      transform: translateX(-30px);
+    }
+  }
+  
+  
+  
+  
+  
