@@ -3,10 +3,9 @@ import { Router } from '@angular/router';
 import { HttpClientService } from '../service/http-client.service';
 import { Book } from '../model/Book';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Order } from '../model/Order';
 import { User } from '../model/User ';
-import { JoinTable } from '../model/JoinTable';
-import { faAdd, faCartFlatbed, faCartPlus, faCartShopping, faDollarSign, faQuestion, faUserEdit } from '@fortawesome/free-solid-svg-icons';
+import { faCartPlus, faCartShopping, faDollarSign, faQuestion, faUserEdit } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from '../service/auth.service';
 
 @Component({
   selector: 'app-shopbook',
@@ -36,22 +35,7 @@ export class ShopbookComponent implements OnInit {
   msg: any;
   status: any;
 
-  constructor(private router: Router, private httpClientService: HttpClientService) { }
-
-
-  /*ngOnInit() {
-    this.httpClientService.getBooks(1, 6).subscribe(
-      response => this.handleSuccessfulResponse(response),
-    );
-    //from localstorage retrieve the cart item
-    let data = localStorage.getItem('cart');
-    //if this is not null convert it to JSON else initialize it as empty
-    if (data !== null) {
-      this.cartBooks = JSON.parse(data);
-    } else {
-      this.cartBooks = [];
-    }
-  }*/
+  constructor(private router: Router, private httpClientService: HttpClientService, public authService: AuthService) { }
 
   // Aggiunto regex errori
   escapeRegExp(string) {
@@ -72,6 +56,19 @@ export class ShopbookComponent implements OnInit {
       this.cartBooks = JSON.parse(data);
     } else {
       this.cartBooks = [];
+    }
+
+
+
+    if (localStorage["boughtCart"] === "true")
+    {
+      localStorage["boughtCart"] = false;
+      this.authService.buy().then(res => {
+        this.emptyCart();
+        location.href = "/order";
+      }, err => {
+
+      });
     }
 
     this.refreshData();
@@ -168,7 +165,7 @@ export class ShopbookComponent implements OnInit {
       name: book.name,
       author: book.author,
       price: book.price,
-      picByte: book.picByte,
+      //picByte: book.picByte,
       q: 1
     };
 
@@ -176,57 +173,11 @@ export class ShopbookComponent implements OnInit {
     //updated the cartBooks
     this.updateCartData(cartData);
     //save the updated cart data in localstorage
+
     localStorage.setItem('cart', JSON.stringify(cartData));
     //make the isAdded field of the book added to cart as true
     book.isAdded = true;
   }
-
-
-
-
-
-
-  buy(uid: number) {
-    let cart = JSON.parse(localStorage["cart"]);
-
-    let order: Order;
-
-
-
-    order = new Order();
-    order.user = new User();
-    order.user.id = uid;
-
-    this.httpClientService.addOrder(uid).subscribe({
-      next: (ret: any) => {
-
-        let oid = ret.orderId;
-
-        cart.forEach(ele => {
-
-          let jt: JoinTable = new JoinTable();
-          //let jt = {book: {id:ele.id}, order: {id: oid}, quantity: ele.q};
-
-          //debugger;
-          jt.book.id = ele.id;
-          jt.order.id = oid;
-          jt.quantity = ele.q;
-          //jt.price = ele.price;
-
-
-          this.httpClientService.addJoinTable(jt).subscribe({
-            next: (jt: JoinTable) => {
-              this.emptyCart();
-            }
-          })
-
-        });
-
-      }
-    });
-
-  }
-
 
   updateCartData(cartData) {
     this.cartBooks = cartData;
@@ -236,13 +187,28 @@ export class ShopbookComponent implements OnInit {
     this.router.navigate(['/order']);
   }
 
-  emptyCart() {
-    this.cartBooks = [];
-    localStorage.clear();
-    this.refreshData();
+  buyCart() {
+
+    if (!this.authService.isLogged()){
+      localStorage["boughtCart"] = true;
+      location.href = "/login";
+      return;
+    }
+
+    this.authService.buy().then(res => {
+      this.emptyCart();
+      location.href = "/order";
+    }, err => {
+    
+    });
+
   }
 
-
+  emptyCart() {
+    this.cartBooks = [];
+    localStorage.setItem("cart", "[]");
+    this.refreshData();
+  }
 
   removeFromCart(bookId: number) {
     // Trova l'indice del libro da rimuovere nel carrello
@@ -262,9 +228,5 @@ export class ShopbookComponent implements OnInit {
       }
     }
   }
-
-
-
-
 
 }

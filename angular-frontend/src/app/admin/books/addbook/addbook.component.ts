@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { concatMap, switchMap } from 'rxjs/operators';
+import { AuthService } from 'src/app/service/auth.service';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class AddbookComponent implements OnInit {
   constructor(private httpClientService: HttpClientService,
     private activedRoute: ActivatedRoute,
     private router: Router,
-    private httpClient: HttpClient) { }
+    private httpClient: HttpClient,
+    private auth: AuthService) { }
 
   ngOnInit() {
 
@@ -140,28 +142,13 @@ export class AddbookComponent implements OnInit {
         }
       })
 
-      /*
-      this.httpClient.post('http://localhost:8080/books/upload', uploadData, { observe: 'response' })
-        .subscribe((response) => {
-          if (response.status === 200) {
-              this.httpClientService.addBook(this.book).subscribe(
-              (book) => {
-                this.bookAddedEvent.emit();
-                this.router.navigate(['admin', 'books']);
-              }
-            
-            console.log('Image uploaded successfully');
-          } else {
-            console.log('Image not uploaded successfully');
-          }
-        });
-        */
     } else {
 
 
 
       let isImgUpload = (this.selectedFile != undefined);
 
+      //debugger;
 
       const uploadData = new FormData();
       if (isImgUpload) {
@@ -174,34 +161,20 @@ export class AddbookComponent implements OnInit {
 
 
       imgUploadObs.pipe(
-        switchMap(() => this.httpClientService.updateBook(this.book))
+        switchMap(() => this.httpClientService.updateBook(this.book, this.auth.role.toLowerCase()))
       ).subscribe(
         (res) => {
           this.msg = "";
           this.bookAddedEvent.emit();
-          this.router.navigate(['admin', 'books']);
+          this.router.navigate([this.auth.role.toLowerCase(), 'books']);
         },
         (err) => {
           this.msg = this.replaceAll(err.message, "#", "<br>");
         }
       );
-
-
-
-      /*
-      this.httpClientService.updateBook(this.book).subscribe(
-        (book) => {
-          this.bookAddedEvent.emit();
-          this.router.navigate(['admin', 'books']);
-        }
-      );
-      */
-
     }
 
   }
-
-
 
   getImageColor(src: string, cb: any) {
     var image = new Image();

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 //import com.javainuse.validators.ByteArrayNotEmpty;
-import com.javainuse.validators.MaxLength;
+//import com.javainuse.validators.MaxLength;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,9 +46,8 @@ public class Book {
 	@Column(name = "price")
 	private double price;
 
-	// Validators personalizzati dato che javax.validation.constraints non offre alcun validatore per un campo byte[]
 	//@ByteArrayNotEmpty(message = "Byte array image cannot be null or empty")
-	@MaxLength(value = 1000000, message = "Byte array image length exceeds the maximum allowed")
+	//@MaxLength(value = 1000000, message = "Byte array image length exceeds the maximum allowed")
 	@Column(name = "picByte", length = 100000)
 	private byte[] picByte;
 

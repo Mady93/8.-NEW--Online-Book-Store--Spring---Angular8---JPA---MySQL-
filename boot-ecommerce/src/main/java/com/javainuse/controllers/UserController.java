@@ -3,15 +3,16 @@ package com.javainuse.controllers;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
-import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -52,29 +53,20 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
 @RestController
-//@CrossOrigin(origins = "http://localhost:4200")  // Problemi con i cors
 @CrossOrigin(origins = "*")
-//@RequestMapping(path = "users") // Non produce jsnon ed il punto di innesco di base non mi piace
 @RequestMapping(path = "/users", produces = "application/json")
 public class UserController {
 
-	// non è final e la dependency injection non è fatta nel costruttore,di conseguenza non va bene per i multi threading (concorrenza)
-	/*@Autowired
-	private UserRepository userRepository;*/
-	
-	
 	private final UserRepository userRepository;
 	private String pubKey;
-
 
 	@Autowired
 	public UserController(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
 
-
 	@PostMapping(path = "/setPubKey", consumes = "text/plain")
-	public ResponseEntity<Object> setPubKey(@RequestBody String key){
+	public ResponseEntity<Object> setPubKey(@RequestBody String key) {
 
 		this.pubKey = key;
 
@@ -82,62 +74,54 @@ public class UserController {
 
 	}
 
-
 	private static PublicKey getPublicKeyFromString(String keyString) throws Exception {
-        keyString = keyString
-                .replace("-----BEGIN PUBLIC KEY-----", "")
-                .replace("-----END PUBLIC KEY-----", "")
-                .replaceAll("\\s", ""); // Rimuove eventuali spazi
+		keyString = keyString
+				.replace("-----BEGIN PUBLIC KEY-----", "")
+				.replace("-----END PUBLIC KEY-----", "")
+				.replaceAll("\\s", ""); // Rimuove eventuali spazi
 
-        byte[] publicKeyBytes = Base64.getDecoder().decode(keyString);
-        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
+		byte[] publicKeyBytes = Base64.getDecoder().decode(keyString);
+		X509EncodedKeySpec keySpec = new X509EncodedKeySpec(publicKeyBytes);
 
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        return keyFactory.generatePublic(keySpec);
-    }
+		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+		return keyFactory.generatePublic(keySpec);
+	}
 
-
-	/* funzione che calcola quanti secondi di validita' ha il token master utilizzato per il refresh token */
-	long getExpInSeconds(String token) throws Exception{
-
-
+	
+	 //funzione che calcola quanti secondi di validita' ha il token master utilizzato per il refresh token
+	
+	long getExpInSeconds(String token) throws Exception {
 
 		try {
 
-
 			PublicKey pubKeyFromatted = getPublicKeyFromString(this.pubKey);
 
-
-            Jws<Claims> jws = Jwts.parserBuilder()
-                    .setSigningKey(pubKeyFromatted)
-                    .build()
-                    .parseClaimsJws(token);
+			Jws<Claims> jws = Jwts.parserBuilder()
+					.setSigningKey(pubKeyFromatted)
+					.build()
+					.parseClaimsJws(token);
 			Claims claims = jws.getBody();
 
-
-
-            // Esempio: verifica che il token non sia scaduto
-            Date expirationDate = claims.getExpiration();
-            Date now = new Date();
-            //return !expirationDate.before(now);
+			// Esempio: verifica che il token non sia scaduto
+			Date expirationDate = claims.getExpiration();
+			Date now = new Date();
+			// return !expirationDate.before(now);
 
 			long diff = expirationDate.getTime() - now.getTime();
 			diff = diff / 1000;
 
 			return diff;
 
-        } catch (JwtException | IllegalArgumentException e) {
-            // Il token è scaduto o non è valido
-            //return false;
+		} catch (JwtException | IllegalArgumentException e) {
+			// Il token è scaduto o non è valido
 			return 0;
-        }
+		}
 
 	}
 
-
 	@PostMapping(path = "/saveToken", consumes = "application/json")
-	public ResponseEntity<Object> saveToken(@RequestBody String data) throws JsonMappingException, JsonProcessingException{
-
+	public ResponseEntity<Object> saveToken(@RequestBody String data)
+			throws JsonMappingException, JsonProcessingException {
 
 		Map<String, Object> req = new ObjectMapper().readValue(data, Map.class);
 		Long uid = Long.parseLong(req.get("uid").toString());
@@ -150,76 +134,60 @@ public class UserController {
 
 		user.setToken(token);
 		userRepository.save(user);
-		//userRepository.save(user);
 
 		return ResponseEntity.status(200).body("");
 	}
 
-
-	
 	@PostMapping(path = "/login", consumes = "application/json")
-    public ResponseEntity<Object> login(@RequestBody User user) throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
-        HttpStatus retStatus = HttpStatus.OK;
-        User x = this.userRepository.findUserByEmail(user.getEmail());
+	public ResponseEntity<Object> login(@RequestBody User user)
+			throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
+		HttpStatus retStatus = HttpStatus.OK;
+		User x = this.userRepository.findUserByEmail(user.getEmail());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode json = objectMapper.createObjectNode();
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode json = objectMapper.createObjectNode();
 
-        System.out.println(user.toString());
-        System.out.println(x != null ? x.toString() : "User not found");
+		System.out.println(user.toString());
+		System.out.println(x != null ? x.toString() : "User not found");
 
-        if (x == null || !x.getPassword().equals(user.getPassword())) {
-            json.put("msg", "Authentication failed");
-            retStatus = HttpStatus.FORBIDDEN;
-        } else {
-            json.put("msg", "Login succeeded")
-                .put("id", String.valueOf(x.getId()))
-                .put("role", x.getType().toString());
-        }
+		if (x == null || !x.getPassword().equals(user.getPassword())) {
+			json.put("msg", "Authentication failed");
+			retStatus = HttpStatus.FORBIDDEN;
+		} else {
+			json.put("msg", "Login succeeded")
+					.put("id", String.valueOf(x.getId()))
+					.put("role", x.getType().toString());
+		}
 
-        return ResponseEntity.status(retStatus).body(json);
-    }
-
-
-
+		return ResponseEntity.status(retStatus).body(json);
+	}
 
 	@PostMapping(path = "/register", consumes = "application/json")
-    public ResponseEntity<Object> register(@RequestBody @Valid User user) throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
-        HttpStatus retStatus = HttpStatus.CREATED;
-        
+	public ResponseEntity<Object> register(@RequestBody @Valid User user)
+			throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
+		HttpStatus retStatus = HttpStatus.CREATED;
 
 		userRepository.save(user);
 
+		return ResponseEntity.status(retStatus).body("");
+	}
 
-        return ResponseEntity.status(retStatus).body("");
-    }
-	
-
-	
 	@GetMapping(path = "/{uid:\\d+}/getTokenTime")
 	public ResponseEntity<Object> refreshToken(@PathVariable Long uid) throws Exception {
-        
+
 		Optional<User> optional = userRepository.findById(uid);
 		User user = optional.orElseThrow(
 				() -> new ResourceNotFoundException("Unable to retrieve the resource. The user resource with ID: "
 						+ uid + " was not found in the database"));
 
-		
 		String token = user.getToken();
 
 		ObjectMapper objectMapper = new ObjectMapper();
-        ObjectNode json = objectMapper.createObjectNode();
+		ObjectNode json = objectMapper.createObjectNode();
 		json.put("time", getExpInSeconds(token));
 
 		return ResponseEntity.status(HttpStatus.OK).body(json);
-    }
-	
-
-
-
-
-
-
+	}
 
 	@GetMapping(path = "/count")
 	public ResponseEntity<Integer> countUsers() throws ResourceNotFoundException, IllegalArgumentException {
@@ -244,15 +212,7 @@ public class UserController {
 					"Unable to retrieve the page: " + page + ". No users resource was found in the database");
 		}
 	}
-	
-	
-	// Non consuma json, non ha le eccezioni gestite e l'url adeguata
-	/*@PostMapping("/add")
-	public void createUser(@RequestBody User user) {
-		userRepository.save(user);
-	}*/
-	
-	
+
 	// metodo per admin - crea l'utente
 	@PostMapping(path = "/add", consumes = "application/json")
 	public ResponseEntity<Object> postUserAdmin(@RequestBody @Valid User user)
@@ -262,47 +222,33 @@ public class UserController {
 		String message = "User created successfully";
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));
 	}
+
 	
-	
-
-	// metodo per user - crea se stesso
-	@PostMapping(path = "/addUserItSelf", consumes = "application/json")
-	public ResponseEntity<Object> postUserItSelf(@RequestBody @Valid User user)
-			throws MethodArgumentNotValidException, IllegalArgumentException, DataIntegrityViolationException{
-
-				user.setType("User");
-
-		userRepository.save(user);
-		String message = "User created successfully";
-		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));
-	}
-
-
 	// metodo per admin - l'unico che puo modificare il ruolo
-	@PostMapping(path = "/customers/setRole", consumes = "application/json")
+	@PostMapping(path = "/setRole", consumes = "application/json")
 	public ResponseEntity<Object> setRole(@RequestBody JsonNode data)
 			throws MethodArgumentNotValidException, IllegalArgumentException {
 
-		String code = data.get("code").asText();
-		String email = data.get("email").asText();
 
-		User u = this.userRepository.findUserByType(code);
 
-		if (u == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Role not found");
-		User user = this.userRepository.findUserByEmail(email);
-		if (user == null) return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-		user.setType(u.getType());
+		Long uid = data.get("uid").asLong();
+		Optional<User> optional = userRepository.findById(uid);
+		User user = optional.orElseThrow(
+				() -> new ResourceNotFoundException("Unable to retrieve the resource. The user resource with ID: "
+						+ uid + " was not found in the database"));
+
+		String role = data.get("role").asText();
+		user.setType(role);
 
 		userRepository.save(user);
 
-		return ResponseEntity.status(HttpStatus.OK).body("");
+
+		return ResponseEntity.status(HttpStatus.OK).body("{'response': 'Role changed'}");
+
+
+		
 	}
 
-
-
-	
-	
-	// Aggiunto perche mancante
 	@GetMapping(path = "/{id:\\d+}/one")
 	public ResponseEntity<User> getUserById(@PathVariable("id") Long id)
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -313,63 +259,49 @@ public class UserController {
 						+ id + " was not found in the database"));
 		return ResponseEntity.ok().body(user);
 	}
-	
-	
-	
-	// Aggiunto perche mancante
+
 	@PutMapping(path = "/update/{id:\\d+}", consumes = "application/json")
 	public ResponseEntity<Object> putUser(@PathVariable("id") Long id, @RequestBody @Valid User user)
-	        throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
+			throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
 
-	    Optional<User> optionalUser = userRepository.findById(id);
-	    if (optionalUser.isPresent()) {
-	        User existingUser = optionalUser.get();
+		Optional<User> optionalUser = userRepository.findById(id);
+		if (optionalUser.isPresent()) {
+			User existingUser = optionalUser.get();
 
-	        // Verifica se l'utente sta cercando di mantenere la stessa email
-	        if (existingUser.getId().equals(user.getId()) && existingUser.getEmail().equals(user.getEmail())) {
-	            existingUser.setName(user.getName());
-	            existingUser.setPassword(user.getPassword());
+			// Verifica se l'utente sta cercando di mantenere la stessa email
+			if (existingUser.getId().equals(user.getId()) && existingUser.getEmail().equals(user.getEmail())) {
+				existingUser.setName(user.getName());
+				existingUser.setPassword(user.getPassword());
 
-	            userRepository.save(existingUser);
+				userRepository.save(existingUser);
 
-	            String message = "User updated successfully";
-	            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-	        } else {
-	            // Verifica se l'utente sta cercando di modificare l'email
-	            if (!existingUser.getEmail().equals(user.getEmail())) {
-	                // Verifica se l'email è già in uso da un altro utente
-	                if (userRepository.existsByEmail(user.getEmail())) {
-	                    return ResponseEntity.status(HttpStatus.CONFLICT)
-	                            .body(new ApiResponse(HttpStatus.CONFLICT.value(), "Email already exists"));
-	                }
-	            }
+				String message = "User updated successfully";
+				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+			} else {
+				// Verifica se l'utente sta cercando di modificare l'email
+				if (!existingUser.getEmail().equals(user.getEmail())) {
+					// Verifica se l'email è già in uso da un altro utente
+					if (userRepository.existsByEmail(user.getEmail())) {
+						return ResponseEntity.status(HttpStatus.CONFLICT)
+								.body(new ApiResponse(HttpStatus.CONFLICT.value(), "Email already exists"));
+					}
+				}
 
-	            // Aggiorna gli altri campi e salva l'utente
-	            existingUser.setName(user.getName());
-	            existingUser.setEmail(user.getEmail());
-	            existingUser.setPassword(user.getPassword());
+				existingUser.setName(user.getName());
+				existingUser.setEmail(user.getEmail());
+				existingUser.setPassword(user.getPassword());
 
-	            userRepository.save(existingUser);
+				userRepository.save(existingUser);
 
-	            String message = "User updated successfully";
-	            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-	        }
-	    } else {
-	        throw new ResourceNotFoundException("Unable to perform the modification. The user resource with ID: "
-	                + id + " was not found in the database");
-	    }
+				String message = "User updated successfully";
+				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+			}
+		} else {
+			throw new ResourceNotFoundException("Unable to perform the modification. The user resource with ID: "
+					+ id + " was not found in the database");
+		}
 	}
 
-
-	/*
-	// getOne() deprecato , non ha le eccezioni gestite e l'url adeguata
-	@DeleteMapping(path = { "/{id}" })
-	public User deleteUser(@PathVariable("id") long id) {
-		User user = userRepository.getOne(id);
-		userRepository.deleteById(id);
-		return user;
-	}*/
-	
 	
 	@DeleteMapping(path = "/{id:\\d+}/delete")
 	public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id)
@@ -388,26 +320,18 @@ public class UserController {
 		}
 	}
 
-	// Aggiunto perche mancante
+
+	// posso cancellare tutti gli utenti eccetto admin
+	
 	@DeleteMapping(path = "/deleteAll")
-	public ResponseEntity<ApiResponse> deleteUsers() throws ResourceNotFoundException, IllegalArgumentException {
+	public ResponseEntity<ApiResponse> deleteUsers() {
+		//userRepository.deleteByTypeIn(Arrays.asList("User", "Seller"));
 
-		List<User> userList = (List<User>) userRepository.findAll();
-		if (!userList.isEmpty()) {
-			userRepository.deleteAll(userList);
+		userRepository.deleteAll();
 
-			String message = "Users deleted successfully";
-			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-
-		} else {
-			throw new ResourceNotFoundException(
-					"Unable to perform the deletion. No users resource was found in the database");
-		}
+		String message = "Users with types User and Seller have been deleted successfully";
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 	}
-
-
-
-
 
 
 }

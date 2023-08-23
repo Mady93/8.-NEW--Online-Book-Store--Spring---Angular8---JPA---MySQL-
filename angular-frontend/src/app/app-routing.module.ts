@@ -12,6 +12,7 @@ const routes: Routes = [
   { path: '', redirectTo: 'shop', pathMatch: 'full' },
   { path: 'admin/users', canActivate: [RoleGuardService], component: UsersComponent },
   { path: 'admin/books', canActivate: [RoleGuardService], component: BooksComponent },
+  { path: 'seller/books', canActivate: [RoleGuardService], component: BooksComponent },
   { path: 'shop', component: ShopbookComponent },
   { path: 'order', canActivate: [RoleGuardService], component: OrderComponent },
   { path: 'register', component: RegisterLoginComponent },

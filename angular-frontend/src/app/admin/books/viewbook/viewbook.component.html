@@ -40,7 +40,7 @@
 
     <div style="text-align: center; margin-top: -30px;">
         <a class="btn btn-small btn-warning" (click)="editBook()">Edit</a>
-        <a style="margin-left: 30px;" class="btn btn-small btn-danger" (click)="deleteBook()">Delete</a>
+        <a style="margin-left: 30px;" class="btn btn-small btn-danger" (click)="deleteBook()" *ngIf="auth.role=='Admin'">Delete</a>
     </div>
 
     <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>

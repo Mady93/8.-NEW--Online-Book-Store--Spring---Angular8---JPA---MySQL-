@@ -27,15 +27,6 @@ export class AdduserComponent implements OnInit {
   ngOnInit() {
   }
 
-/*  addUser() {
-    this.httpClientService.addUser(this.user).subscribe(
-      (user) => {
-        this.userAddedEvent.emit();
-        this.router.navigate(['admin', 'users']);
-      }
-    );
-  } */
-
   // Aggiunto regex errori
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { JoinTable } from 'src/app/model/JoinTable';
 import { Order } from 'src/app/model/Order';
+import { AuthService } from 'src/app/service/auth.service';
 import { HttpClientService } from 'src/app/service/http-client.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { HttpClientService } from 'src/app/service/http-client.service';
 })
 export class OrderComponent implements OnInit {
 
-  constructor(private service: HttpClientService) { }
+  constructor(private service: HttpClientService, private auth: AuthService) { }
 
 
 
@@ -22,7 +23,7 @@ export class OrderComponent implements OnInit {
 
   ngOnInit() {
 
-    this.fetchOrdersByUid(1);
+    this.fetchOrdersByUid(this.auth.uid);
 
   }
 

@@ -3,6 +3,7 @@ package com.javainuse.entities;
 import java.io.Serializable;
 
 import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;

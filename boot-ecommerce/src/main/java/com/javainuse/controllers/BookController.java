@@ -36,20 +36,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 @RestController
-// @CrossOrigin(origins = "http://localhost:4200") // Problemi con i cors
 @CrossOrigin(origins = "*")
-// @RequestMapping(path = "books") // Non produce jsnon ed il punto di innesco di base non mi piace
 @RequestMapping(path = "/books", produces = "application/json")
 public class BookController {
 	
 	// gestione separata dell'array di byte
 	private byte[] imageBytes;
 
-	// non è final e la dependency injection non è fatta nel costruttore,di conseguenza non va bene per i multi threading (concorrenza)
-	/* @Autowired
-	private BookRepository bookRepository; */
-	
-	
 	private final BookRepository bookRepository;
 	
 	@Autowired
@@ -84,15 +77,6 @@ public class BookController {
 			}
 		}
 		
-		
-		// Non consuma json, non ha le eccezioni gestite e l'url adeguata
-	/* @PostMapping("/upload")
-	public void uploadImage(@RequestParam("imageFile") MultipartFile file) throws IOException {
-		this.bytes = file.getBytes();
-	}*/
-		
-		
-		
 		@PostMapping(path = "/upload", consumes = "multipart/form-data")
 		public ResponseEntity<Object> uploadImage(@RequestParam("imageFile") MultipartFile file)
 		        throws MethodArgumentNotValidException, IllegalArgumentException, IOException {
@@ -101,18 +85,7 @@ public class BookController {
 		    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 		}
 
-		
-		
-		
-	// Non consuma json, non ha le eccezioni gestite e l'url adeguata
-	 /* @PostMapping("/add")
-	public void createBook(@RequestBody Book book) throws IOException {
-		book.setPicByte(this.bytes);
-		bookRepository.save(book);
-		this.bytes = null;
-	}*/
-	 
-	 @PostMapping(path = "/add", consumes = "application/json")
+	 	@PostMapping(path = "/add", consumes = "application/json")
 		public ResponseEntity<Object> postBook(@RequestBody @Valid Book book)
 				throws MethodArgumentNotValidException, IllegalArgumentException {
 		 
@@ -129,7 +102,6 @@ public class BookController {
 	
 	 
 	 
-	// Aggiunto perche mancante
 		@GetMapping(path = "/{id:\\d+}/one")
 		public ResponseEntity<Book> getBookById(@PathVariable("id") Long id)
 				throws ResourceNotFoundException, IllegalArgumentException {
@@ -140,14 +112,7 @@ public class BookController {
 							+ id + " was not found in the database"));
 			return ResponseEntity.ok().body(book);
 		}
-		
-	
-		// Non consuma json, non ha le eccezioni gestite e l'url adeguata
-		/*@PutMapping("/update")
-		public void updateBook(@RequestBody Book book) {
-			bookRepository.save(book);
-		}*/
-		
+
 		
 		@PutMapping(path = "/update/{id:\\d+}", consumes = "application/json")
 		public ResponseEntity<Object> putBook(@PathVariable("id") Long id, @RequestBody @Valid Book book)
@@ -159,7 +124,6 @@ public class BookController {
 				existingBook.setName(book.getName());
 				existingBook.setAuthor(book.getAuthor());
 				existingBook.setPrice(book.getPrice());
-				//existingBook.setPicByte(book.getPicByte());
 				
 				if (this.imageBytes != null) {
 					existingBook.setPicByte(this.imageBytes);
@@ -175,19 +139,73 @@ public class BookController {
 						+ id + " was not found in the database");
 			}
 		}
-	 
-	 
-	 
-	
-	/*
-	 // getOne() deprecato 
-	@DeleteMapping(path = { "/{id}" })
-	public Book deleteBook(@PathVariable("id") long id) {
-		Book book = bookRepository.getOne(id);
-		bookRepository.deleteById(id);
-		return book;
-	}*/
-	
+
+
+		@PutMapping(path = "/update/{id:\\d+}/price", consumes = "application/json")
+		public ResponseEntity<Object> updatePrice(@PathVariable("id") Long id, @RequestBody @Valid Book book)
+				throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
+
+			Optional<Book> optional = bookRepository.findById(id);
+			if (optional.isPresent()) {
+				Book existingBook = optional.get();
+				existingBook.setPrice(book.getPrice());
+
+				bookRepository.save(existingBook);
+
+				String message = "Book updated successfully";
+				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+			} else {
+				throw new ResourceNotFoundException("Unable to perform the modification. The book resource with ID: "
+						+ id + " was not found in the database");
+			}
+		}
+		
+
+
+		/*
+		@PutMapping(path = "/update/{id:\\d+}", consumes = "application/json")
+		public ResponseEntity<Object> putBook(@PathVariable("id") Long id, @RequestBody String body)
+				throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException, JsonMappingException, JsonProcessingException {
+
+			ObjectMapper om = new ObjectMapper();
+
+			Book book = om.readValue(body, Book.class);
+			Optional<Book> optional = bookRepository.findById(id);
+
+
+
+
+			JsonNode jsonNode = om.readTree(body);
+			String role = jsonNode.get("role").asText();
+
+
+
+			if (optional.isPresent()) {
+				Book existingBook = optional.get();
+
+				if (role == "Admin"){
+
+					existingBook.setName(book.getName());
+					existingBook.setAuthor(book.getAuthor());
+					existingBook.setPrice(book.getPrice());
+					if (this.imageBytes != null) existingBook.setPicByte(this.imageBytes);
+
+				}else{
+					existingBook.setPrice(book.getPrice());
+				}
+
+				bookRepository.save(existingBook);
+
+				String message = "Book updated successfully";
+				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+			} else {
+				throw new ResourceNotFoundException("Unable to perform the modification. The book resource with ID: "
+						+ id + " was not found in the database");
+			}
+
+		}
+		*/
+
 	
 		@DeleteMapping(path = "/{id:\\d+}/delete")
 		public ResponseEntity<Object> deleteBook(@PathVariable("id") Long id)
@@ -207,7 +225,6 @@ public class BookController {
 			}
 		}
 
-		// Aggiunto perche mancante
 		@DeleteMapping(path = "/deleteAll")
 		public ResponseEntity<ApiResponse> deleteBooks() throws ResourceNotFoundException, IllegalArgumentException {
 
@@ -224,6 +241,4 @@ public class BookController {
 			}
 		}
 
-	
-	
 }

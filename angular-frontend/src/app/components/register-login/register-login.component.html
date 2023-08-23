@@ -34,7 +34,7 @@
   
    <mat-form-field appearance="fill">
     <mat-label>Email</mat-label>
-    <input matInput formControlName="email" type="email" placeholder="Email" value="pippo@gmail.com"/>
+    <input matInput formControlName="email" type="email" placeholder="Email"/>
     <mat-icon matSuffix>email</mat-icon>
   
     <mat-error>
@@ -49,7 +49,7 @@
   
     <mat-form-field appearance="fill">
       <mat-label>Password</mat-label>
-      <input matInput formControlName="password" type="{{ showPassword[0] ? 'text' : 'password' }}" placeholder="Password" value="11111111"/>
+      <input matInput formControlName="password" type="{{ showPassword[0] ? 'text' : 'password' }}" placeholder="Password"/>
 
       <button mat-icon-button matSuffix type="button" (click)="toggleShowPassword(0)">
         <mat-icon>{{ showPassword[0] ? 'visibility' : 'visibility_off' }}</mat-icon>
@@ -103,7 +103,7 @@
   
     </div>
   
-    <div *ngIf='msg' [innerHTML]="msg">
+    <div *ngIf='msg' [innerHTML]="msg" style="margin-top: 10px; color: red; text-align: center;">
       <p style="color: rgb(255, 0, 0); font-size: 15px; text-align: center;"></p>
     </div>
   

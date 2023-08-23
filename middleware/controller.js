@@ -1,19 +1,14 @@
-
-
-
 const jwt = require('jsonwebtoken');
 const http = require('http');
 const fetch = require('node-fetch');
 const { privateKey } = require('./keys.js');
 
 
-
-
-
-
-
-
-
+/*
+questo codice si occupa di autenticare un utente attraverso una richiesta di login al backend Spring. 
+Se l'autenticazione ha successo, genera due token JWT: uno per l'accesso iniziale (scadenza di 2 ore) e un altro per il rinnovo del token (scadenza di 20 minuti). 
+Invia il token di rinnovo al frontend e invia il token di accesso al backend Spring
+*/
 
 function sendTokenToSpring(uid, token){
 
@@ -32,9 +27,6 @@ function sendTokenToSpring(uid, token){
     return fetch(url, options);
 
 }
-
-
-
 
 
 exports.loginRoute = (req, res) => {
@@ -70,23 +62,23 @@ exports.loginRoute = (req, res) => {
                     });
 
 
-
+                    
                     sendTokenToSpring(data.id, token).then(x => {
                         
                         if (x.status == 200)
                         {
 
-                            const token20 = jwt.sign({
+                            const tokenRefresh = jwt.sign({
                                 role: data.role
                             },
                             privateKey,
                             {
                                 algorithm: 'RS256',
-                                expiresIn: '20s',
+                                expiresIn: '1200s',
                                 subject: data.id
                             });
                             
-                            res.setHeader('Authorization', token20);
+                            res.setHeader('Authorization', tokenRefresh);
                             res.status(200).send("");
 
                         } else {
@@ -97,16 +89,17 @@ exports.loginRoute = (req, res) => {
 
 
 
-                    
                 });
 
             } else {
                 x.text().then(data => {
                     res.status(x.status).send({ msg: data });
                 });
+
             }
         });
 };
+
 
 
 

@@ -18,6 +18,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     let res = req;
     let token = localStorage.getItem("token");
 
+    
     if (token) {
         // .clone fa una coppia superficiale (side effect).. in cui le modifiche si riflettano sull'originale in un secondo momento 
         res = req.clone({
@@ -34,12 +35,14 @@ export class AuthInterceptorService implements HttpInterceptor {
                 if (token != null)
                 {
                   console.log(token);
+                  localStorage.setItem("token", token);
                 }
 
               }
             },
             err => {
                 if (err.status == 401) {
+                    //debugger;
                     localStorage.removeItem("token");
                     this.auth.logout();
                     this.router.navigate(["/login"]);

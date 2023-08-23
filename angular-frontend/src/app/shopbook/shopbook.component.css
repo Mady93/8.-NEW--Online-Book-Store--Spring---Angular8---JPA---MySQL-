@@ -29,3 +29,11 @@
     font-size: 15px;
     text-align: center;
 }
+
+.card {
+    overflow: hidden;
+}
+
+.caret {
+  color:blue;
+}

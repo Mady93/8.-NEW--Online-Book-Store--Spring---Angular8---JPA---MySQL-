@@ -1,7 +1,7 @@
 
 
-# @name login
-@token = {{login.response.headers.Authorization}}
+# @name loginAdmin
+@tokenAdmin = {{loginAdmin.response.headers.Authorization}}
 
 POST http://127.0.0.1:3000/login
 Content-Type: application/json
@@ -13,31 +13,52 @@ Content-Type: application/json
 
 
 
+###
+
+# @name loginUser
+@tokenUser = {{loginUser.response.headers.Authorization}}
+
+POST http://127.0.0.1:3000/login
+Content-Type: application/json
+
+{
+    "email": "erminio@gmail.com",
+    "password": "11111110"
+}
+
+
+
+###
+
+
+OPTIONS http://127.0.0.1:3000/orders/1/add
+Host: localhost:8080
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0
+Accept: */*
+Accept-Language: it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3
+Accept-Encoding: gzip, deflate, br
+Access-Control-Request-Method: GET
+Access-Control-Request-Headers: authorization
+Referer: http://127.0.0.1:4200/
+Origin: http://127.0.0.1:4200/
+
 
 
 ###
 
 
 GET http://127.0.0.1:3000/users/get?page=0&size=6
-Authorization: Bearer {{token}}
-
-
-
-
-
+Authorization: Bearer {{tokenAdmin}}
 
 
 
 ###
 
 
-POST http://127.0.0.1:8080/users/saveToken
-Content-Type: application/json
+GET http://127.0.0.1:3000/users/1/one
+Authorization: Bearer {{tokenUser}}
 
-{
-    "uid": 1,
-    "token": "scottona"
-}
+
 
 
 ###

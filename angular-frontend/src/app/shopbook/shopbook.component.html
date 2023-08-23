@@ -8,32 +8,6 @@
         <div class="offset-md-8">
             <ul class="nav navbar-nav navbar-right">
 
-              <!--  <li class="dropdown">
-                    <br>
-                    <a href="#" class="btn btn-info btn-lg" data-toggle="dropdown" role="button" aria-expanded="false">
-                        <span class="fa fa-shopping-cart">
-                            Books Added In Cart:
-                        </span>
-                       <span class="caret">{{cartBooks.length}}</span>
-
-                    </a>
-                    <ul class="dropdown-menu dropdown-cart" role="menu">
-                        <li *ngFor="let item of cartBooks">
-                            <div class="item product-cart-item row">
-                                <div class="col-md-8" *ngIf="item">{{item.name}}</div>
-                                <div class="col-md-4" *ngIf="item"><strong>${{item.price}}</strong></div>
-                            </div>
-                        </li>
-                        <hr>
-                        <li><a class="btn btn-small btn-success" role="button" (click)="goToCart()">View Cart</a></li>
-                        <br>
-                        <li *ngIf="cartBooks.length > 0">
-                            <a class="btn btn-small btn-warning" role="button" (click)="emptyCart()">Empty Cart</a></li>
-                    </ul>
-                </li> -->
-
-
-
                 <div class="col-md-10 custom-products-cart-container" style="text-align: center;">
                     <div class="offset-md-8">
                         <ul class="nav navbar-nav navbar-right">
@@ -69,13 +43,12 @@
 
                                     <hr>
 
-                                    <div style="text-align: center;">
+                                    <div style="text-align: center;" *ngIf="authService.role == '' || ['Admin','User','Seller'].includes(authService.role)">
 
-                                        <a  *ngIf="cartBooks.length > 0" class="btn btn-small btn-danger" role="button" (click)="buy(1)"><fa-icon [icon]="iconaBuy" style="color: white; font-size: midium; font-weight: bold;"></fa-icon> Buy</a>
+                                        {{authService.uid}}
+                                        <a  *ngIf="cartBooks.length > 0" class="btn btn-small btn-danger" role="button" (click)="buyCart()"><fa-icon [icon]="" style="color: white; font-size: midium; font-weight: bold;"></fa-icon> Buy</a>
                                     
-                                        <a *ngIf="cartBooks.length > 0" class="btn btn-small btn-warning paddingM" style="color: white;" role="button" (click)="emptyCart()"><fa-icon [icon]="iconaEmpty" style=" font-size: midium; font-weight: bold;"></fa-icon> Empty Cart</a>
-
-                                      <!--  <a  *ngIf="cartBooks.length > 0" class="btn btn-small btn-success paddingM" role="button" (click)="goToCart()"><fa-icon [icon]="iconaView" style="color: white; font-size: midium; font-weight: bold;"></fa-icon> View Orders</a> -->
+                                        <a *ngIf="cartBooks.length > 0" class="btn btn-small btn-warning paddingM" style="color: white;" role="button" (click)="emptyCart()">Empty Cart</a>
 
                                     </div>
                                     
@@ -96,11 +69,9 @@
 
 
 <div class="container row custom-margin" style="max-width: 100%; width: 100%">
-    <!--<div class="col-md-4" *ngFor="let book of books;let i=index">-->
         <div class="col-md-3" *ngFor="let book of books | paginate: { itemsPerPage: size, currentPage: page, totalItems: allBooks}; let i=index">
        
         <div class="card card-block custom-margin">
-           <!-- <img class="custom-image-style" img src="{{book.retrievedImage}}" height="300" width="200" style="margin-left: 60px; margin-top: 10px"> -->
            <div style="text-align: center;">
             <img class="custom-image-style custom-margin" img src="{{book.retrievedImage}}" height="463" width="300" >
            </div>
@@ -110,7 +81,7 @@
                     <p style="margin-left: 60px">{{book.author}}</p>
                 </div>
                 <div class="offset-md-4 col-md-4">
-                    <button class="btn btn-primary btn-sm" (click)="addToCart(book.id)"
+                    <button class="btn btn-primary btn-sm" *ngIf="authService.role == '' || ['Admin','User','Seller'].includes(authService.role)" (click)="addToCart(book.id)"
                         [disabled]="book.isAdded===true"><fa-icon [icon]="iconaAdd" style="color: rgb(255, 255, 255); font-size: large;"></fa-icon> Add To Cart</button>
                 </div>
 

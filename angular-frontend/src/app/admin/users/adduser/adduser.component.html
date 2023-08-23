@@ -9,16 +9,20 @@
   
 
   <label for="name">Name</label>
-  <input type="text" class="form-control" id="name" placeholder="user name" [(ngModel)]="user.name" name="name">
+  <input type="text" class="form-control" id="name" placeholder="name" [(ngModel)]="user.name" name="name">
 
   <label for="type">Type</label>
-  <input type="text" class="form-control" id="type" placeholder="type name" [(ngModel)]="user.type" name="name">
+  <input type="text" class="form-control" id="type" placeholder="type" [(ngModel)]="user.type" name="type">
 
-<!--   <select>
-    <option disabled default>Seleziona..</option>
-    <option>User</option>
-    <option>Admin</option>
-  </select> -->
+
+  <!--<label for="type">Type</label>
+  <select class="custom-form-control-select form-control" id="type" [(ngModel)]="user.type" name="type">
+    <option disabled default [selected]="true">Select..</option>
+    <option [value]='Admin'>Admin</option>
+    <option [value]='User'>User</option>
+    <option [value]='Seller'>Seller</option>
+  </select>
+-->
 
   <label for="email">Email</label>
   <input type="email" class="form-control" id="email" placeholder="email" [(ngModel)]="user.email" name="email">

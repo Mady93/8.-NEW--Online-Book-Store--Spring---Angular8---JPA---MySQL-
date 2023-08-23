@@ -2,6 +2,7 @@ import { Component, OnInit,Input,EventEmitter, Output } from '@angular/core';
 import { Book } from 'src/app/model/Book';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-viewbook',
@@ -18,8 +19,7 @@ export class ViewbookComponent implements OnInit {
 
   msg: any;
 
-  constructor(private httpClientService: HttpClientService, private router: Router
-    ) { }
+  constructor(private httpClientService: HttpClientService, private router: Router, private auth: AuthService) { }
 
   ngOnInit() {
   }
@@ -35,14 +35,6 @@ export class ViewbookComponent implements OnInit {
 
 
   deleteBook() {
-    /*
-    this.httpClientService.deleteBook(this.book.id).subscribe(
-      (book) => {
-        this.bookDeletedEvent.emit();
-        this.router.navigate(['admin', 'books']);
-      }
-    ); */
-
    // debugger;
     /*cancello da tutti gli ordini il libro che sto cancellando eliminando la relazione con la join table*/
     this.httpClientService.deleteJoinTablesByBookId(this.book.id).subscribe({

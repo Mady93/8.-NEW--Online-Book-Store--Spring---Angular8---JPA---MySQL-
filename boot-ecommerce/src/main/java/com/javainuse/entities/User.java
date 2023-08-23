@@ -46,13 +46,6 @@ public class User {
 	@Column(name = "name")
 	private String name;
 
-/* 	@NotNull(message = "Role type cannot be null")
-	@NotBlank(message = "Role type cannot be blank")
-	@Pattern(regexp = "^[A-Za-z.-]+$", message = "Role type must not contain numbers, special characters, or spaces")
-	@Column(name = "type")
-	private String type; */
-
-
 	@Pattern(regexp = "^(Admin|User|Seller)$", message = "Role type must be one of: Admin, User, Seller")
     @Column(name = "type")
 	private String type;

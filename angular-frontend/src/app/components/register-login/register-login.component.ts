@@ -3,7 +3,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
-//import { faEnvelope, faCoffee } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-register-login',
@@ -11,8 +10,6 @@ import { AuthService } from 'src/app/service/auth.service';
   styleUrls: ['./register-login.component.scss']
 })
 export class RegisterLoginComponent implements OnInit {
-
-  //faEnvelope = faEnvelope;
   
 form  : FormGroup;
 
@@ -134,8 +131,9 @@ form  : FormGroup;
       let email = this.form.controls.email.value;
       let password = this.form.controls.password.value;
 
-      email = "pippo@gmail.com";
-      password = "11111111";
+      //email = "pippo@gmail.com";
+      //password = "11111111";
+
 
       if(this.isLogin) {
 
@@ -175,13 +173,7 @@ form  : FormGroup;
       } else {
 
         //debugger;
-        /*
-        this.form.addControl("passwordRepeat", new FormControl('', Validators.required));
-        this.form.setValidators([Validators.required, this.validatePwd()]);
-        this.form.updateValueAndValidity();
-        */
-      
-
+     
         this.auth.register(name, email , password).subscribe({
           next: (res) => {
             this.router.navigate(["/login"]);

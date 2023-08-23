@@ -123,7 +123,7 @@ public class EcommerceApplication implements CommandLineRunner {
 		
         User user1 = new User("Pippo Baudo", "Admin", "pippo@gmail.com", "11111111");
         User user2 = new User("Erminio Ottone", "User", "erminio@gmail.com", "11111110");
-        User user3 = new User("Silvia Lolli", "User", "silvia@gmail.com", "11111100");
+        User user3 = new User("Silvia Lolli", "Seller", "silvia@gmail.com", "11111100");
         User user4 = new User("Monalisa Silvestri", "User", "monalisa@gmail.com", "11111000");
         User user5 = new User("Ugo Fantozzi", "User", "ugo@gmail.com", "11110000");
 

@@ -1,19 +1,19 @@
 <header>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-        <div><a class="navbar-brand">Uccucultura</a></div>
+        <div><a class="navbar-brand">O' Cuccultura</a></div>
        
         <ul class="navbar-nav">
 
             <li><a class="nav-link" routerLink="/shop"><fa-icon [icon]="iconaHome" style="color: white;"></fa-icon> Shop</a></li>
 
-            <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin'].includes(authService.role)">
+            <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin', 'Seller'].includes(authService.role)">
                 <a ngbDropdownToggle class="nav-link" id="navbarDropdown" role="button"
                     aria-haspopup="true" aria-expanded="false"><fa-icon [icon]="iconaSecurity" style="color: white;"></fa-icon>
-                    Admin
+                    {{authService.role}}
                 </a>
                 <div ngbDropdownMenu aria-labelledby="navbarDropdown" style="background-color: #0dcaf0;">
-                    <a routerLink="/admin/users" class="dropdown-item" *ngIf="['Admin'].includes(authService.role)"><fa-icon [icon]="iconaUsers" style="color: black;"></fa-icon> Users</a>
-                    <a routerLink="/admin/books" class="dropdown-item" *ngIf="['Admin'].includes(authService.role)"><fa-icon [icon]="iconaBooks" style="color: black;"></fa-icon> Books</a>
+                    <a routerLink="/admin/users" class="dropdown-item" *ngIf="authService.role == 'Admin'"><fa-icon [icon]="iconaUsers" style="color: black;"></fa-icon> Users</a>
+                    <a routerLink="/{{authService.role.toLowerCase()}}/books" class="dropdown-item" *ngIf="['Admin', 'Seller'].includes(authService.role)"><fa-icon [icon]="iconaBooks" style="color: black;"></fa-icon> Books</a>
                 </div>
             </li>
 
@@ -28,18 +28,7 @@
                 <a class="nav-link" routerLink="/order">
                 <fa-icon [icon]="iconaView" style="color: white; font-size: medium; font-weight: bold;"></fa-icon> Orders
               </a></li>
-           <!--
-               <li *ngIf="authService.role == '' ">
-            <a class="nav-link" (click)="toggleLoginStatus()">
-              <fa-icon [icon]="iconaProfiles"></fa-icon>
-              {{ isLogin ? 'Login' : 'Register' }}
-            </a>
-          </li>
-           -->
-           
-          
-          
-
+       
             <li *ngIf="['Admin','User','Seller'].includes(authService.role)"><a class="nav-link" (click)="authService.logout()" routerLink="/shop"><fa-icon [icon]="iconaProfiles" style="color: white;"></fa-icon> Logout</a></li>
         
         </ul>

@@ -3,6 +3,8 @@ package com.javainuse.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.criteria.CriteriaBuilder.In;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -12,13 +14,12 @@ import org.springframework.data.domain.Sort;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
 import com.javainuse.exceptions.ResourceNotFoundException;
@@ -35,6 +35,7 @@ import com.javainuse.repositories.UserRepository;
 
 @RestController
 @CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping(path = "/orders", produces = "application/json")
 public class OrderController {
 
@@ -65,29 +66,8 @@ public class OrderController {
 		ObjectNode rootNode = objectMapper.createObjectNode();
 		rootNode.put("orderId", newOrder.getId());
 		String jsonString = objectMapper.writeValueAsString(rootNode);
-
-		// String message = "The order for the user with ID: " + userId+ " was created
-		// successfully";
 		return ResponseEntity.status(HttpStatus.CREATED).body(jsonString);
 	}
-
-	/*
-	 * @GetMapping(path = "/{userId:\\d+}/list")
-	 * public ResponseEntity<List<Order>> getOrders(@PathVariable("userId") Long
-	 * userId)
-	 * throws ResourceNotFoundException, IllegalArgumentException {
-	 * 
-	 * List<Order> list = orderRepository.findOrdersByIdUser(userId);
-	 * 
-	 * if (!list.isEmpty()) {
-	 * return ResponseEntity.ok(list);
-	 * } else {
-	 * throw new
-	 * ResourceNotFoundException("Unable to retrieve the list. No orders resource was found in the database for the user with ID: "
-	 * + userId);
-	 * }
-	 * }
-	 */
 
 	@GetMapping(path = "/{userId:\\d+}/count")
 	public ResponseEntity<Integer> countOrders(@PathVariable("userId") Long userId)
@@ -139,43 +119,7 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 
-	/*
-	 * @PutMapping(path = "/{userId:\\d+}/{orderId:\\d+}/put", consumes =
-	 * "application/json")
-	 * public ResponseEntity<Object> putOrder(@PathVariable("userId") Long
-	 * userId, @PathVariable("orderId") Long orderId, @RequestBody @Valid Order
-	 * updatedOrder)
-	 * throws ResourceNotFoundException, MethodArgumentNotValidException,
-	 * IllegalArgumentException {
-	 * 
-	 * Optional<Order> optional = orderRepository.findById(orderId);
-	 * if (optional.isPresent()) {
-	 * Order existingOrder = optional.get();
-	 * 
-	 * // Verifica che l'ordine appartenga all'user specificato
-	 * if (!existingOrder.getUser().getId().equals(userId)) {
-	 * throw new IllegalArgumentException("The order with ID: " + orderId +
-	 * " does not belong to the user with ID: " + userId);
-	 * }
-	 * 
-	 * existingOrder.setUser(updatedOrder.getUser());
-	 * 
-	 * orderRepository.save(existingOrder);
-	 * 
-	 * String message = "Order with ID: " +orderId+
-	 * " was updated successfully for the user with ID: " + userId;
-	 * return ResponseEntity.status(HttpStatus.OK).body(new
-	 * ApiResponse(HttpStatus.OK.value(), message));
-	 * } else {
-	 * throw new
-	 * ResourceNotFoundException("Unable to perform the modification. The order resource with ID: "
-	 * + orderId + " was not found in the database for the user with ID: " +
-	 * userId);
-	 * }
-	 * }
-	 */
-
-	@DeleteMapping(path = "/{userId:\\d+}/{orderId:\\d+}/delete/one")
+	/* @DeleteMapping(path = "/{userId:\\d+}/delete/one")
 	public ResponseEntity<Object> deleteOrder(@PathVariable("userId") Long userId,
 			@PathVariable("orderId") Long orderId)
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -196,26 +140,52 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 	}
 
-	@DeleteMapping(path = "/{userId:\\d+}/delete/all")
-	public ResponseEntity<ApiResponse> deleteOrders(@PathVariable("userId") Long userId)
+	@DeleteMapping(path = "/orders/deleteAll")
+	public ResponseEntity<ApiResponse> deleteAllOrders()
 			throws ResourceNotFoundException, IllegalArgumentException {
-		Optional<User> userOptional = userRepository.findById(userId);
-		if (userOptional.isPresent()) {
-			User user = userOptional.get();
-			List<Order> list = orderRepository.findOrdersByUser(user);
-
-			if (!list.isEmpty()) {
-				orderRepository.deleteAll(list);
-
-				String message = "All Orders associated with user ID: " + userId + " have been deleted successfully";
-				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-			} else {
-				throw new ResourceNotFoundException(
-						"No orders associated with user ID: " + userId + " were found in the database");
-			}
-		} else {
-			throw new ResourceNotFoundException("User with ID: " + userId + " was not found in the database");
-		}
+		orderRepository.deleteAll();
+	
+		String message = "All orders have been deleted successfully";
+		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 	}
 
+ 	@Transactional
+@DeleteMapping(path = "/{userId:\\d+}/deleteByUserId")
+public void deleteJoinTableAndOrdersByUserId(@PathVariable("userId") Long userId) throws ResourceNotFoundException, IllegalArgumentException {
+    // Verifica se ci sono ordini per l'userId
+    Long orderCount = orderRepository.countOrdersByUserId(userId);
+    if (orderCount == 0) {
+        throw new ResourceNotFoundException("No orders found for the user with ID: " + userId);
+    }
+
+    orderRepository.deleteJoinTableByUserId(userId);
+    orderRepository.deleteOrdersByUserId(userId);
 }
+
+
+*/
+
+	@DeleteMapping("/deleteAll")
+	public void deleteAlRecordsOnOrder() throws ResourceNotFoundException {
+
+
+		
+		Long orderCount = orderRepository.countOrders();
+
+		if (orderCount == 0) {
+			throw new ResourceNotFoundException("No orders found to delete.");
+		} else {
+			orderRepository.deleteAll();
+		}
+		
+	}
+
+
+
+}
+
+	
+	
+	
+
+

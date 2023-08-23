@@ -47,23 +47,6 @@ export class UsersComponent implements OnInit {
       return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
     }
 
-  /*refreshData(){
-    console.log('Test');
-    this.httpClientService.getUsers().subscribe(
-      response => this.handleSuccessfulResponse(response),
-    );
-
-    this.activatedRoute.queryParams.subscribe(
-      (params) => {
-        this.action = params['action'];
-        const selectedUserId = params['id'];
-        if (selectedUserId) {
-          this.selectedUser = this.users.find(user => user.id === +selectedUserId);
-        }
-      }
-    );
-  }*/
-
   refreshData() {
     this.httpClientService.countUsers().subscribe({
       next: (num: number) => {
@@ -138,6 +121,55 @@ renderPage(event: number) {
   handleSuccessfulResponse(response) {
     this.users = response;
   }
+
+
+  deleteAll() {
+    this.httpClientService.deleteAllRecordsOnJoinTable().subscribe({
+      next: (res) => {
+        this.msg = "";
+        
+        this.httpClientService.deleteAlRecordsOnOrder().subscribe({
+          next: (res) => {
+            this.msg = "";
+            
+            this.httpClientService.deleteUsers().subscribe({
+              next: () => {
+               
+                this.allUsers = 0;
+                this.users = [];
+                this.refreshData();
+              },
+              error: (err: HttpErrorResponse) => {
+                
+                this.msg = this.replaceAll(err.message, "#", "<br>");
+              },
+              complete: () => {
+              }
+            });
+    
+          },
+          error: (err) => {
+           this.msg = this.replaceAll(err.message, "#", "<br>");
+          },
+          complete: () => {
+    
+          }
+        });
+
+
+      },
+      error: (err) => {
+       this.msg = this.replaceAll(err.message, "#", "<br>");
+      },
+      complete: () => {
+
+      }
+    });
+  }
+
+
+  
+
 
 
 }

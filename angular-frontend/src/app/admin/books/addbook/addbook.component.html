@@ -2,11 +2,6 @@
   <h1>{{book.id == null ? 'Add' : 'Edit'}} Book - {{book.id}}</h1>
 </div>
 
-<!-- <img src="data:image/jpeg;base64,{{book.picByte}}" id="image" style="display: none"/> -->
-<!-- data:image/jpeg;base64,{{book.picByte}} -->
-
-<!-- style="background-image: url('{{image.src}}')" -->
-
 <form #recievedUser="ngForm">
 
   
@@ -26,10 +21,6 @@
   <div class="form-group"><!--  *ngIf="book.id == null" -->
     <br>
     <input type="file" (change)="onFileChanged($event)">
-    
-    <!-- <div style="text-align: center; margin-top: 5px;">
-      <img [src]="imgURL" height="350" width="250" *ngIf="imgURL">
-    </div> -->
 
   </div>
 

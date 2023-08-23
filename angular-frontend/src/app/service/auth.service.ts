@@ -1,8 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { User } from '../model/User ';
+import { HttpClientService } from './http-client.service';
+import { Order } from '../model/Order';
+import { JoinTable } from '../model/JoinTable';
 
 @Injectable({
   providedIn: 'root'
@@ -10,22 +13,17 @@ import { User } from '../model/User ';
 export class AuthService {
 
   role: string = "";
-  uid: string = "";
+  uid: number = 0;
   exp: number;
 
-
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private httpClientService: HttpClientService) {
     this.checkState();
   }
-
-
 
   checkState(){
     
     let token = localStorage.getItem("token");
     if (!token) return;
-
-
 
     let a = token.indexOf(".");
     let b = token.indexOf(".", a+1);
@@ -36,8 +34,64 @@ export class AuthService {
     this.role = data.role;
     this.uid = data.sub;
     this.exp = data.exp;
+  }
+
+  buy() {
+
+    if (this.uid==0) return;
+
+
+    let cart = JSON.parse(localStorage["cart"]);
+    let order: Order;
+
+    order = new Order();
+    order.user = new User();
+    order.user.id = this.uid;
+
+
+    return new Promise((resolve, reject)=>{
+      this.httpClientService.addOrder(this.uid).subscribe({
+        next: (ret: any) => {
+          let oid = ret.orderId;
+      
+          // Creare un array di promesse per le chiamate addJoinTable
+          const joinTablePromises = cart.map(ele => {
+            let jt: JoinTable = new JoinTable();
+            jt.book.id = ele.id;
+            jt.order.id = oid;
+            jt.quantity = ele.q;
+            
+            // Restituire la promessa dalla chiamata addJoinTable
+            return this.httpClientService.addJoinTable(jt).toPromise();
+          });
+      
+          // Attendere il completamento di tutte le promesse utilizzando Promise.all()
+          Promise.all(joinTablePromises)
+            .then(() => {
+              // Le chiamate addJoinTable sono state completate
+              resolve(null);
+            })
+            .catch(error => {
+              // Gestire eventuali errori
+              console.error("Errore durante il completamento delle promesse:", error);
+              reject();
+            });
+        },
+        error: error => {
+          // Gestire eventuali errori nella chiamata addOrder
+          console.error("Errore nella chiamata addOrder:", error);
+          reject();
+        }
+      });
+    });
+
+     
     
   }
+
+
+
+
 
 
   login(email: string, password: string): Observable<HttpResponse<any>> {
@@ -62,13 +116,11 @@ export class AuthService {
       );
   }
 
-
-
   logout() {
+    this.uid = 0;
     localStorage.removeItem("token");
     this.role = "";
   }
-
 
   isLogged(): boolean {
     return (localStorage["token"] != null)
@@ -86,8 +138,5 @@ export class AuthService {
 
     return this.http.post<any>(url, user, {headers: headers})
   }
-
-
-
 
 }

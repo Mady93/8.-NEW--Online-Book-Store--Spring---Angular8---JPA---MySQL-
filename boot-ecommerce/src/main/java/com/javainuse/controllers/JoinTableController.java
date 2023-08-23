@@ -2,15 +2,10 @@ package com.javainuse.controllers;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.javainuse.details.ApiResponse;
@@ -81,24 +75,6 @@ public class JoinTableController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));
 	}
 
-	/*@GetMapping(path = "/{bookId:\\d+}/{orderId:\\d+}/count")
-	public ResponseEntity<Long> countJoinTables(@PathVariable("bookId") Long bookId,
-			@PathVariable("orderId") Long orderId)
-			throws ResourceNotFoundException {
-
-		JoinTable.JoinTableId joinTableId = new JoinTable.JoinTableId(orderId, bookId);
-
-		Optional<JoinTable> optionalJoinTable = joinTableRepository.findById(joinTableId);
-		if (!optionalJoinTable.isPresent()) {
-			throw new ResourceNotFoundException(
-					"No joinTables resource was found in the database for the book with ID: " + bookId
-							+ " and order with ID: " + orderId);
-		}
-
-		Long count = joinTableRepository.countJoinTablesByCompositeId(joinTableId);
-
-		return new ResponseEntity<>(count, HttpStatus.OK);
-	}*/
 
 	@GetMapping(path = "/{orderId:\\d+}/get")
 	public ResponseEntity<List<JoinTable>> getJoinTables(@PathVariable("orderId") Long orderId)
@@ -109,53 +85,6 @@ public class JoinTableController {
 		return new ResponseEntity<>(ls, HttpStatus.OK);
 
 	}
-
-	/*
-	@GetMapping(path = "/{bookId:\\d+}/{orderId:\\d+}/get")
-	public ResponseEntity<List<JoinTable>> getJoinTables(@PathVariable("bookId")
-	Long bookId,
-
-	@PathVariable("orderId") Long orderId, @RequestParam("page") int
-	page, @RequestParam("size") int size)
-	throws ResourceNotFoundException, IllegalArgumentException {
-	JoinTable.JoinTableId joinTableId = new JoinTable.JoinTableId(orderId,
-	bookId);
-
-	Pageable pageable = PageRequest.of(page, size,
-	Sort.by("addedAt").ascending());
-	Page<JoinTable> pagedResult =
-	joinTableRepository.findJoinTablesByCompositeId(joinTableId, pageable);
-
-	if (pagedResult.hasContent()) {
-	return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
-	} else {
-	throw new ResourceNotFoundException(
-	"Unable to retrieve the page: " + page
-	+
-	" because no joinTables resource was found in the database for the book with ID: "
-	+ bookId + " and order with ID: " + orderId);
-	}
-	}
-
-	@GetMapping(path = "/{bookId:\\d+}/{orderId:\\d+}/one")
-	public ResponseEntity<JoinTable> getJoinTableById(@PathVariable("bookId")
-	Long bookId,
-
-	@PathVariable("orderId") Long orderId)
-	throws ResourceNotFoundException {
-
-	JoinTableId joinTableId = new JoinTableId(orderId, bookId);
-	Optional<JoinTable> optionalJoinTable =
-	joinTableRepository.findById(joinTableId);
-
-	JoinTable joinTable = optionalJoinTable
-	.orElseThrow(() -> new
-	ResourceNotFoundException("JoinTable entry with Book ID: " + bookId
-	+ " and Order ID: " + orderId + " was not found in the database"));
-
-	return ResponseEntity.ok().body(joinTable);
-	}
-	 */
 
 	@PutMapping(path = "/update/{bookId:\\d+}/{orderId:\\d+}", consumes = "application/json")
 	public ResponseEntity<Object> putJoinTable(@PathVariable("bookId") Long bookId,
@@ -185,42 +114,7 @@ public class JoinTableController {
 		}
 	}
 
-	/*
-	@DeleteMapping(path = "/{bookId:\\d+}/{orderId:\\d+}/delete")
-	public ResponseEntity<Object> deleteJoinTable(@PathVariable("bookId") Long bookId,
-			@PathVariable("orderId") Long orderId)
-			throws ResourceNotFoundException, IllegalArgumentException {
-
-		JoinTableId joinTableId = new JoinTableId(orderId, bookId);
-		Optional<JoinTable> optionalJoinTable = joinTableRepository.findById(joinTableId);
-		if (optionalJoinTable.isPresent()) {
-			JoinTable existingJoinTable = optionalJoinTable.get();
-
-			if (!joinTableId.equals(existingJoinTable.getId())) {
-				throw new IllegalArgumentException(
-						"The joinTable with ID: " + joinTableId + " was not found in the database");
-			}
-
-			joinTableRepository.delete(existingJoinTable);
-
-			String message = "JoinTable with ID: " + joinTableId + " deleted successfully";
-			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-		} else {
-			throw new ResourceNotFoundException("Unable to delete the joinTable. The joinTable resource with ID: "
-					+ joinTableId + " was not found in the database");
-		}
-	}
-
-	@DeleteMapping(path = "/deleteAll")
-	public ResponseEntity<ApiResponse> deleteAllRecordsOnJoinTable() {
-		joinTableRepository.deleteAll();
-
-		String message = "All JoinTables have been deleted successfully";
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-	}
-	*/
-
-
+	
 
 
 
@@ -235,10 +129,6 @@ public class JoinTableController {
 			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 
 	}
-
-
-
-
 
 	@Transactional
 	@DeleteMapping(path = "/deleteAll")

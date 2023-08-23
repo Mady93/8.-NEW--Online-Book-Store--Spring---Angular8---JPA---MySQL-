@@ -3,6 +3,7 @@ import { Book } from 'src/app/model/Book';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-books',
@@ -27,8 +28,7 @@ export class BooksComponent implements OnInit {
   status: any;
 
   constructor(private httpClientService: HttpClientService,
-    private activedRoute: ActivatedRoute,
-    private router: Router) { }
+    private activedRoute: ActivatedRoute, private router: Router, private auth: AuthService) { }
 
   ngOnInit() {
     this.selectedBook = new Book();
@@ -46,33 +46,6 @@ export class BooksComponent implements OnInit {
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
-
-
-
-/*
-  refreshData() {
-    this.httpClientService.getBooks(1, 6).subscribe(
-      response => this.handleSuccessfulResponse(response)
-    );
-    this.activedRoute.queryParams.subscribe(
-      (params) => {
-        // get the url parameter named action. this can either be add or view.
-        this.action = params['action'];
-        // get the parameter id. this will be the id of the book whose details 
-        // are to be displayed when action is view.
-        const id = params['id'];
-        // if id exists, convert it to integer and then retrive the book from
-        // the books array
-        if (id) {
-          this.selectedBook = this.books.find(book => {
-            return book.id === +id;
-          });
-        }
-      }
-    );
-  }
-  */
-
 
   refreshData() {
     this.httpClientService.countBooks().subscribe({
@@ -131,7 +104,10 @@ export class BooksComponent implements OnInit {
 
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
     if (qp.action=='view') delete qp.action;
-    this.router.navigate(['admin','books'], {queryParams: qp});
+
+    
+
+    this.router.navigate([this.auth.role.toLowerCase(),'books'], {queryParams: qp});
     this.refreshData();
   }
 
@@ -163,12 +139,12 @@ export class BooksComponent implements OnInit {
     if (t!=undefined) t.style.backgroundImage = "none";
     
     this.selectedBook = new Book();
-    this.router.navigate(['admin', 'books'], { queryParams: { action: 'add', page: this.page } });
+    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'add', page: this.page } });
     
   }
 
   viewBook(id: number) {
-    this.router.navigate(['admin', 'books'], { queryParams: { id, action: 'view', page: this.page } });
+    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { id, action: 'view', page: this.page } });
   }
 
 

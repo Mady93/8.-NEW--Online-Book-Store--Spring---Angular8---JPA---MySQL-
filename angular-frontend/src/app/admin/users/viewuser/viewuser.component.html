@@ -19,7 +19,13 @@
     </tr>
     <tr>
       <td>User Type</td>
-      <td>{{user.type}}</td>
+      <td>
+        <select [(ngModel)]="user.type" (ngModelChange)="onRoleChange($event)">
+          <option [value]="'Admin'">Admin</option>
+          <option [value]="'User'">User</option>
+          <option [value]="'Seller'">Seller</option>
+        </select>
+      </td>
     </tr>
 
   </table>
