@@ -5,16 +5,16 @@ import { Book } from '../model/Book';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { Order } from '../model/Order';
-import { JoinTable } from '../model/JoinTable';
+import { OrderBook } from '../model/OrderBook';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpClientService {
 
-  constructor(
-    private httpClient: HttpClient
-  ) { }
+  private baseURL = 'http://localhost:3000'; // Dichiarazione come membro della classe
+
+  constructor(private httpClient: HttpClient) { }
 
 
   handleError(error: HttpErrorResponse): Observable<never> {
@@ -49,19 +49,19 @@ export class HttpClientService {
     let body = {uid: uid, role: role};
     const headers = { 'Content-Type': 'application/json' };
 
-    return this.httpClient.post<User>('http://localhost:3000/users/setRole', body, { headers: headers }).pipe(
+    return this.httpClient.post<User>(`${this.baseURL}/users/setRole`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   } 
 
   countUsers(): Observable<number> {
-    return this.httpClient.get<number>('http://localhost:3000/users/count').pipe(
+    return this.httpClient.get<number>(`${this.baseURL}/users/count`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   getUsers(page: number, size: number): Observable<Book[]> {
-    return this.httpClient.get<Book[]>('http://localhost:3000/users/get?page=' + (page - 1) + '&size=' + size).pipe(
+    return this.httpClient.get<Book[]>(`${this.baseURL}/users/get?page=${page - 1}&size=${size}`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -69,14 +69,14 @@ export class HttpClientService {
   addUser(newUser: User): Observable<User> {
     const headers = { 'Content-Type': 'application/json' };
     const body = JSON.stringify(newUser);
-    return this.httpClient.post<User>('http://localhost:3000/users/add', body, { headers: headers }).pipe(
+    return this.httpClient.post<User>(`${this.baseURL}/users/add`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
  
   getUser(id: number): Observable<User> {
-    return this.httpClient.get<User>('http://localhost:3000/users/' + id + '/one').pipe(
+    return this.httpClient.get<User>(`${this.baseURL}/users/${id}/one`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -85,19 +85,19 @@ export class HttpClientService {
   updateUser(updatedUser: User): Observable<User> {
     const headers = { 'content-type': 'application/json' };
     const body = JSON.stringify(updatedUser);
-    return this.httpClient.put<User>('http://localhost:3000/users/update/' + updatedUser.id, body, { headers: headers }).pipe(
+    return this.httpClient.put<User>(`${this.baseURL}/users/update/${updatedUser.id}`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   deleteUser(id: number): Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/users/' + id + '/delete').pipe(
+    return this.httpClient.delete<void>(`${this.baseURL}/users/${id}/delete`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   deleteUsers(): Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/users/deleteAll').pipe(
+    return this.httpClient.delete<void>(`${this.baseURL}/users/deleteAll`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -115,20 +115,19 @@ export class HttpClientService {
     const headers = { 'Content-Type': 'application/json' };
     const body = JSON.stringify(book);
 
-    return this.httpClient.post<Book>('http://localhost:3000/books/upload', formData, { params: { imageFile: imageFile.name }, headers: headers })
-      .pipe(
+    return this.httpClient.post<Book>(`${this.baseURL}/books/upload`, formData, { params: { imageFile: imageFile.name }, headers: headers }).pipe(
         catchError((err: HttpErrorResponse) => this.handleError(err))
       );
   }
 
   countBooks(): Observable<number> {
-    return this.httpClient.get<number>('http://localhost:3000/books/count').pipe(
+    return this.httpClient.get<number>(`${this.baseURL}/books/count`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   getBooks(page: number, size: number): Observable<Book[]> {
-    return this.httpClient.get<Book[]>('http://localhost:3000/books/get?page=' + (page - 1) + '&size=' + size).pipe(
+    return this.httpClient.get<Book[]>(`${this.baseURL}/books/get?page=${page - 1}&size=${size}`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -136,19 +135,19 @@ export class HttpClientService {
   addBook(newBook: Book): Observable<Book> {
     const headers = { 'Content-Type': 'application/json' };
     const body = JSON.stringify(newBook);
-    return this.httpClient.post<Book>('http://localhost:3000/books/add', body, { headers: headers }).pipe(
+    return this.httpClient.post<Book>(`${this.baseURL}/books/add`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   getBook(id: number): Observable<Book> {
-    return this.httpClient.get<Book>('http://localhost:3000/books/' + id + '/one').pipe(
+    return this.httpClient.get<Book>(`${this.baseURL}/books/${id}/one`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   deleteBook(id: number): Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/books/' + id + '/delete').pipe(
+    return this.httpClient.delete<void>(`${this.baseURL}/books/${id}/delete`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -158,8 +157,8 @@ export class HttpClientService {
     delete updatedBook.picByte;
     delete updatedBook.retrievedImage;
 
-    let url: string = 'http://localhost:3000/books/update/' + updatedBook.id;
-    url += (role=="seller")?'/price':'';
+    let url: string = `${this.baseURL}/books/update/${updatedBook.id}`;
+    url += (role === "seller") ? '/price' : '';
 
     const headers = { 'content-type': 'application/json' };
     
@@ -170,7 +169,7 @@ export class HttpClientService {
   }
 
   deleteBooks(): Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/books/deleteAll').pipe(
+    return this.httpClient.delete<void>(`${this.baseURL}/books/deleteAll`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -182,34 +181,32 @@ export class HttpClientService {
   // Order
 
   countOrders(uid: number): Observable<number> {
-    return this.httpClient.get<number>('http://localhost:3000/orders/'+uid+'/count').pipe(
+    return this.httpClient.get<number>(`${this.baseURL}/orders/${uid}/count`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   getOrders(uid: number, page: number, size: number): Observable<Order[]> {
-    return this.httpClient.get<Order[]>('http://localhost:3000/orders/'+uid+'/get?page=' + (page - 1) + '&size=' + size).pipe(
+    return this.httpClient.get<Order[]>(`${this.baseURL}/orders/${uid}/get?page=${page - 1}&size=${size}`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   addOrder(uid: number): Observable<any> {
-    
-
-    return this.httpClient.get<any>('http://localhost:3000/orders/'+uid+'/add').pipe(
+    return this.httpClient.get<any>(`${this.baseURL}/orders/${uid}/add`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   getOrder(id: number): Observable<Order> {
-    return this.httpClient.get<Order>('http://localhost:3000/orders/' + id + '/one').pipe(
+    return this.httpClient.get<Order>(`${this.baseURL}/orders/${id}/one`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
   // Non ancora usato
   deleteOrder(id: number): Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/orders/' + id + '/delete').pipe(
+    return this.httpClient.delete<void>(`${this.baseURL}/orders/${id}/delete`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -218,21 +215,14 @@ export class HttpClientService {
   updateOrder(updatedOrder: Order): Observable<Order> {
     const headers = { 'content-type': 'application/json' };
     const body = JSON.stringify(updatedOrder);
-    return this.httpClient.put<Order>('http://localhost:3000/orders/update/' + updatedOrder.id, body, { headers: headers }).pipe(
+    return this.httpClient.put<Order>(`${this.baseURL}/orders/update/${updatedOrder.id}`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
-// Non ancora usato
-  deleteOrders(): Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/orders/deleteAll').pipe(
-      catchError((err: HttpErrorResponse) => this.handleError(err))
-    );
-  }
-
-  //per cancellare tutti i ordini ------------ prova
+ 
   deleteAlRecordsOnOrder():Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/orders/deleteAll').pipe(
+    return this.httpClient.delete<void>(`${this.baseURL}/orders/deleteAll`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
@@ -240,32 +230,40 @@ export class HttpClientService {
 
 
 
-  // JoinTable
+  // INTERSECT TABLE => OrderBook
 
-  addJoinTable(newJoinTable: JoinTable): Observable<JoinTable> {
+  addOrderBook(newOrderBook: OrderBook): Observable<OrderBook> {
     const headers = { 'Content-Type': 'application/json' };
-    const body = JSON.stringify(newJoinTable);
-    return this.httpClient.post<JoinTable>('http://localhost:3000/joinTables/add', body, { headers: headers }).pipe(
+    const body = JSON.stringify(newOrderBook);
+    return this.httpClient.post<OrderBook>(`${this.baseURL}/order_book/add`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
 
-  getJoinTablesByOrderId(oid: number): Observable<JoinTable[]>{
-    return this.httpClient.get<JoinTable[]>('http://localhost:3000/joinTables/' + oid + '/get').pipe(
+  getOrderBooksByOrderId(orderId: number): Observable<OrderBook[]>{
+    return this.httpClient.get<OrderBook[]>(`${this.baseURL}/order_book/${orderId}/get`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
+/*
+  deleteOrderBooksByBookId(bookId: number): Observable<void>{
+    return this.httpClient.delete<void>(`${this.baseURL}/order_book/${bookId}/delete`).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+  }*/
 
-  deleteJoinTablesByBookId(bid: number): Observable<void>{
-    return this.httpClient.delete<void>('http://localhost:3000/joinTables/'+bid+"/delete").pipe(
+  //aggiunto mo
+  deleteAllRecordsOnOrderBookByOrderId(orderId: number): Observable<void>{
+    return this.httpClient.delete<void>(`${this.baseURL}/order_book/${orderId}/delete/orderId`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
+  
 
-  deleteAllRecordsOnJoinTable():Observable<void> {
-    return this.httpClient.delete<void>('http://localhost:3000/joinTables/deleteAll').pipe(
+  deleteAllRecordsOnOrderBook():Observable<void> {
+    return this.httpClient.delete<void>(`${this.baseURL}/order_book/deleteAll`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }

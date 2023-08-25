@@ -28,6 +28,7 @@ import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Book;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.BookRepository;
+import com.javainuse.services.BookService;
 
 //paginazione
 import org.springframework.data.domain.Page;
@@ -44,10 +45,12 @@ public class BookController {
 	private byte[] imageBytes;
 
 	private final BookRepository bookRepository;
+	private final BookService bookService;
 	
 	@Autowired
-	public BookController(BookRepository bookRepository) {
+	public BookController(BookRepository bookRepository, BookService bookService) {
 		this.bookRepository = bookRepository;
+		this.bookService = bookService;
 	}
 	
 
@@ -89,9 +92,7 @@ public class BookController {
 		public ResponseEntity<Object> postBook(@RequestBody @Valid Book book)
 				throws MethodArgumentNotValidException, IllegalArgumentException {
 		 
-		 
 		 	if (this.imageBytes == null) throw new IllegalArgumentException("You have to load an image before this call");
-		 
 		 
 		 	book.setPicByte(this.imageBytes);
 			bookRepository.save(book);
@@ -100,8 +101,6 @@ public class BookController {
 			return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));
 		}
 	
-	 
-	 
 		@GetMapping(path = "/{id:\\d+}/one")
 		public ResponseEntity<Book> getBookById(@PathVariable("id") Long id)
 				throws ResourceNotFoundException, IllegalArgumentException {
@@ -113,7 +112,6 @@ public class BookController {
 			return ResponseEntity.ok().body(book);
 		}
 
-		
 		@PutMapping(path = "/update/{id:\\d+}", consumes = "application/json")
 		public ResponseEntity<Object> putBook(@PathVariable("id") Long id, @RequestBody @Valid Book book)
 				throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
@@ -129,7 +127,6 @@ public class BookController {
 					existingBook.setPicByte(this.imageBytes);
 				}
 				
-
 				bookRepository.save(existingBook);
 
 				String message = "Book updated successfully";
@@ -139,7 +136,6 @@ public class BookController {
 						+ id + " was not found in the database");
 			}
 		}
-
 
 		@PutMapping(path = "/update/{id:\\d+}/price", consumes = "application/json")
 		public ResponseEntity<Object> updatePrice(@PathVariable("id") Long id, @RequestBody @Valid Book book)
@@ -154,60 +150,16 @@ public class BookController {
 
 				String message = "Book updated successfully";
 				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+
 			} else {
+
 				throw new ResourceNotFoundException("Unable to perform the modification. The book resource with ID: "
 						+ id + " was not found in the database");
 			}
 		}
-		
-
-
-		/*
-		@PutMapping(path = "/update/{id:\\d+}", consumes = "application/json")
-		public ResponseEntity<Object> putBook(@PathVariable("id") Long id, @RequestBody String body)
-				throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException, JsonMappingException, JsonProcessingException {
-
-			ObjectMapper om = new ObjectMapper();
-
-			Book book = om.readValue(body, Book.class);
-			Optional<Book> optional = bookRepository.findById(id);
-
-
-
-
-			JsonNode jsonNode = om.readTree(body);
-			String role = jsonNode.get("role").asText();
-
-
-
-			if (optional.isPresent()) {
-				Book existingBook = optional.get();
-
-				if (role == "Admin"){
-
-					existingBook.setName(book.getName());
-					existingBook.setAuthor(book.getAuthor());
-					existingBook.setPrice(book.getPrice());
-					if (this.imageBytes != null) existingBook.setPicByte(this.imageBytes);
-
-				}else{
-					existingBook.setPrice(book.getPrice());
-				}
-
-				bookRepository.save(existingBook);
-
-				String message = "Book updated successfully";
-				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-			} else {
-				throw new ResourceNotFoundException("Unable to perform the modification. The book resource with ID: "
-						+ id + " was not found in the database");
-			}
-
-		}
-		*/
-
 	
-		@DeleteMapping(path = "/{id:\\d+}/delete")
+		/*
+		 @DeleteMapping(path = "/{id:\\d+}/delete")
 		public ResponseEntity<Object> deleteBook(@PathVariable("id") Long id)
 				throws ResourceNotFoundException, IllegalArgumentException {
 
@@ -233,6 +185,42 @@ public class BookController {
 				bookRepository.deleteAll(list);
 
 				String message = "Books deleted successfully";
+				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+
+			} else {
+				throw new ResourceNotFoundException(
+						"Unable to perform the deletion. No books resource was found in the database");
+			}
+		}
+		 */
+
+
+		 @DeleteMapping(path = "/{bookId:\\d+}/delete")
+		public ResponseEntity<Object> deleteBook(@PathVariable("bookId") Long bookId)
+				throws ResourceNotFoundException, IllegalArgumentException {
+
+			Optional<Book> optional = bookRepository.findById(bookId);
+			if (optional.isPresent()) {
+
+				bookService.deleteBookAndRelatedData(bookId);
+
+				String message = "Book and associated data have been deleted successfully";
+				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+
+			} else {
+				throw new ResourceNotFoundException("Unable to perform the deletion. The book resource with ID: " + bookId
+						+ " was not found in the database");
+			}
+		}
+
+		@DeleteMapping(path = "/deleteAll")
+		public ResponseEntity<ApiResponse> deleteBooks() throws ResourceNotFoundException, IllegalArgumentException {
+
+			List<Book> list = (List<Book>) bookRepository.findAll();
+			if (!list.isEmpty()) {
+				bookService.deleteAll();
+
+				String message = "Books and their associated data have been deleted successfully";
 				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 
 			} else {

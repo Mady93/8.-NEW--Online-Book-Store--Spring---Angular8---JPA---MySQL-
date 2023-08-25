@@ -9,12 +9,6 @@ import com.javainuse.entities.User;
 
 import java.util.List;
 
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -31,16 +25,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     long countOrders();
 
-    /*
-    @Transactional
-    default void deleteAllOrders() {
-        EntityManager em = getEntityManager();
-        em.createQuery("DELETE FROM Orders").executeUpdate();
-    }
-
-    @PersistenceContext
-    EntityManager getEntityManager();
-    */
-    
+    // aggiunto mo
+    List<Order> findByUserId(Long userId);
 
 }

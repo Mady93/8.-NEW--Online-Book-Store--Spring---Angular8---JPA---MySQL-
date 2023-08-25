@@ -1,10 +1,16 @@
-<div>
-  <details *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}"
-    (click)="openDetail(order.id)">
-    <summary>
-      <b>Order of: {{order.createdAt | date: 'dd/MM/yyyy'}}</b>
-    </summary>
+<div class="align">
+  <h1 class="size">My Orders</h1>
+</div>
 
+<div *ngIf="allOrders > 0" class="custom">
+
+  <details *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}"
+    (click)="openDetail(order.id)"> 
+    <summary>
+      <!--<b>Order of: {{order.createdAt | date: 'dd/MM/yyyy'}}</b>-->
+      <b>Order of: {{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}}</b>
+    </summary>
+   
     <div class="table-responsive">
       <table class="table table-bordered table-striped">
         <thead class="thead-dark">
@@ -42,8 +48,10 @@
   </details>
 </div>
 
-<div class="custom-margin d-flex justify-content-center">
+<div class="custom-margin d-flex justify-content-center" *ngIf="allOrders > 0">
   <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
 </div>
 
-<p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+<div class="custom-margin">
+  <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+</div>

@@ -42,9 +42,7 @@ app.use(function (req, res, next) {
 });
 
 
-/*
- questo codice crea un server Node.js che agisce come proxy per le richieste verso un backend Spring, controllando e rinnovando i token JWT e gestendo l'autenticazione degli utenti.
-  */
+// questo codice crea un server Node.js che agisce come proxy per le richieste verso un backend Spring, controllando e rinnovando i token JWT e gestendo l'autenticazione degli utenti.
 
 
 sendJWT((status) => {
@@ -56,13 +54,10 @@ sendJWT((status) => {
 
 });
 
-
-
-
 let tokenMap = {};
 
-
 const accessTable = [
+
     //Rotte users
     { path: /^\/users\/get/, groups: ["Admin"] },
     { path: /^\/users\/\d+\/one$/, groups: ["Admin"] },
@@ -71,7 +66,6 @@ const accessTable = [
     { path: /^\/users\/setRole$/, groups: ["Admin"] },
     { path: /^\/users\/deleteAll$/, groups: ["Admin"] },
 
-
     // Rotte orders
     { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller"] },
     { path: /^\/orders\/\d+\/one$/, groups: ["Admin", "User", "Seller"] },
@@ -79,16 +73,18 @@ const accessTable = [
     { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller"] },
     { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller"] },
     { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/orders\/users\/\d+\/delete$/, groups: ["Admin"] },
-    { path: /^\/orders\/users\/\d+\/deleteAll$/, groups: ["Admin"] },
-   
+   // { path: /^\/orders\/users\/\d+\/delete$/, groups: ["Admin"] },
+   // { path: /^\/orders\/users\/\d+\/deleteAll$/, groups: ["Admin"] },
+   // { path: /^\/orders\/\d+\/deleteAll$/, groups: ["Admin"] },
 
-    // Rotte JoinTables
-    { path: /^\/joinTables\/add$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/joinTables\/\d+\/get$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/joinTables\/update\/\d+\/\d+$/, groups: ["Admin"] },
-    { path: /^\/joinTables\/\d+\/delete$/, groups: ["Admin"] },
-    { path: /^\/joinTables\/deleteAll$/, groups: ["Admin"] },
+    // Rotte intersect table
+    { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller"] },
+    { path: /^\/order_book\/\d+\/get$/, groups: ["Admin", "User", "Seller"] },
+    { path: /^\/order_book\/update\/\d+\/\d+$/, groups: ["Admin"] },
+   // { path: /^\/order_book\/\d+\/delete$/, groups: ["Admin"] },
+   // { path: /^\/order_book\/deleteAll$/, groups: ["Admin"] },
+   // { path: /^\/order_book\/\d+\/delete\/orderId$/, groups: ["Admin"] }, 
+    
 
     // Rotte Books
     { path: /^\/books\/upload$/, groups: ["Admin"] },
@@ -100,10 +96,6 @@ const accessTable = [
 
 ];
 
-
-
-
-
 function getPermissionByPath(path) {
 
     for (let ele of accessTable) {
@@ -112,12 +104,7 @@ function getPermissionByPath(path) {
     }
 
     return null;
-
 }
-
-
-
-
 
 function sendJWT(cb) {
     const url = "http://127.0.0.1:8080/users/setPubKey";
@@ -135,7 +122,6 @@ function sendJWT(cb) {
         });
 }
 
-
 function isMasterTokenValid(uid, cb) {
 
     const url = "http://127.0.0.1:8080/users/" + uid + "/getTokenTime";
@@ -150,9 +136,7 @@ function isMasterTokenValid(uid, cb) {
                 cb(res.status, data.time);
             })
         })
-
 }
-
 
 function checkAndRenewToken(uid, exp, role) {
     const now = Math.floor(Date.now() / 1000);
@@ -168,7 +152,6 @@ function checkAndRenewToken(uid, exp, role) {
                 } else {
                     resolve({ state: 0 });
                 }
-
 
                 if (status == 200) {
                     let t = (time > refreshTokenTime) ? refreshTokenTime : parseInt(time);
@@ -186,21 +169,21 @@ function checkAndRenewToken(uid, exp, role) {
                         });
 
                     resolve({ state: 1, token: refreshToken });
+
                 } else {
+
                     resolve({ state: 2 });
+
                 }
-
             });
-
         });
+
     } else {
+
         return Promise.resolve({ state: 2 });
+
     }
 }
-
-
-
-
 
 // Middleware per verificare il token JWT
 async function checkToken(req, res, next) {
@@ -229,7 +212,7 @@ async function checkToken(req, res, next) {
             uid = decoded.sub;
             exp = decoded.exp;
 
-            /* se il token e' scaduto e il token master e' ancora valido effettuto un refresh */
+            // se il token e' scaduto e il token master e' ancora valido effettuto un refresh 
             checkAndRenewToken(uid, exp, role).then(res0 => {
                 switch (res0.state) {
                     case 0:
@@ -249,14 +232,19 @@ async function checkToken(req, res, next) {
                         }
                 }
             });
+
         } catch (err) {
+
             return res.status(401).json(err);
+
         }
+
     } else {
         /* non ho un token ma provo comunque a prendere la risorsa */
         if (authUsers == null || authUsers.includes(role)) {
             // Puoi andare avanti
             next();
+
         } else {
             // Rispondi con status 403 Forbidden
             const timestamp = Date.now();
@@ -264,12 +252,7 @@ async function checkToken(req, res, next) {
         }
     }
 
-
 }
-
-
-
-
 
 // Endpoint per il login
 app.options('/login', (req, res) => {

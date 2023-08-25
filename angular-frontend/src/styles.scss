@@ -1,7 +1,11 @@
+html,body {
+    height: 100%;
+}
 
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .paragraph {
     margin-top: 2rem;
@@ -9,3 +13,4 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-size: 15px;
     text-align: center;
 }
+

@@ -3,6 +3,7 @@ import { User } from 'src/app/model/User ';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
+import { AuthService } from 'src/app/service/auth.service';
 
 @Component({
   selector: 'app-users',
@@ -25,9 +26,7 @@ export class UsersComponent implements OnInit {
     msg: any;
     status: any;
 
-  constructor(private httpClientService: HttpClientService,
-    private router: Router,
-    private activatedRoute: ActivatedRoute) { }
+  constructor(private httpClientService: HttpClientService, private router: Router, private activatedRoute: ActivatedRoute, private authService: AuthService) { }
 
   ngOnInit() {
 
@@ -53,6 +52,8 @@ export class UsersComponent implements OnInit {
         console.log("Array length = "+num)
         this.allUsers = num;
         this.msg = "";
+
+      
   
         this.httpClientService.getUsers(this.page, this.size).subscribe({
           next: (response) => {
@@ -84,6 +85,7 @@ export class UsersComponent implements OnInit {
         this.allUsers = 0;
         this.users = [];
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
       },
       complete: () => {
         console.log("Completed countUsers()");
@@ -123,8 +125,9 @@ renderPage(event: number) {
   }
 
 
+  /*
   deleteAll() {
-    this.httpClientService.deleteAllRecordsOnJoinTable().subscribe({
+    this.httpClientService.deleteAllRecordsOnOrderBook().subscribe({
       next: (res) => {
         this.msg = "";
         
@@ -166,9 +169,25 @@ renderPage(event: number) {
       }
     });
   }
+  */
 
 
-  
+  deleteAll() {
+    this.httpClientService.deleteUsers().subscribe({
+      next: () => {
+       
+        this.allUsers = 0;
+        this.users = [];
+        this.refreshData();
+      },
+      error: (err: HttpErrorResponse) => {
+        
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+      },
+      complete: () => {
+      }
+    });
+  }
 
 
 

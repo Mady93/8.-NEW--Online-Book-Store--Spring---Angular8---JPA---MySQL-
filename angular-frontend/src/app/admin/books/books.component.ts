@@ -50,10 +50,10 @@ export class BooksComponent implements OnInit {
   refreshData() {
     this.httpClientService.countBooks().subscribe({
       next: (num: number) => {
-        console.log("Length array = "+num);
+        console.log("Length array = " + num);
         this.allBooks = num;
         this.msg = "";
-  
+
         this.httpClientService.getBooks(this.page, this.size).subscribe({
           next: (response) => {
             console.log(response);
@@ -62,11 +62,11 @@ export class BooksComponent implements OnInit {
 
             this.activedRoute.queryParams.subscribe(
               (params) => {
-               
+
                 this.action = params['action'];
-               
+
                 const id = params['id'];
-              
+
                 if (id) {
                   this.selectedBook = this.books.find(book => {
                     return book.id === +id;
@@ -85,8 +85,8 @@ export class BooksComponent implements OnInit {
             console.log("Completed getBooks()");
           }
         });
-  
-       
+
+
       },
       error: (err: HttpErrorResponse) => {
         this.allBooks = 0;
@@ -98,16 +98,16 @@ export class BooksComponent implements OnInit {
       }
     });
   }
-  
+
   renderPage(event: number) {
     this.page = (event);
 
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
-    if (qp.action=='view') delete qp.action;
+    if (qp.action == 'view') delete qp.action;
 
-    
 
-    this.router.navigate([this.auth.role.toLowerCase(),'books'], {queryParams: qp});
+
+    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp });
     this.refreshData();
   }
 
@@ -133,14 +133,14 @@ export class BooksComponent implements OnInit {
   }
 
   addBook() {
-    
+
     let t = document.querySelector("form");
 
-    if (t!=undefined) t.style.backgroundImage = "none";
-    
+    if (t != undefined) t.style.backgroundImage = "none";
+
     this.selectedBook = new Book();
     this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'add', page: this.page } });
-    
+
   }
 
   viewBook(id: number) {
@@ -149,21 +149,21 @@ export class BooksComponent implements OnInit {
 
 
 
-  deleteAll() {
-    this.httpClientService.deleteAllRecordsOnJoinTable().subscribe({
+  /*deleteAll() {
+    this.httpClientService.deleteAllRecordsOnOrderBook().subscribe({
       next: (res) => {
         this.msg = "";
-        
+
 
         this.httpClientService.deleteBooks().subscribe({
           next: () => {
-           
+
             this.allBooks = 0;
             this.books = [];
             this.refreshData();
           },
           error: (err: HttpErrorResponse) => {
-            
+
             this.msg = this.replaceAll(err.message, "#", "<br>");
           },
           complete: () => {
@@ -173,14 +173,31 @@ export class BooksComponent implements OnInit {
 
       },
       error: (err) => {
-       this.msg = this.replaceAll(err.message, "#", "<br>");
+        this.msg = this.replaceAll(err.message, "#", "<br>");
       },
       complete: () => {
 
       }
     });
 
- 
+
+  }*/
+
+  deleteAll(){
+    this.httpClientService.deleteBooks().subscribe({
+      next: () => {
+
+        this.allBooks = 0;
+        this.books = [];
+        this.refreshData();
+      },
+      error: (err: HttpErrorResponse) => {
+
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+      },
+      complete: () => {
+      }
+    });
   }
 
 }

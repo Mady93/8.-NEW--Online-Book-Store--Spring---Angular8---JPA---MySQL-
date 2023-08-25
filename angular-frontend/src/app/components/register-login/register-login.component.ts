@@ -141,7 +141,8 @@ form  : FormGroup;
 
         this.auth.login(email, password).subscribe({
           next: (res) => {
-            this.router.navigate(["/shop"]);
+            //this.router.navigate(["/shop"]);
+            location.href="/shop";
           },
           error: (err: HttpErrorResponse) => {
            

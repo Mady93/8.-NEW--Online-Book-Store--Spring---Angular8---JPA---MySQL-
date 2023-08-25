@@ -1,3 +1,26 @@
 .navbar-brand {
     margin-left: 10px;
 }
+
+.profile {
+    float: right;
+    right: 0px;
+    position: absolute;
+    margin-right: 10px;
+}
+
+.white {
+    color: white;
+}
+
+.black {
+    color: black;
+}
+
+.yellow {
+    color: rgb(255, 234, 0);
+}
+
+.center {
+    text-align: center;
+}

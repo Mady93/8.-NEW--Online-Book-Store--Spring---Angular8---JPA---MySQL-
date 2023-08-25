@@ -10,7 +10,7 @@ Se l'autenticazione ha successo, genera due token JWT: uno per l'accesso inizial
 Invia il token di rinnovo al frontend e invia il token di accesso al backend Spring
 */
 
-function sendTokenToSpring(uid, token){
+function sendTokenToSpring(uid, token) {
 
     const url = "http://127.0.0.1:8080/users/saveToken";
     const options = {
@@ -28,10 +28,7 @@ function sendTokenToSpring(uid, token){
 
 }
 
-
 exports.loginRoute = (req, res) => {
-
-
 
     const url = "http://127.0.0.1:8080/users/login";
     const options = {
@@ -41,7 +38,6 @@ exports.loginRoute = (req, res) => {
         },
         body: JSON.stringify(req.body),
     };
-
 
     fetch(url, options)
         .then(x => {
@@ -54,30 +50,27 @@ exports.loginRoute = (req, res) => {
                     const token = jwt.sign({
                         role: data.role
                     },
-                    privateKey,
-                    {
-                        algorithm: 'RS256',
-                        expiresIn: '2h',
-                        subject: data.id
-                    });
-
-
-                    
-                    sendTokenToSpring(data.id, token).then(x => {
-                        
-                        if (x.status == 200)
+                        privateKey,
                         {
+                            algorithm: 'RS256',
+                            expiresIn: '2h',
+                            subject: data.id
+                        });
+
+                    sendTokenToSpring(data.id, token).then(x => {
+
+                        if (x.status == 200) {
 
                             const tokenRefresh = jwt.sign({
                                 role: data.role
                             },
-                            privateKey,
-                            {
-                                algorithm: 'RS256',
-                                expiresIn: '1200s',
-                                subject: data.id
-                            });
-                            
+                                privateKey,
+                                {
+                                    algorithm: 'RS256',
+                                    expiresIn: '1200s',
+                                    subject: data.id
+                                });
+
                             res.setHeader('Authorization', tokenRefresh);
                             res.status(200).send("");
 
@@ -87,15 +80,12 @@ exports.loginRoute = (req, res) => {
 
                     });
 
-
-
                 });
 
             } else {
                 x.text().then(data => {
                     res.status(x.status).send({ msg: data });
                 });
-
             }
         });
 };

@@ -3,8 +3,8 @@ import { Book } from '../../../model/Book';
 import { HttpClientService } from '../../../service/http-client.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { concatMap, switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { AuthService } from 'src/app/service/auth.service';
 
 
@@ -123,7 +123,7 @@ export class AddbookComponent implements OnInit {
         next: () => {
           this.httpClientService.addBook(this.book).subscribe({
             next: () => {
-              this.msg = "";
+             this.msg = "";
               this.bookAddedEvent.emit();
               this.router.navigate(['admin', 'books']);
             },

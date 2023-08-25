@@ -11,12 +11,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.javainuse.entities.Book;
-import com.javainuse.entities.JoinTable;
-import com.javainuse.entities.JoinTable.JoinTableId;
+import com.javainuse.entities.OrderBook;
+import com.javainuse.entities.OrderBook.OrderBooksId;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
 import com.javainuse.repositories.BookRepository;
-import com.javainuse.repositories.JoinTableRepository;
+import com.javainuse.repositories.OrderBookRepository;
 import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
 
@@ -41,7 +41,7 @@ public class EcommerceApplication implements CommandLineRunner {
 		OrderRepository orderRepository;
 
 		@Autowired
-	    private JoinTableRepository joinTableRepository;
+	    private OrderBookRepository orderBookRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(EcommerceApplication.class, args);
@@ -126,7 +126,7 @@ public class EcommerceApplication implements CommandLineRunner {
         User user3 = new User("Silvia Lolli", "Seller", "silvia@gmail.com", "11111100");
         User user4 = new User("Monalisa Silvestri", "User", "monalisa@gmail.com", "11111000");
         User user5 = new User("Ugo Fantozzi", "User", "ugo@gmail.com", "11110000");
-
+		User user6 = new User("Salvatore Brutto", "User", "salvatore@gmail.com", "11100000");
 
 		
       
@@ -135,58 +135,58 @@ public class EcommerceApplication implements CommandLineRunner {
          userRepository.save(user3);
          userRepository.save(user4);
          userRepository.save(user5);
-
+		 userRepository.save(user6);
 
        
          
 		// Create Orders
-		Order order1 = new Order(user1);
+		Order order1 = new Order(user1,"Send");
 		order1.setUser(user1);
 
-		Order order2 = new Order(user1);
+		Order order2 = new Order(user1,"Send");
 		order2.setUser(user1);
 		
-		Order order3 = new Order(user1);
+		Order order3 = new Order(user1,"Send");
 		order3.setUser(user1);
 		
-		Order order4 = new Order(user1);
+		Order order4 = new Order(user1,"Working");
 		order4.setUser(user1);
 		
-		Order order5 = new Order(user2);
+		Order order5 = new Order(user2,"Send");
 		order5.setUser(user2);
 		
-		Order order6 = new Order(user2);
+		Order order6 = new Order(user2,"Working");
 		order6.setUser(user2);
 		
-		Order order7 = new Order(user2);
+		Order order7 = new Order(user2,"Working");
 		order7.setUser(user2);
 		
 		
-		Order order8 = new Order(user3);
+		Order order8 = new Order(user3,"Send");
 		order8.setUser(user3);
 		
 		
-		Order order9 = new Order(user3);
+		Order order9 = new Order(user3,"Send");
 		order9.setUser(user3);
 		
 		
-		Order order10 = new Order(user4);
+		Order order10 = new Order(user4,"Working");
 		order10.setUser(user4);
 		
 		
-		Order order11 = new Order(user4);
+		Order order11 = new Order(user4,"Working");
 		order11.setUser(user4);
 		
-		Order order12 = new Order(user4);
+		Order order12 = new Order(user4,"Send");
 		order12.setUser(user4);
 		
-		Order order13 = new Order(user5);
+		Order order13 = new Order(user5,"Send");
 		order13.setUser(user5);
 		
-		Order order14 = new Order(user5);
+		Order order14 = new Order(user5,"Send");
 		order14.setUser(user5);
 		
-		Order order15 = new Order(user5);
+		Order order15 = new Order(user5,"Working");
 		order15.setUser(user5);
 
 
@@ -208,108 +208,108 @@ public class EcommerceApplication implements CommandLineRunner {
 		Order o15 = orderRepository.save(order15);
 		
 		
-		JoinTable.JoinTableId joinTableId1 = new JoinTableId(o1.getId(), b1.getId());
-		JoinTable joinTable1 = new JoinTable(joinTableId1, 3, b1.getPrice());
-		joinTable1.setOrder(o1); 
-		joinTable1.setBook(b1); 
+		OrderBook.OrderBooksId orderBooksId1 = new OrderBooksId(o1.getId(), b1.getId());
+		OrderBook orderBook1 = new OrderBook(orderBooksId1, 3, b1.getPrice());
+		orderBook1.setOrder(o1); 
+		orderBook1.setBook(b1); 
 
-		JoinTable.JoinTableId joinTableId2 = new JoinTableId(o1.getId(), b2.getId());
-		JoinTable joinTable2 = new JoinTable(joinTableId2, 2, b2.getPrice());
-		joinTable2.setOrder(o1); 
-		joinTable2.setBook(b2); 
+		OrderBook.OrderBooksId orderBooksId2 = new OrderBooksId(o1.getId(), b2.getId());
+		OrderBook orderBook2 = new OrderBook(orderBooksId2, 2, b2.getPrice());
+		orderBook2.setOrder(o1); 
+		orderBook2.setBook(b2); 
 		
-		JoinTable.JoinTableId joinTableId3 = new JoinTableId(o2.getId(), b3.getId());
-		JoinTable joinTable3 = new JoinTable(joinTableId3, 1, b3.getPrice());
-		joinTable3.setOrder(o2); 
-		joinTable3.setBook(b3); 
+		OrderBook.OrderBooksId orderBooksId3 = new OrderBooksId(o2.getId(), b3.getId());
+		OrderBook orderBook3 = new OrderBook(orderBooksId3, 1, b3.getPrice());
+		orderBook3.setOrder(o2); 
+		orderBook3.setBook(b3); 
 
-		JoinTable.JoinTableId joinTableId4 = new JoinTableId(o2.getId(), b4.getId());
-		JoinTable joinTable4 = new JoinTable(joinTableId4, 3, b4.getPrice());
-		joinTable4.setOrder(o2); 
-		joinTable4.setBook(b4); 
+		OrderBook.OrderBooksId orderBooksId4 = new OrderBooksId(o2.getId(), b4.getId());
+		OrderBook orderBook4 = new OrderBook(orderBooksId4, 3, b4.getPrice());
+		orderBook4.setOrder(o2); 
+		orderBook4.setBook(b4); 
 
-		JoinTable.JoinTableId joinTableId5 = new JoinTableId(o3.getId(), b5.getId());
-		JoinTable joinTable5 = new JoinTable(joinTableId5, 9, b5.getPrice());
-		joinTable5.setOrder(o3); 
-		joinTable5.setBook(b5); 
+		OrderBook.OrderBooksId orderBooksId5 = new OrderBooksId(o3.getId(), b5.getId());
+		OrderBook orderBook5 = new OrderBook(orderBooksId5, 9, b5.getPrice());
+		orderBook5.setOrder(o3); 
+		orderBook5.setBook(b5); 
 
-		JoinTable.JoinTableId joinTableId6 = new JoinTableId(o4.getId(), b6.getId());
-		JoinTable joinTable6 = new JoinTable(joinTableId6, 3, b6.getPrice());
-		joinTable6.setOrder(o4); 
-		joinTable6.setBook(b6); 
+		OrderBook.OrderBooksId orderBooksId6 = new OrderBooksId(o4.getId(), b6.getId());
+		OrderBook orderBook6 = new OrderBook(orderBooksId6, 3, b6.getPrice());
+		orderBook6.setOrder(o4); 
+		orderBook6.setBook(b6); 
 
-		JoinTable.JoinTableId joinTableId7 = new JoinTableId(o5.getId(), b7.getId());
-		JoinTable joinTable7 = new JoinTable(joinTableId7, 5, b7.getPrice());
-		joinTable7.setOrder(o5); 
-		joinTable7.setBook(b7); 
+		OrderBook.OrderBooksId orderBooksId7 = new OrderBooksId(o5.getId(), b7.getId());
+		OrderBook orderBook7 = new OrderBook(orderBooksId7, 5, b7.getPrice());
+		orderBook7.setOrder(o5); 
+		orderBook7.setBook(b7); 
 
-		JoinTable.JoinTableId joinTableId8 = new JoinTableId(o6.getId(), b8.getId());
-		JoinTable joinTable8 = new JoinTable(joinTableId8, 45, b8.getPrice());
-		joinTable8.setOrder(o6); 
-		joinTable8.setBook(b8);
+		OrderBook.OrderBooksId orderBooksId8 = new OrderBooksId(o6.getId(), b8.getId());
+		OrderBook orderBook8 = new OrderBook(orderBooksId8, 45, b8.getPrice());
+		orderBook8.setOrder(o6); 
+		orderBook8.setBook(b8);
 
-		JoinTable.JoinTableId joinTableId9 = new JoinTableId(o7.getId(), b9.getId());
-		JoinTable joinTable9 = new JoinTable(joinTableId9, 7, b9.getPrice());
-		joinTable9.setOrder(o7); 
-		joinTable9.setBook(b9);
+		OrderBook.OrderBooksId orderBooksId9 = new OrderBooksId(o7.getId(), b9.getId());
+		OrderBook orderBook9 = new OrderBook(orderBooksId9, 7, b9.getPrice());
+		orderBook9.setOrder(o7); 
+		orderBook9.setBook(b9);
 
-		JoinTable.JoinTableId joinTableId10 = new JoinTableId(o8.getId(), b10.getId());
-		JoinTable joinTable10 = new JoinTable(joinTableId10, 1, b10.getPrice());
-		joinTable10.setOrder(o8); 
-		joinTable10.setBook(b10);
+		OrderBook.OrderBooksId orderBooksId10 = new OrderBooksId(o8.getId(), b10.getId());
+		OrderBook orderBook10 = new OrderBook(orderBooksId10, 1, b10.getPrice());
+		orderBook10.setOrder(o8); 
+		orderBook10.setBook(b10);
 
-		JoinTable.JoinTableId joinTableId11 = new JoinTableId(o9.getId(), b11.getId());
-		JoinTable joinTable11 = new JoinTable(joinTableId11, 2, b11.getPrice());
-		joinTable11.setOrder(o9); 
-		joinTable11.setBook(b11);
+		OrderBook.OrderBooksId orderBooksId11 = new OrderBooksId(o9.getId(), b11.getId());
+		OrderBook orderBook11 = new OrderBook(orderBooksId11, 2, b11.getPrice());
+		orderBook11.setOrder(o9); 
+		orderBook11.setBook(b11);
 
-		JoinTable.JoinTableId joinTableId12 = new JoinTableId(o10.getId(), b1.getId());
-		JoinTable joinTable12 = new JoinTable(joinTableId12, 4, b1.getPrice());
-		joinTable12.setOrder(o10); 
-		joinTable12.setBook(b1);
+		OrderBook.OrderBooksId OrderBooksId12 = new OrderBooksId(o10.getId(), b1.getId());
+		OrderBook orderBook12 = new OrderBook(OrderBooksId12, 4, b1.getPrice());
+		orderBook12.setOrder(o10); 
+		orderBook12.setBook(b1);
 
-		JoinTable.JoinTableId joinTableId13 = new JoinTableId(o11.getId(), b2.getId());
-		JoinTable joinTable13 = new JoinTable(joinTableId13, 5, b2.getPrice());
-		joinTable13.setOrder(o11); 
-		joinTable13.setBook(b2);
+		OrderBook.OrderBooksId orderBooksId13 = new OrderBooksId(o11.getId(), b2.getId());
+		OrderBook orderBook13 = new OrderBook(orderBooksId13, 5, b2.getPrice());
+		orderBook13.setOrder(o11); 
+		orderBook13.setBook(b2);
 
-		JoinTable.JoinTableId joinTableId14 = new JoinTableId(o12.getId(), b3.getId());
-		JoinTable joinTable14 = new JoinTable(joinTableId14, 5, b3.getPrice());
-		joinTable14.setOrder(o12); 
-		joinTable14.setBook(b3);
+		OrderBook.OrderBooksId orderBooksId14 = new OrderBooksId(o12.getId(), b3.getId());
+		OrderBook orderBook14 = new OrderBook(orderBooksId14, 5, b3.getPrice());
+		orderBook14.setOrder(o12); 
+		orderBook14.setBook(b3);
 
-		JoinTable.JoinTableId joinTableId15 = new JoinTableId(o13.getId(), b4.getId());
-		JoinTable joinTable15 = new JoinTable(joinTableId15, 7, b4.getPrice());
-		joinTable15.setOrder(o13); 
-		joinTable15.setBook(b4);
+		OrderBook.OrderBooksId orderBooksId15 = new OrderBooksId(o13.getId(), b4.getId());
+		OrderBook orderBook15 = new OrderBook(orderBooksId15, 7, b4.getPrice());
+		orderBook15.setOrder(o13); 
+		orderBook15.setBook(b4);
 
-		JoinTable.JoinTableId joinTableId16 = new JoinTableId(o14.getId(), b5.getId());
-		JoinTable joinTable16 = new JoinTable(joinTableId16, 9, b5.getPrice());
-		joinTable16.setOrder(o14); 
-		joinTable16.setBook(b5);
+		OrderBook.OrderBooksId orderBooksId16 = new OrderBooksId(o14.getId(), b5.getId());
+		OrderBook orderBook16 = new OrderBook(orderBooksId16, 9, b5.getPrice());
+		orderBook16.setOrder(o14); 
+		orderBook16.setBook(b5);
 
-		JoinTable.JoinTableId joinTableId17 = new JoinTableId(o15.getId(), b6.getId());
-		JoinTable joinTable17 = new JoinTable(joinTableId17, 10, b6.getPrice());
-		joinTable17.setOrder(o15); 
-		joinTable17.setBook(b6);
+		OrderBook.OrderBooksId orderBooksId17 = new OrderBooksId(o15.getId(), b6.getId());
+		OrderBook orderBook17 = new OrderBook(orderBooksId17, 10, b6.getPrice());
+		orderBook17.setOrder(o15); 
+		orderBook17.setBook(b6);
 
-		joinTableRepository.save(joinTable1);
-		joinTableRepository.save(joinTable2);
-	    joinTableRepository.save(joinTable3);
-	    joinTableRepository.save(joinTable4);
-	    joinTableRepository.save(joinTable5);
-		joinTableRepository.save(joinTable6);
-		joinTableRepository.save(joinTable7);
-		joinTableRepository.save(joinTable8);
-		joinTableRepository.save(joinTable9);
-		joinTableRepository.save(joinTable10);
-		joinTableRepository.save(joinTable11);
-		joinTableRepository.save(joinTable12);
-		joinTableRepository.save(joinTable13);
-		joinTableRepository.save(joinTable14);
-		joinTableRepository.save(joinTable15);
-		joinTableRepository.save(joinTable16);
-		joinTableRepository.save(joinTable17);
+		orderBookRepository.save(orderBook1);
+		orderBookRepository.save(orderBook2);
+	    orderBookRepository.save(orderBook3);
+	    orderBookRepository.save(orderBook4);
+	    orderBookRepository.save(orderBook5);
+		orderBookRepository.save(orderBook6);
+		orderBookRepository.save(orderBook7);
+		orderBookRepository.save(orderBook8);
+		orderBookRepository.save(orderBook9);
+		orderBookRepository.save(orderBook10);
+		orderBookRepository.save(orderBook11);
+		orderBookRepository.save(orderBook12);
+		orderBookRepository.save(orderBook13);
+		orderBookRepository.save(orderBook14);
+		orderBookRepository.save(orderBook15);
+		orderBookRepository.save(orderBook16);
+		orderBookRepository.save(orderBook17);
 
     }
 	
@@ -335,7 +335,7 @@ public class EcommerceApplication implements CommandLineRunner {
 		List<User> userLst = userRepository.findAll();
 		List<Order> orderLst = orderRepository.findAll();
 		
-		Iterable<JoinTable> joinTableLst = joinTableRepository.findAll();
+		Iterable<OrderBook> orderBookLst = orderBookRepository.findAll();
 		
 		System.out.println("");
 		System.out.println("=================== Book List: ==================");
@@ -352,8 +352,8 @@ public class EcommerceApplication implements CommandLineRunner {
 		
 		
 		System.out.println("");
-		System.out.println("=================== JoinTable List: ==================");
-		joinTableLst.forEach(System.out::println);
+		System.out.println("=================== orderBook List: ==================");
+		orderBookLst.forEach(System.out::println);
 	}
 		
 

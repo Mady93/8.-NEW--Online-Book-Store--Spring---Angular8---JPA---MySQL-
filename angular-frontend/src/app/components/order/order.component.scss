@@ -1,5 +1,6 @@
 details {
-    background-color: aquamarine;
+    //background-color: aquamarine;
+    background-color: #0dcaf0;
     padding: 5px;
     margin: 30px;
     margin-bottom: 0px;
@@ -25,7 +26,31 @@ label {
 }
 
 
-th,
-td {
+th,td {
     text-align: center;
+}
+
+.paragraph {
+    margin-top: 2rem;
+    color: rgb(255, 0, 0);
+    font-size: 15px;
+    text-align: center;
+}
+
+.custom-margin {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.align {
+    margin-top: 10px!important;
+    margin-left: 10px; 
+}
+
+.size {
+    font-size: 2rem;
+}
+
+.custom {
+    margin-top: 50px!important;
 }

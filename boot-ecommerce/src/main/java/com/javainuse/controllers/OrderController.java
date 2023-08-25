@@ -3,8 +3,6 @@ package com.javainuse.controllers;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.criteria.CriteriaBuilder.In;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -14,7 +12,6 @@ import org.springframework.data.domain.Sort;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
 import com.javainuse.exceptions.ResourceNotFoundException;
@@ -119,57 +117,29 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 
-	/* @DeleteMapping(path = "/{userId:\\d+}/delete/one")
-	public ResponseEntity<Object> deleteOrder(@PathVariable("userId") Long userId,
-			@PathVariable("orderId") Long orderId)
-			throws ResourceNotFoundException, IllegalArgumentException {
-
-		Optional<Order> optional = orderRepository.findById(orderId);
-		Order order = optional.orElseThrow(
-				() -> new ResourceNotFoundException("Order with ID: " + orderId + " was not found in the database"));
-
-		// Verifica che l'ID dell'user associato all'ordine sia uguale a userId
-		if (!order.getUser().getId().equals(userId)) {
-			throw new IllegalArgumentException(
-					"The order with ID: " + orderId + " is not associated with the user with ID: " + userId);
-		}
-
-		orderRepository.deleteById(orderId);
-
-		String message = "Order deleted successfully";
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-	}
-
-	@DeleteMapping(path = "/orders/deleteAll")
-	public ResponseEntity<ApiResponse> deleteAllOrders()
-			throws ResourceNotFoundException, IllegalArgumentException {
-		orderRepository.deleteAll();
 	
-		String message = "All orders have been deleted successfully";
-		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-	}
+/* 
+@DeleteMapping(path = "/{userId:\\d+}/deleteAll")
+public ResponseEntity<Object> deleteOrdersByUserId(@PathVariable("userId") Long userId)
+        throws ResourceNotFoundException, IllegalArgumentException {
 
- 	@Transactional
-@DeleteMapping(path = "/{userId:\\d+}/deleteByUserId")
-public void deleteJoinTableAndOrdersByUserId(@PathVariable("userId") Long userId) throws ResourceNotFoundException, IllegalArgumentException {
-    // Verifica se ci sono ordini per l'userId
-    Long orderCount = orderRepository.countOrdersByUserId(userId);
-    if (orderCount == 0) {
-        throw new ResourceNotFoundException("No orders found for the user with ID: " + userId);
+    List<Order> orders = orderRepository.findByUserId(userId);
+    if (orders.isEmpty()) {
+        throw new ResourceNotFoundException("No orders found for user with ID: " + userId);
     }
 
-    orderRepository.deleteJoinTableByUserId(userId);
-    orderRepository.deleteOrdersByUserId(userId);
+    for (Order order : orders) {
+        orderRepository.delete(order);
+    }
+
+    String message = "All orders for user with ID: " + userId + " have been deleted successfully";
+    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 }
 
-
-*/
 
 	@DeleteMapping("/deleteAll")
 	public void deleteAlRecordsOnOrder() throws ResourceNotFoundException {
 
-
-		
 		Long orderCount = orderRepository.countOrders();
 
 		if (orderCount == 0) {
@@ -178,7 +148,7 @@ public void deleteJoinTableAndOrdersByUserId(@PathVariable("userId") Long userId
 			orderRepository.deleteAll();
 		}
 		
-	}
+	}*/
 
 
 

@@ -1,6 +1,6 @@
 
 <div class="container row">
-    <div class="col-md-2">
+    <div class="col-md-2" *ngIf="allBooks > 0">
         <h1>Books</h1>
     </div>
     
@@ -45,10 +45,10 @@
 
                                     <div style="text-align: center;" *ngIf="authService.role == '' || ['Admin','User','Seller'].includes(authService.role)">
 
-                                        {{authService.uid}}
-                                        <a  *ngIf="cartBooks.length > 0" class="btn btn-small btn-danger" role="button" (click)="buyCart()"><fa-icon [icon]="" style="color: white; font-size: midium; font-weight: bold;"></fa-icon> Buy</a>
+                                        <!--{{authService.uid}}-->
+                                        <a  *ngIf="cartBooks.length > 0" class="btn btn-small btn-secondary btnn" role="button" (click)="buyCart()">Buy</a>
                                     
-                                        <a *ngIf="cartBooks.length > 0" class="btn btn-small btn-warning paddingM" style="color: white;" role="button" (click)="emptyCart()">Empty Cart</a>
+                                        <a *ngIf="cartBooks.length > 0" class="btn btn-small btn-danger paddingM btnn" role="button" (click)="emptyCart()">Empty Cart</a>
 
                                     </div>
                                     
@@ -91,7 +91,8 @@
 
         </div>
     </div>
-    <div class="custom-margin d-flex justify-content-center">
+
+    <div class="custom-margin d-flex justify-content-center" *ngIf="allBooks > 0">
         <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
     </div>
     

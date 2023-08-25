@@ -1,23 +1,21 @@
 package com.javainuse.controllers;
 
+import java.nio.file.AccessDeniedException;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -37,8 +35,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.User;
+import com.javainuse.exceptions.MaxAdminLimitExceededException;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.UserRepository;
+import com.javainuse.services.UserService;
 
 //paginazione
 import org.springframework.data.domain.Sort;
@@ -58,11 +58,13 @@ import io.jsonwebtoken.Jwts;
 public class UserController {
 
 	private final UserRepository userRepository;
+	private final UserService userService;
 	private String pubKey;
 
 	@Autowired
-	public UserController(UserRepository userRepository) {
+	public UserController(UserRepository userRepository, UserService userService) {
 		this.userRepository = userRepository;
+		this.userService = userService;
 	}
 
 	@PostMapping(path = "/setPubKey", consumes = "text/plain")
@@ -87,9 +89,8 @@ public class UserController {
 		return keyFactory.generatePublic(keySpec);
 	}
 
-	
-	 //funzione che calcola quanti secondi di validita' ha il token master utilizzato per il refresh token
-	
+	// funzione che calcola quanti secondi di validita' ha il token master
+	// utilizzato per il refresh token
 	long getExpInSeconds(String token) throws Exception {
 
 		try {
@@ -223,13 +224,10 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));
 	}
 
-	
 	// metodo per admin - l'unico che puo modificare il ruolo
-	@PostMapping(path = "/setRole", consumes = "application/json")
+	/*@PostMapping(path = "/setRole", consumes = "application/json")
 	public ResponseEntity<Object> setRole(@RequestBody JsonNode data)
 			throws MethodArgumentNotValidException, IllegalArgumentException {
-
-
 
 		Long uid = data.get("uid").asLong();
 		Optional<User> optional = userRepository.findById(uid);
@@ -242,11 +240,46 @@ public class UserController {
 
 		userRepository.save(user);
 
-
 		return ResponseEntity.status(HttpStatus.OK).body("{'response': 'Role changed'}");
+	}*/
 
 
-		
+
+
+	// Vincoli :  massimo 5 admin e minimo 1 admin
+	@PostMapping(path = "/setRole", consumes = "application/json")
+	public ResponseEntity<Object> setRole(@RequestBody JsonNode data)
+			throws MethodArgumentNotValidException, IllegalArgumentException, MaxAdminLimitExceededException {
+
+		Long uid = data.get("uid").asLong();
+		Optional<User> optional = userRepository.findById(uid);
+		User user = optional.orElseThrow(
+				() -> new ResourceNotFoundException("Unable to retrieve the resource. The user resource with ID: " + uid
+						+ " was not found in the database"));
+
+		String role = data.get("role").asText();
+
+		if ("admin".equalsIgnoreCase(role)) {
+			// Conta il numero di utenti con ruolo "admin"
+			long adminCount = userRepository.countByType("Admin");
+
+			if (adminCount >= 5) {
+				throw new MaxAdminLimitExceededException("Maximum administrators limit reached!");
+			}
+
+		} else if ("User".equalsIgnoreCase(role) || "Seller".equalsIgnoreCase(role)) {
+			// Verifica se l'utente è l'ultimo admin e sta cercando di cambiare il ruolo a
+			// "User" o "Seller"
+			long adminCount = userRepository.countByType("Admin");
+			if (adminCount == 1 && user.getType().equalsIgnoreCase("admin")) {
+				throw new RuntimeException("You cannot change the role of the last admin!");
+			}
+		}
+
+		user.setType(role);
+		userRepository.save(user);
+
+		return ResponseEntity.status(HttpStatus.OK).body("{'response': 'Ruolo modificato'}");
 	}
 
 	@GetMapping(path = "/{id:\\d+}/one")
@@ -302,36 +335,31 @@ public class UserController {
 		}
 	}
 
-	
-	@DeleteMapping(path = "/{id:\\d+}/delete")
-	public ResponseEntity<Object> deleteUser(@PathVariable("id") Long id)
-			throws ResourceNotFoundException, IllegalArgumentException {
+	// Entity Manager => UserService => delete user by id EXCEPT the last 'Admin'
+	@DeleteMapping(path = "/{userId:\\d+}/delete")
+	public ResponseEntity<Object> deleteUser(@PathVariable("userId") Long userId)
+			throws ResourceNotFoundException, IllegalArgumentException, AccessDeniedException {
 
-		Optional<User> optionalUser = userRepository.findById(id);
+		Optional<User> optionalUser = userRepository.findById(userId);
 		if (optionalUser.isPresent()) {
-			userRepository.deleteById(id);
+			userService.deleteUserAndRelatedData(userId);
 
-			String message = "User deleted successfully";
+			String message = "User and associated data have been deleted successfully";
 			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 
 		} else {
-			throw new ResourceNotFoundException("Unable to perform the deletion. The user resource with ID: " + id
+			throw new ResourceNotFoundException("Unable to perform the deletion. The user resource with ID: " + userId
 					+ " was not found in the database");
 		}
 	}
 
-
-	// posso cancellare tutti gli utenti eccetto admin
-	
+	// Entity Manager => UserService => DELETE ALL USERS EXCEPT ALL 'Admin'
 	@DeleteMapping(path = "/deleteAll")
-	public ResponseEntity<ApiResponse> deleteUsers() {
-		//userRepository.deleteByTypeIn(Arrays.asList("User", "Seller"));
+	public ResponseEntity<ApiResponse> deleteUsers() throws IllegalArgumentException, RuntimeException {
 
-		userRepository.deleteAll();
-
-		String message = "Users with types User and Seller have been deleted successfully";
+		userService.deleteAllExceptAdmin();
+		String message = "Users and their associated data have been deleted successfully";
 		return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 	}
-
 
 }

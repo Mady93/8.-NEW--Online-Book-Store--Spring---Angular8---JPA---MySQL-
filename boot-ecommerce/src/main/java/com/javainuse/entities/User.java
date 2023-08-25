@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -34,6 +33,8 @@ import lombok.ToString;
 //aggiunti
 @NamedQuery(name = "User.findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
 @NamedQuery(name = "User.findUserByType", query = "SELECT u FROM User u WHERE u.type = :code")
+@NamedQuery(name = "User.countByType", query = "SELECT COUNT(u) FROM User u WHERE u.type IN ('Admin')")
+
 public class User {
 
 	@Id
@@ -42,7 +43,6 @@ public class User {
 	private Long id;
 
 	@NotNull(message = "Name cannot be null")
-	@NotBlank(message = "Name cannot be blank")
 	@Column(name = "name")
 	private String name;
 
@@ -52,7 +52,6 @@ public class User {
 
 
 
-	@NotBlank(message = "Email cannot be blank")
 	@NotNull(message = "Email cannot be null")
 	@Pattern(regexp = "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\." + "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
 			+ "(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\\.)+[A-Za-z0-9]"
@@ -61,7 +60,6 @@ public class User {
 	private String email;
 	
 	@NotNull(message = "Password cannot be null")
-	@NotBlank(message = "Password cannot be blank")
 	@Pattern(regexp = "^.{8,}$", message = "Password must be at least 8 characters long")
 	@Column(name = "password")
 	private String password;

@@ -22,17 +22,13 @@ import lombok.ToString;
 */
 
 @Entity
-@Table(name = "join_table")
-
-//@NamedQuery(name = "JoinTable.emptyJoinTable", query = "DELETE FROM JoinTable")
-//@NamedQuery(name = "JoinTable.deleteJoinTablesByBookId", query = "DELETE FROM JoinTable jt WHERE jt.id.bookId = :bookId")
-@NamedQuery(name = "JoinTable.getJoinTablesByOrderId", query = "SELECT jt FROM JoinTable jt WHERE jt.id.orderId = :orderId")
-
-public class JoinTable {
+@Table(name = "order_books")
+@NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt FROM OrderBook jt WHERE jt.id.orderId = :orderId")
+public class OrderBook {
 
 	// istanza inner class senza argomenti
 	@EmbeddedId
-	private JoinTableId id = new JoinTableId();
+	private OrderBooksId id = new OrderBooksId();
 
 	@ManyToOne
 	@MapsId("orderId")
@@ -52,11 +48,11 @@ public class JoinTable {
 	@Column(name = "added_at", nullable = false)
 	private Date addedAt;
 
-	public JoinTableId getId() {
+	public OrderBooksId getId() {
 		return id;
 	}
 
-	public void setId(JoinTableId id) {
+	public void setId(OrderBooksId id) {
 		this.id = id;
 	}
 
@@ -99,10 +95,10 @@ public class JoinTable {
 	public void setAddedAt(Date addedAt) {
 		this.addedAt = addedAt;
 	}
-	public JoinTable() {
+	public OrderBook() {
 	}
 	
-	public JoinTable(JoinTableId id, Integer quantity, double price) {
+	public OrderBook(OrderBooksId id, Integer quantity, double price) {
 		this.id = id;
 		this.quantity = quantity;
 		this.price = price;
@@ -110,7 +106,7 @@ public class JoinTable {
 
 	// inner class
 	@Embeddable
-	public static class JoinTableId implements Serializable {
+	public static class OrderBooksId implements Serializable {
 
 		private static final long serialVersionUID = 1L;
 
@@ -133,10 +129,10 @@ public class JoinTable {
 			this.bookId = bookId;
 		}
 
-		public JoinTableId() {
+		public OrderBooksId() {
 		}
 
-		public JoinTableId(Long orderId, Long bookId) {
+		public OrderBooksId(Long orderId, Long bookId) {
 			super();
 			this.orderId = orderId;
 			this.bookId = bookId;

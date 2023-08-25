@@ -1,36 +1,69 @@
 <header>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        
         <div><a class="navbar-brand">O' Cuccultura</a></div>
-       
+
         <ul class="navbar-nav">
 
-            <li><a class="nav-link" routerLink="/shop"><fa-icon [icon]="iconaHome" style="color: white;"></fa-icon> Shop</a></li>
+            <li><a class="nav-link" routerLink="/shop"><fa-icon [icon]="iconaHome" class="white"></fa-icon>
+                    Shop</a>
+            </li>
 
             <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin', 'Seller'].includes(authService.role)">
-                <a ngbDropdownToggle class="nav-link" id="navbarDropdown" role="button"
-                    aria-haspopup="true" aria-expanded="false"><fa-icon [icon]="iconaSecurity" style="color: white;"></fa-icon>
+                <a ngbDropdownToggle class="nav-link" id="navbarDropdown" role="button" aria-haspopup="true"
+                    aria-expanded="false"><fa-icon [icon]="iconaSecurity" class="white"></fa-icon>
                     {{authService.role}}
                 </a>
                 <div ngbDropdownMenu aria-labelledby="navbarDropdown" style="background-color: #0dcaf0;">
-                    <a routerLink="/admin/users" class="dropdown-item" *ngIf="authService.role == 'Admin'"><fa-icon [icon]="iconaUsers" style="color: black;"></fa-icon> Users</a>
-                    <a routerLink="/{{authService.role.toLowerCase()}}/books" class="dropdown-item" *ngIf="['Admin', 'Seller'].includes(authService.role)"><fa-icon [icon]="iconaBooks" style="color: black;"></fa-icon> Books</a>
+                    <a routerLink="/admin/users" class="dropdown-item" *ngIf="authService.role == 'Admin'"><fa-icon
+                            [icon]="iconaUsers" class="black"></fa-icon> Users</a>
+                    <a routerLink="/{{authService.role.toLowerCase()}}/books" class="dropdown-item"
+                        *ngIf="['Admin', 'Seller'].includes(authService.role)"><fa-icon [icon]="iconaBooks"
+                        class="black"></fa-icon> Books</a>
                 </div>
             </li>
 
             <li *ngIf="authService.role == '' ">
                 <a class="nav-link" [routerLink]="isLogin ? '/login' : '/register'">
-                  <fa-icon [icon]="iconaProfiles" style="color: white;"></fa-icon>
-                   {{ isLogin ? 'Login' : 'Register' }}
+                    <fa-icon [icon]="iconaProfiles" class="white"></fa-icon>
+                    {{ isLogin ? 'Login' : 'Register' }}
                 </a>
-              </li>
+            </li>
 
-              <li *ngIf="['Admin','User','Seller'].includes(authService.role)">
-                <a class="nav-link" routerLink="/order">
-                <fa-icon [icon]="iconaView" style="color: white; font-size: medium; font-weight: bold;"></fa-icon> Orders
-              </a></li>
-       
-            <li *ngIf="['Admin','User','Seller'].includes(authService.role)"><a class="nav-link" (click)="authService.logout()" routerLink="/shop"><fa-icon [icon]="iconaProfiles" style="color: white;"></fa-icon> Logout</a></li>
-        
+            <li *ngIf="['Admin','User','Seller'].includes(authService.role)">
+                <a class="nav-link" (click)="authService.logout()" routerLink="/shop"><fa-icon [icon]="iconaProfiles"
+                    class="white"></fa-icon> Logout</a>
+            </li>
+
+
         </ul>
+
+        <ul class="navbar-nav profile">
+            <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin','User','Seller'].includes(authService.role)">
+                <a ngbDropdownToggle class="nav-link" id="ordersDropdown" role="button" aria-haspopup="true"
+                    aria-expanded="false">
+
+                    <div class="center">
+
+                        <fa-icon [icon]="iconaProfile"
+                            class="white"></fa-icon> Profile
+                            
+                    </div>
+
+                    <span>Welcome
+                        <span class="yellow"> {{ userName }}</span>
+                    </span>
+
+                </a>
+
+                <div ngbDropdownMenu aria-labelledby="ordersDropdown" style="background-color: #0dcaf0; margin-top: -5px;">
+                    <a routerLink="/order" class="dropdown-item"><fa-icon [icon]="iconaView"
+                        class="black"></fa-icon> My orders</a>
+                    <a routerLink="/communication" class="dropdown-item"><fa-icon [icon]="iconaCommunication"
+                        class="black"></fa-icon> My Communications</a>
+                </div>
+            </li>
+        </ul>
+
     </nav>
 </header>

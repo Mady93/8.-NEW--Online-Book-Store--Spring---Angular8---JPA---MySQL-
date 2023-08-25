@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { faAdd, faBook, faHome, faList, faUnlockKeyhole, faUser, faUserAlt} from '@fortawesome/free-solid-svg-icons';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { faAdd, faBook, faHome, faList, faMailBulk, faUnlockKeyhole, faUser, faUserAlt, faUserGroup, faVoicemail } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../service/auth.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { HttpClientService } from '../service/http-client.service';
 
 @Component({
   selector: 'app-menu',
@@ -11,21 +12,27 @@ import { filter } from 'rxjs/operators';
 })
 export class MenuComponent implements OnInit {
 
+  userName: string = '';
+
   iconaHome = faHome;
-  iconaUsers = faUserAlt;
+  iconaUsers = faUserGroup;
   iconaInsert = faAdd;
   iconaProfiles = faUser;
   iconaSecurity = faUnlockKeyhole;
   iconaBooks = faBook;
   iconaView = faList;
+  iconaProfile = faUserAlt;
+  iconaCommunication = faMailBulk;
 
   isLogin: boolean = true;
   showViewOrders: boolean = false;
 
-  constructor(public authService: AuthService, private router: Router) { }
+  currentUrl: string;
+
+  constructor(public authService: AuthService, private router: Router, private httpClienteService: HttpClientService) { }
 
   ngOnInit() {
-  
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -40,10 +47,34 @@ export class MenuComponent implements OnInit {
           this.showViewOrders = false;
         }
       }
-    });
-}
+    }); 
+    
+
+    this.updateUserData();
+    
+  }
+
+
+  private updateUserData() {
+    const userId = this.authService.uid;
+
+    this.httpClienteService.getUser(userId).subscribe(
+      (userData) => {
+        //debugger;
+        this.userName = userData.name;
+      },
+      (error) => {
+        console.error('Errore nel recuperare i dati utente:', error);
+      }
+    );
+    
+  }
+
+  
+
+
 
 }
-  
+
 
 

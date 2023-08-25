@@ -156,7 +156,7 @@ export class ShopbookComponent implements OnInit {
     if (data !== null) {
       cartData = JSON.parse(data);
     }
-    console.log('hii');
+    //console.log('hii');
     // add the selected book to cart data
 
 

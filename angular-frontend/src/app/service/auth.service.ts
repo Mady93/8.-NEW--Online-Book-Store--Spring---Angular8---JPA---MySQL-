@@ -5,7 +5,7 @@ import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { User } from '../model/User ';
 import { HttpClientService } from './http-client.service';
 import { Order } from '../model/Order';
-import { JoinTable } from '../model/JoinTable';
+import { OrderBook } from '../model/OrderBook';
 
 @Injectable({
   providedIn: 'root'
@@ -54,21 +54,21 @@ export class AuthService {
         next: (ret: any) => {
           let oid = ret.orderId;
       
-          // Creare un array di promesse per le chiamate addJoinTable
-          const joinTablePromises = cart.map(ele => {
-            let jt: JoinTable = new JoinTable();
+          // Creare un array di promesse per le chiamate addOrderBook
+          const orderBookPromises = cart.map(ele => {
+            let jt: OrderBook = new OrderBook();
             jt.book.id = ele.id;
             jt.order.id = oid;
             jt.quantity = ele.q;
             
-            // Restituire la promessa dalla chiamata addJoinTable
-            return this.httpClientService.addJoinTable(jt).toPromise();
+            // Restituire la promessa dalla chiamata addOrderBook
+            return this.httpClientService.addOrderBook(jt).toPromise();
           });
       
           // Attendere il completamento di tutte le promesse utilizzando Promise.all()
-          Promise.all(joinTablePromises)
+          Promise.all(orderBookPromises)
             .then(() => {
-              // Le chiamate addJoinTable sono state completate
+              // Le chiamate addOrderBook sono state completate
               resolve(null);
             })
             .catch(error => {

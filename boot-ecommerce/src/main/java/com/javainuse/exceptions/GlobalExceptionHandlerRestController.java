@@ -13,6 +13,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.AccessDeniedException;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,7 +90,7 @@ public class GlobalExceptionHandlerRestController {
 		return new ErrorResponse<>(timestamp, status, errors, ex.getMessage(), stackTraceArray, path);
 	}
 	
-// Mancanza di parametro per il campo age "" -  conversione da string a integer = null
+// Mancanza di parametro per il campo age "" -  conversione da string a integer = null  -- in questo progetto non e' necessaria
 @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 @ExceptionHandler(MissingServletRequestParameterException.class)
 	public ErrorResponse<String> handleBadRequestException(MissingServletRequestParameterException ex, WebRequest request) {
@@ -165,7 +166,7 @@ public class GlobalExceptionHandlerRestController {
 		return new ErrorResponse<String>(status, errors, ex.getMessage(), stackTraceArray, path);
 	}
 
-	//gestice name di tipo string per i metodi getByNameByNotActive() - All'inserimento di un numero viene sollevata l'eccezione
+	//gestice name di tipo string per i metodi getByNameByNotActive() - All'inserimento di un numero viene sollevata l'eccezione -- in questo progetto non e' necessaria
 	@ExceptionHandler(IllegalArgumentException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public ErrorResponse<String> handleGeneric(IllegalArgumentException ex, WebRequest request) {
@@ -207,6 +208,45 @@ public class GlobalExceptionHandlerRestController {
 	    String errors = HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase();
 
 	    return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
+	}
+
+// Viene sollevata quando l'ultimo admin tenta di cancellarsi dal sito -- (di regola possono essere 5 admin per un sito)
+	@ExceptionHandler(AccessDeniedException.class)
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	public ErrorResponse<String> handleEx(Exception ex, WebRequest request) {
+	    String path = getPath(request);
+	    String[] stackTraceArray = getStackTraceAsArray(ex);
+	    String message = "You're the only one with type 'Admin'. We apologize, you cannot delete yourself!";
+	    int status = HttpStatus.NOT_ACCEPTABLE.value();
+	    String errors = HttpStatus.NOT_ACCEPTABLE.getReasonPhrase();
+
+	    return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
+	}
+
+	// Viene sollevata quando un admin tenta di cancellare per la seconda volta tutti gli utenti e nella tabella user restano solo gli user con il type Admin (usato come sicurezza per una cancellazione di massa)
+	@ExceptionHandler(RuntimeException.class)
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	public ErrorResponse<String> handleExAdmin(Exception ex, WebRequest request) {
+		String path = getPath(request);
+		String[] stackTraceArray = getStackTraceAsArray(ex);
+		String message = "We apologize, you cannot delete yourself and the users with type = 'Admin'! To maintain the security of inadvertent deletion, please delete through the user ID.";
+		int status = HttpStatus.NOT_ACCEPTABLE.value();
+		String errors = HttpStatus.NOT_ACCEPTABLE.getReasonPhrase();
+
+		return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
+	}
+
+// Viene sollevata quando un admin tenta di aggiungere il 6 admin 
+	@ExceptionHandler(MaxAdminLimitExceededException.class)
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	public ErrorResponse<String> handleMaxRoleAdminErrorResponse(Exception ex, WebRequest request) {
+		String path = getPath(request);
+		String[] stackTraceArray = getStackTraceAsArray(ex);
+		String message = ex.getMessage();
+		int status = HttpStatus.NOT_ACCEPTABLE.value();
+		String errors = HttpStatus.NOT_ACCEPTABLE.getReasonPhrase();
+
+		return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
 	}
 
 }
