@@ -10,7 +10,18 @@ body {
 .paragraph {
     margin-top: 2rem;
     color: rgb(255, 0, 0);
-    font-size: 15px;
+    font-size: 18px;
     text-align: center;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+
+.success {
+	margin-top: 2rem;
+    color: green;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
 }
 

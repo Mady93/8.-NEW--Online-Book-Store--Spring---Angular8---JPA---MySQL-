@@ -64,7 +64,22 @@ Authorization: Bearer {{tokenUser}}
 ###
 
 
+POST http://127.0.0.1:8080/books/upload
+Authorization: Bearer {{tokenUser}}
+Content-Type: multipart/form-data; boundary=MfnBoundry
 
+--MfnBoundry
+Content-Disposition: form-data; name="imageFile"; filename="test.txt"
+Content-Type: text/plain
+
+sasaprova
+--MfnBoundry--
+
+
+
+
+
+###
 GET http://127.0.0.1:8080/users/1/getTokenTime
 
 

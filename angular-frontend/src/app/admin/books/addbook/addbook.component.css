@@ -37,7 +37,10 @@ form {
 .paragraphh {
     margin-top: 2rem;
     color: red;
-    font-size: 15px;
+    font-size: 17px;
     text-align: center;
     background: rgba(0,0,0,0.8);
+    font-family: 'Times New Roman', Times, serif;
   }
+
+  

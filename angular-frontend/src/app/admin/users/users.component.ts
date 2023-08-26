@@ -24,6 +24,7 @@ export class UsersComponent implements OnInit {
   
     // Aggiunto errori
     msg: any;
+    ok: any;
     status: any;
 
   constructor(private httpClientService: HttpClientService, private router: Router, private activatedRoute: ActivatedRoute, private authService: AuthService) { }
@@ -52,14 +53,14 @@ export class UsersComponent implements OnInit {
         console.log("Array length = "+num)
         this.allUsers = num;
         this.msg = "";
+        this.ok = ""
 
-      
-  
         this.httpClientService.getUsers(this.page, this.size).subscribe({
-          next: (response) => {
-            console.log(response);
+          next: (res) => {
+            console.log(res);
             this.msg = "";
-            this.handleSuccessfulResponse(response);
+            this.ok = "";
+            this.handleSuccessfulResponse(res);
             this.activatedRoute.queryParams.subscribe(
               (params) => {
                 this.action = params['action'];
@@ -74,6 +75,12 @@ export class UsersComponent implements OnInit {
           error: (err: HttpErrorResponse) => {
             console.log(err.message);
             this.msg = this.replaceAll(err.message, "#", "<br>");
+
+            setTimeout(() => {
+              this.msg = '';
+            }, 2000);
+      
+            
           },
           complete: () => {
             console.log("Completed getUsers()");
@@ -85,6 +92,11 @@ export class UsersComponent implements OnInit {
         this.allUsers = 0;
         this.users = [];
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        /*setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+        */
 
       },
       complete: () => {
@@ -120,69 +132,34 @@ renderPage(event: number) {
     this.refreshData();
   }
 
-  handleSuccessfulResponse(response) {
-    this.users = response;
+  handleSuccessfulResponse(res) {
+    this.users = res;
   }
-
-
-  /*
-  deleteAll() {
-    this.httpClientService.deleteAllRecordsOnOrderBook().subscribe({
-      next: (res) => {
-        this.msg = "";
-        
-        this.httpClientService.deleteAlRecordsOnOrder().subscribe({
-          next: (res) => {
-            this.msg = "";
-            
-            this.httpClientService.deleteUsers().subscribe({
-              next: () => {
-               
-                this.allUsers = 0;
-                this.users = [];
-                this.refreshData();
-              },
-              error: (err: HttpErrorResponse) => {
-                
-                this.msg = this.replaceAll(err.message, "#", "<br>");
-              },
-              complete: () => {
-              }
-            });
-    
-          },
-          error: (err) => {
-           this.msg = this.replaceAll(err.message, "#", "<br>");
-          },
-          complete: () => {
-    
-          }
-        });
-
-
-      },
-      error: (err) => {
-       this.msg = this.replaceAll(err.message, "#", "<br>");
-      },
-      complete: () => {
-
-      }
-    });
-  }
-  */
-
 
   deleteAll() {
     this.httpClientService.deleteUsers().subscribe({
-      next: () => {
+      next: (res: any) => {
        
+        this.ok = res.message;
+        this.msg = "";
         this.allUsers = 0;
         this.users = [];
-        this.refreshData();
+
+        setTimeout(() => {
+          this.ok = '';
+          this.refreshData();
+        }, 2000);
+       
       },
       error: (err: HttpErrorResponse) => {
         
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+      
+        
       },
       complete: () => {
       }

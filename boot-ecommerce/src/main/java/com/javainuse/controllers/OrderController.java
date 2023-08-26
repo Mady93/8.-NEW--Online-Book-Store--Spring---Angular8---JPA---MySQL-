@@ -1,5 +1,6 @@
 package com.javainuse.controllers;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,12 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Order;
+import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.User;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
+import com.javainuse.services.OrderService;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -39,11 +40,13 @@ public class OrderController {
 
 	private final OrderRepository orderRepository;
 	private final UserRepository userRepository;
+	private final OrderService orderService;
 
 	@Autowired
-	public OrderController(OrderRepository orderRepository, UserRepository userRepository) {
+	public OrderController(OrderRepository orderRepository, UserRepository userRepository, OrderService orderService) {
 		this.orderRepository = orderRepository;
 		this.userRepository = userRepository;
+		this.orderService = orderService;
 	}
 
 	@GetMapping(path = "/{userId:\\d+}/add")
@@ -67,7 +70,8 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(jsonString);
 	}
 
-	@GetMapping(path = "/{userId:\\d+}/count")
+	
+	 @GetMapping(path = "/{userId:\\d+}/count")
 	public ResponseEntity<Integer> countOrders(@PathVariable("userId") Long userId)
 			throws ResourceNotFoundException, IllegalArgumentException {
 		Long count = orderRepository.countOrdersByUserId(userId);
@@ -94,6 +98,9 @@ public class OrderController {
 							+ " because no orders resource was found in the database for the user with ID: " + userId);
 		}
 	}
+	 
+
+	
 
 	@GetMapping(path = "/{userId:\\d+}/{orderId:\\d+}/one")
 	public ResponseEntity<Order> getOrderById(@PathVariable("userId") Long userId,
@@ -116,41 +123,6 @@ public class OrderController {
 
 		return ResponseEntity.ok().body(order);
 	}
-
-	
-/* 
-@DeleteMapping(path = "/{userId:\\d+}/deleteAll")
-public ResponseEntity<Object> deleteOrdersByUserId(@PathVariable("userId") Long userId)
-        throws ResourceNotFoundException, IllegalArgumentException {
-
-    List<Order> orders = orderRepository.findByUserId(userId);
-    if (orders.isEmpty()) {
-        throw new ResourceNotFoundException("No orders found for user with ID: " + userId);
-    }
-
-    for (Order order : orders) {
-        orderRepository.delete(order);
-    }
-
-    String message = "All orders for user with ID: " + userId + " have been deleted successfully";
-    return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-}
-
-
-	@DeleteMapping("/deleteAll")
-	public void deleteAlRecordsOnOrder() throws ResourceNotFoundException {
-
-		Long orderCount = orderRepository.countOrders();
-
-		if (orderCount == 0) {
-			throw new ResourceNotFoundException("No orders found to delete.");
-		} else {
-			orderRepository.deleteAll();
-		}
-		
-	}*/
-
-
 
 }
 

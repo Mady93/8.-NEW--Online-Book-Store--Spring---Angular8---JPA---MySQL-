@@ -103,11 +103,13 @@
   
     </div>
   
-    <div *ngIf='msg' [innerHTML]="msg" style="margin-top: 10px; color: red; text-align: center;">
-      <p style="color: rgb(255, 0, 0); font-size: 15px; text-align: center;"></p>
+    <div style="text-align: center;">
+      <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+      <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
     </div>
-  
+
   </form>
   
+
 
 </div>

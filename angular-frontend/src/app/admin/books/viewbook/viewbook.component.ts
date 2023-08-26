@@ -3,6 +3,7 @@ import { Book } from 'src/app/model/Book';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-viewbook',
@@ -18,6 +19,7 @@ export class ViewbookComponent implements OnInit {
   bookDeletedEvent = new EventEmitter();
 
   msg: any;
+  ok: any;
 
   constructor(private httpClientService: HttpClientService, private router: Router, private auth: AuthService) { }
 
@@ -34,51 +36,28 @@ export class ViewbookComponent implements OnInit {
   }
 
 
-  /*
-  deleteBook() {
-    // debugger;
-    // cancello da tutti gli ordini il libro eliminando la relazione con la intersect table => OrderBook
-    this.httpClientService.deleteOrderBooksByBookId(this.book.id).subscribe({
-      next: (res) => {
-        this.msg = "";
-
-       // debugger;
-
-        // elimino il libro 
-        this.httpClientService.deleteBook(this.book.id).subscribe({
-          next: (res) => {
-            this.msg = "";
-            this.bookDeletedEvent.emit();
-            this.router.navigate(['admin', 'books']);
-          },
-          error: (err) => {
-            this.msg = this.replaceAll(err.message, "#", "<br>");
-          },
-          complete: () => {
-
-          }
-        });
-
-      },
-      error: (err) => {
-        this.msg = this.replaceAll(err.message, "#", "<br>");
-      },
-      complete: () => {
-
-      }
-    });
-  }
-  */
-
   deleteBook() {
     this.httpClientService.deleteBook(this.book.id).subscribe({
-      next: (res) => {
+      next: (res: any) => {
+
         this.msg = "";
-        this.bookDeletedEvent.emit();
-        this.router.navigate(['admin', 'books']);
+        this.ok = res.message;
+
+        setTimeout(() => {
+          this.ok = '';
+          this.bookDeletedEvent.emit();
+          this.router.navigate([this.auth.role.toLowerCase(), 'books']);
+        }, 2000);
+
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+      
+        
       },
       complete: () => {
 
@@ -89,12 +68,12 @@ export class ViewbookComponent implements OnInit {
 
 
   editBook() {
-    this.router.navigate(['admin', 'books'], { queryParams: { action: 'edit', id: this.book.id } });
+    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'edit', id: this.book.id } });
   }
 
 
   closeFunction() {
-    this.router.navigate(['admin', 'books']);
+    this.router.navigate([this.auth.role.toLowerCase(), 'books']);
   }
 
 }

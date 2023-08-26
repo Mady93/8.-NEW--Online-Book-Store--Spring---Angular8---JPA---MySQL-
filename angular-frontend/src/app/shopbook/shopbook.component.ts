@@ -97,6 +97,11 @@ export class ShopbookComponent implements OnInit {
           error: (err: HttpErrorResponse) => {
             console.log(err.message);
             this.msg = this.replaceAll(err.message, "#", "<br>");
+
+            setTimeout(() => {
+              this.msg = '';
+            }, 1000);
+            
           },
           complete: () => {
             console.log("Completed countBooks()");
@@ -107,6 +112,12 @@ export class ShopbookComponent implements OnInit {
         this.allBooks = 0;
         this.books = [];
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        /*setTimeout(() => {
+          this.msg = '';
+        }, 1000);
+      */
+        
       },
       complete: () => {
         console.log("Complete getBooks()");

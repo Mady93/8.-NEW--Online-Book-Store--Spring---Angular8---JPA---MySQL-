@@ -1,4 +1,6 @@
 <div>
+
+
   <h1>Books {{auth.role}}</h1>
 
   <div style="margin-top: 60px; margin-left: 5%;" *ngIf="auth.role=='Admin'">
@@ -35,6 +37,7 @@
       </div>
   
       <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+      <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
   
   
     </div>

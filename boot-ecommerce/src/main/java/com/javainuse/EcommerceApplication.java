@@ -126,7 +126,9 @@ public class EcommerceApplication implements CommandLineRunner {
         User user3 = new User("Silvia Lolli", "Seller", "silvia@gmail.com", "11111100");
         User user4 = new User("Monalisa Silvestri", "User", "monalisa@gmail.com", "11111000");
         User user5 = new User("Ugo Fantozzi", "User", "ugo@gmail.com", "11110000");
+		
 		User user6 = new User("Salvatore Brutto", "User", "salvatore@gmail.com", "11100000");
+		User user7 = new User("Squallor", "Order", "squallor@gmail.com", "11000000");
 
 		
       
@@ -135,7 +137,9 @@ public class EcommerceApplication implements CommandLineRunner {
          userRepository.save(user3);
          userRepository.save(user4);
          userRepository.save(user5);
+
 		 userRepository.save(user6);
+		 userRepository.save(user7);
 
        
          

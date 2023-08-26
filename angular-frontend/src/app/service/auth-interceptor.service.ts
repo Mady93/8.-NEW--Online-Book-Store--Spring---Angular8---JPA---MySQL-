@@ -27,7 +27,7 @@ export class AuthInterceptorService implements HttpInterceptor {
     return next.handle(res).pipe(
       tap(
         event => {
-          if (event instanceof HttpResponse && event.status == 200) {
+          if (event instanceof HttpResponse && (event.status == 200 || event.status == 201)) {
             let token = event.headers.get("Authorization");
 
             if (token != null) {

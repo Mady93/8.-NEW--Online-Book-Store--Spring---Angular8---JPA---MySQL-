@@ -24,18 +24,15 @@ export class OrderComponent implements OnInit {
   ordersDetails: { orders: any[], total: number }[] = [];
 
   msg: any;
+  ok: any;
 
 
   ngOnInit() {
-
     this.fetchOrdersByUid(this.auth.uid);
-
   }
 
   openDetail(oid: number) {
-
     if (this.ordersDetails[oid] === undefined) this.fetchOrderById(oid);
-
   }
 
   // Aggiunto regex errori
@@ -52,17 +49,24 @@ export class OrderComponent implements OnInit {
 
     this.service.countOrders(uid).subscribe({
       next: (num: number) => {
+        this.ok = "";
         this.msg = "";
         this.allOrders = num;
 
         this.service.getOrders(uid, this.page, this.size).subscribe({
           next: (orders: Order[]) => {
             this.msg = "";
+            this.ok = "";
             this.orders = orders;
           },
           error: (err: HttpErrorResponse) => {
 
             this.msg = this.replaceAll(err.message, "#", "<br>");
+
+            setTimeout(() => {
+              this.msg = '';
+            }, 2000);
+            
 
           },
           complete: () => { }
@@ -72,6 +76,11 @@ export class OrderComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
 
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        /*setTimeout(() => {
+          this.msg = '';
+        }, 1000);
+        */
 
       },
       complete: () => { }
@@ -84,7 +93,7 @@ export class OrderComponent implements OnInit {
     this.service.getOrderBooksByOrderId(oid).subscribe({
       next: (jt: OrderBook[]) => {
         this.msg = "";
-
+        this.ok = "";
         this.ordersDetails[oid] = { orders: [], total: 0 };
 
         let total = 0;
@@ -96,6 +105,11 @@ export class OrderComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
 
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+        
 
       },
       complete: () => { }

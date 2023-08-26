@@ -72,10 +72,11 @@ exports.loginRoute = (req, res) => {
                                 });
 
                             res.setHeader('Authorization', tokenRefresh);
-                            res.status(200).send("");
+                            res.status(200).send(data);
+
 
                         } else {
-                            res.status(x.status).send("");
+                            res.status(x.status).send(data);
                         }
 
                     });
@@ -84,7 +85,7 @@ exports.loginRoute = (req, res) => {
 
             } else {
                 x.text().then(data => {
-                    res.status(x.status).send({ msg: data });
+                    res.status(x.status).send(data);
                 });
             }
         });

@@ -1,10 +1,15 @@
 package com.javainuse.services;
 
-//import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.javainuse.entities.OrderBook;
+
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 @Service
 public class OrderBookService {
@@ -13,25 +18,34 @@ public class OrderBookService {
     private EntityManager entityManager;
 
    /* @Transactional
-    public void deleteByBookId(Long bookId) {
-        entityManager.createQuery("DELETE FROM OrderBook jt WHERE jt.id.bookId = :bookId")
-            .setParameter("bookId", bookId)
-            .executeUpdate();
+    public List<OrderBook> traceDeletedAndNotByUserId(Long userId) {
+        TypedQuery<OrderBook> query = entityManager.createQuery(
+                "SELECT ob " +
+                        "FROM OrderBook ob " +
+                        "JOIN ob.order o " +
+                        "WHERE (o.state = 'Send' AND o.deleted = true) OR o.state = 'Working' " +
+                        "AND o.userId = :userId",
+                OrderBook.class);
+        
+        query.setParameter("userId", userId);
+
+        return query.getResultList();
+    
     }
 
-    
 
     @Transactional
-    public void deleteAll() {
-        entityManager.createQuery("DELETE FROM OrderBook").executeUpdate();
-    }
+    public long countDeletedAndNotByUserId(Long userId) {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(ob) " +
+                        "FROM OrderBook ob " +
+                        "JOIN ob.order o " +
+                        "WHERE ((o.state = 'Send' AND o.deleted = true) OR o.state = 'Working') " +
+                        "AND o.userId = :userId", Long.class);
 
-    
-    @Transactional
-    public void deleteByOrderId(Long orderId) {
-        entityManager.createQuery("DELETE FROM OrderBook jt WHERE jt.id.orderId = :orderId")
-            .setParameter("bookId", orderId)
-            .executeUpdate();
+        query.setParameter("userId", userId);
+
+        return query.getSingleResult();
     }
-    */
+ */
 }

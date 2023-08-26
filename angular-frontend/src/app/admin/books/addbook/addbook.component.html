@@ -1,35 +1,41 @@
-<div style="text-align: center;">
-  <h1>{{book.id == null ? 'Add' : 'Edit'}} Book - {{book.id}}</h1>
-</div>
+<div *ngIf="book">
 
-<form #recievedUser="ngForm">
-
-  
-  <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
-    <span aria-hidden="true">&times;</span>
-  </button>
-
-  <label for="name">Name</label>
-  <input type="text" class="form-control" id="name" placeholder="Book Name" [(ngModel)]="book.name" name="name">
-
-  <label for="author">Author</label>
-  <input type="text" class="form-control" id="author" placeholder="author" name="author" [(ngModel)]="book.author">
-
-  <label for="author">Price</label>
-  <input type="text" class="form-control" id="price" placeholder="price" name="price" [(ngModel)]="book.price">
-
-  <div class="form-group"><!--  *ngIf="book.id == null" -->
-    <br>
-    <input type="file" (change)="onFileChanged($event)">
-
-  </div>
-
-  <br>
 
   <div style="text-align: center;">
-    <button type="button" class="btn btn-success" (click)="saveBook()">Save Book</button>
+    <h1>{{book.id == null ? 'Add' : 'Edit'}} Book - {{book.id}}</h1>
   </div>
+  
+  <form #recievedUser="ngForm">
+  
+    
+    <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  
+    <label for="name">Name</label>
+    <input type="text" [disabled]="auth.role == 'Seller'" class="form-control" id="name" placeholder="Book Name" [(ngModel)]="book.name" name="name">
+  
+    <label for="author">Author</label>
+    <input type="text" [disabled]="auth.role == 'Seller'" class="form-control" id="author" placeholder="author" name="author" [(ngModel)]="book.author">
+  
+    <label for="author">Price</label>
+    <input type="text" class="form-control" id="price" placeholder="price" name="price" [(ngModel)]="book.price">
+  
+    <div class="form-group"><!--  *ngIf="book.id == null" -->
+      <br>
+      <input type="file" [disabled]="auth.role == 'Seller'" (change)="onFileChanged($event)">
+  
+    </div>
+  
+    <br>
+  
+    <div style="text-align: center;">
+      <button type="button" class="btn btn-success" (click)="saveBook()">Save Book</button>
+    </div>
+  
+  </form>
 
   <p *ngIf='msg' [innerHTML]="msg" class="paragraphh"></p>
+  <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
 
-</form>
+</div>

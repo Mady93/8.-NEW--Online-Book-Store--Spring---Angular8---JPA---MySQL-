@@ -23,9 +23,9 @@ export class BooksComponent implements OnInit {
   page: number = 1;
   size: number = 5;
 
-  // Aggiunto errori
+ 
   msg: any;
-  status: any;
+  ok: any;
 
   constructor(private httpClientService: HttpClientService,
     private activedRoute: ActivatedRoute, private router: Router, private auth: AuthService) { }
@@ -52,13 +52,15 @@ export class BooksComponent implements OnInit {
       next: (num: number) => {
         console.log("Length array = " + num);
         this.allBooks = num;
+        this.ok = "";
         this.msg = "";
 
         this.httpClientService.getBooks(this.page, this.size).subscribe({
-          next: (response) => {
-            console.log(response);
+          next: (res: any) => {
+            console.log(res);
+            this.ok = "";
             this.msg = "";
-            this.handleSuccessfulResponse(response);
+            this.handleSuccessfulResponse(res);
 
             this.activedRoute.queryParams.subscribe(
               (params) => {
@@ -80,6 +82,12 @@ export class BooksComponent implements OnInit {
           error: (err: HttpErrorResponse) => {
             console.log(err.message);
             this.msg = this.replaceAll(err.message, "#", "<br>");
+
+            setTimeout(() => {
+              this.msg = '';
+            }, 2000);
+      
+            
           },
           complete: () => {
             console.log("Completed getBooks()");
@@ -92,6 +100,12 @@ export class BooksComponent implements OnInit {
         this.allBooks = 0;
         this.books = [];
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+       /* setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+      */
+        
       },
       complete: () => {
         console.log("Completed countBooks()")
@@ -147,53 +161,28 @@ export class BooksComponent implements OnInit {
     this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { id, action: 'view', page: this.page } });
   }
 
-
-
-  /*deleteAll() {
-    this.httpClientService.deleteAllRecordsOnOrderBook().subscribe({
-      next: (res) => {
-        this.msg = "";
-
-
-        this.httpClientService.deleteBooks().subscribe({
-          next: () => {
-
-            this.allBooks = 0;
-            this.books = [];
-            this.refreshData();
-          },
-          error: (err: HttpErrorResponse) => {
-
-            this.msg = this.replaceAll(err.message, "#", "<br>");
-          },
-          complete: () => {
-          }
-        });
-
-
-      },
-      error: (err) => {
-        this.msg = this.replaceAll(err.message, "#", "<br>");
-      },
-      complete: () => {
-
-      }
-    });
-
-
-  }*/
-
   deleteAll(){
     this.httpClientService.deleteBooks().subscribe({
-      next: () => {
+      next: (res: any) => {
+        this.ok = res.message;
 
-        this.allBooks = 0;
-        this.books = [];
-        this.refreshData();
+        setTimeout(() => {
+          this.ok = '';
+          this.allBooks = 0;
+          this.books = [];
+          this.refreshData();
+        }, 2000);
+        
       },
       error: (err: HttpErrorResponse) => {
 
         this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+      
+        
       },
       complete: () => {
       }

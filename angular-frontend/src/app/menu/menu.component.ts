@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { faAdd, faBook, faHome, faList, faMailBulk, faUnlockKeyhole, faUser, faUserAlt, faUserGroup, faVoicemail } from '@fortawesome/free-solid-svg-icons';
+import { faAdd, faBook, faHome, faInbox, faList, faMailBulk, faUnlockKeyhole, faUser, faUserAlt, faUserGroup, faVoicemail } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../service/auth.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -23,6 +23,7 @@ export class MenuComponent implements OnInit {
   iconaView = faList;
   iconaProfile = faUserAlt;
   iconaCommunication = faMailBulk;
+  iconaInbox = faInbox;
 
   isLogin: boolean = true;
   showViewOrders: boolean = false;

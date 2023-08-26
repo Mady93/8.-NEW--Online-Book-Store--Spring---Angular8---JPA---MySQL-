@@ -18,6 +18,7 @@ export class ViewuserComponent implements OnInit {
   userDeletedEvent = new EventEmitter();
 
   msg: any;
+  ok: any;
 
   constructor(private httpClientService: HttpClientService,
     private router: Router) { }
@@ -36,18 +37,32 @@ export class ViewuserComponent implements OnInit {
   deleteUser() {
 
     this.httpClientService.deleteUser(this.user.id).subscribe({
-      next: (res) => {
+
+      next: (res: any) => {
+
+        this.ok = res.message;
         this.msg = "";
-        this.userDeletedEvent.emit();
-        this.router.navigate(['admin', 'users']);
+
+        setTimeout(() => {
+          this.ok = '';
+          this.userDeletedEvent.emit();
+          this.router.navigate(['admin', 'users']);
+        }, 2000);
+
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
+
        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+       setTimeout(() => {
+        this.msg = '';
+      }, 2000);
+      
       },
       complete: () => {
 
       }
-    })
+    });
   }
 
   closeFunction() {
@@ -55,14 +70,30 @@ export class ViewuserComponent implements OnInit {
   }
 
   onRoleChange(newRole: string) {
+    //debugger;
     this.httpClientService.setRole(this.user.id, newRole).subscribe({
-      next: (msg: any) => {
-        console.log(msg);
+      next: (res: any) => {
+        console.log(res);
+        this.ok = res.res;
+
+      setTimeout(() => {
+        this.ok = '';
+      }, 2000);
+      
       },
-      error: (msg: any) => {
-        console.log("role not changed");
+      error: (err: HttpErrorResponse) => {
+      
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+        
+      },
+      complete: () => {
+
       }
-    })
+    });
   }
 
 }

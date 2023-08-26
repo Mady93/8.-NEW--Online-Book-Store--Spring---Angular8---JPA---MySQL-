@@ -29,6 +29,11 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+
+	@Column(name = "isDeleted")
+	private boolean isDeleted;
+
+
 	@NotNull(message = "Name cannot be null")
 	@NotBlank(message = "Name cannot be blank")
 	@Column(name = "name")
@@ -53,7 +58,7 @@ public class Book {
 
 	
 	public Book(String name, String author, double price, byte[] picByte) {
-		
+		this.isDeleted = false;
 		this.name = name;
 		this.author = author;
 		this.price = price;

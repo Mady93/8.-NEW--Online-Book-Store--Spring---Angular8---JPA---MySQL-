@@ -14,6 +14,7 @@ export class RegisterLoginComponent implements OnInit {
 form  : FormGroup;
 
   msg: string[];
+  ok: any;
 
   nameErr: String[];
   emailErr: string[];
@@ -131,18 +132,19 @@ form  : FormGroup;
       let email = this.form.controls.email.value;
       let password = this.form.controls.password.value;
 
-      //email = "pippo@gmail.com";
-      //password = "11111111";
-
-
       if(this.isLogin) {
 
-       
-
         this.auth.login(email, password).subscribe({
-          next: (res) => {
-            //this.router.navigate(["/shop"]);
-            location.href="/shop";
+          next: (res: any) => {
+
+            this.ok = res.message;
+
+            setTimeout(() => {
+              this.ok = '';
+              this.router.navigate(["/shop"]);
+              //location.href="/shop";
+            }, 2000); 
+          
           },
           error: (err: HttpErrorResponse) => {
            
@@ -162,8 +164,7 @@ form  : FormGroup;
             setTimeout(() => {
               this.emailErr = [];
               this.passwordErr = [];
-            }, 3000); //  scompare dopo 3 secondi
-  
+            }, 2000); 
   
           },
           complete: () => {
@@ -174,10 +175,18 @@ form  : FormGroup;
       } else {
 
         //debugger;
-     
+            if(!this.form.valid) return;
         this.auth.register(name, email , password).subscribe({
-          next: (res) => {
-            this.router.navigate(["/login"]);
+
+          next: (res: any) => {
+
+            this.ok = res.message;
+
+            setTimeout(() => {
+              this.ok = '';
+              this.router.navigate(["/login"]);
+            }, 2000); 
+           
           },
           error: (err: HttpErrorResponse) => {
            
@@ -199,7 +208,7 @@ form  : FormGroup;
               this.nameErr = [];
               this.emailErr = [];
               this.passwordErr = [];
-            }, 3000); //  scompare dopo 3 secondi
+            }, 2000); 
   
   
           },
@@ -214,7 +223,9 @@ form  : FormGroup;
     
     }
 
-
-
-
 }
+
+
+
+
+

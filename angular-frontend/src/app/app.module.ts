@@ -32,6 +32,8 @@ import { RegisterLoginComponent } from './components/register-login/register-log
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthInterceptorService } from './service/auth-interceptor.service';
 import { ErrorComponent } from './components/error/error.component';
+import { InboxComponent } from './components/inbox/inbox.component';
+import { CommunicationComponent } from './components/communication/communication.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,9 @@ import { ErrorComponent } from './components/error/error.component';
     ShopbookComponent,
     OrderComponent,
     RegisterLoginComponent,
-    ErrorComponent
+    ErrorComponent,
+    InboxComponent,
+    CommunicationComponent
     ],
   imports: [
     BrowserModule,

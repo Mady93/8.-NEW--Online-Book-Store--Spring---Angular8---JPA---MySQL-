@@ -1,5 +1,7 @@
 package com.javainuse.services;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,7 @@ public class BookService {
     @Transactional
     public void deleteBookAndRelatedData(Long bookId) {
 
-        //ci sarebbe da fare una logica diversa in base allo stato dell'ordine, ma ci vorebbe del tempo aggiuntivo...
+        //ci sarebbe da fare una logica diversa in base allo stato dell'ordine
 
         // Elimina le righe dalla tabella di intersezione OrderBook
         entityManager.createQuery("DELETE FROM OrderBook jt WHERE jt.id.bookId = :bookId")

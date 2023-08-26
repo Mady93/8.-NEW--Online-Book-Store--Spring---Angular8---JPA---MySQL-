@@ -30,11 +30,16 @@
                 </a>
             </li>
 
+            
+            <li>
+                <a class="nav-link" *ngIf="['Order'].includes(authService.role)" routerLink="/inbox"><fa-icon [icon]="iconaInbox"
+                    class="white"></fa-icon> Inbox</a>
+            </li>
+
             <li *ngIf="['Admin','User','Seller'].includes(authService.role)">
                 <a class="nav-link" (click)="authService.logout()" routerLink="/shop"><fa-icon [icon]="iconaProfiles"
                     class="white"></fa-icon> Logout</a>
             </li>
-
 
         </ul>
 

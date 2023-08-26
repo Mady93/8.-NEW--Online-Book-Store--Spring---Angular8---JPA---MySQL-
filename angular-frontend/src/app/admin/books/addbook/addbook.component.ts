@@ -24,6 +24,7 @@ export class AddbookComponent implements OnInit {
   imgURL: any;
 
   msg: any;
+  ok: any;
 
 
   constructor(private httpClientService: HttpClientService,
@@ -106,75 +107,66 @@ export class AddbookComponent implements OnInit {
 
 
 
-  saveBook() {
+  
+  saveBook()
+  {
 
-    if (this.book.id == null) {
-      const uploadData = new FormData();
+    //debugger;
 
-      if (this.selectedFile){
-        uploadData.append('imageFile', this.selectedFile, this.selectedFile.name);
-        this.selectedFile.imageName = this.selectedFile.name;
-      }
-      
-
-      //debugger;
-
-      this.httpClient.post('http://localhost:8080/books/upload', uploadData, { observe: 'response' }).subscribe({
-        next: () => {
-          this.httpClientService.addBook(this.book).subscribe({
-            next: () => {
-             this.msg = "";
-              this.bookAddedEvent.emit();
-              this.router.navigate(['admin', 'books']);
-            },
-            error: (err: HttpErrorResponse) => {
-              this.msg = this.replaceAll(err.message, "#", "<br>");
-            },
-            complete: () => {
-
-            }
-          });
-          console.log('Image uploaded successfully');
-        },
-        error: (err: HttpErrorResponse) => {
-          console.log('Image not uploaded successfully');
-          this.msg = this.replaceAll(err.message, "#", "<br>");
-        }
-      })
-
-    } else {
+    let isImgUpload = (this.selectedFile != undefined);
+    let imgUploadObs = of({});
 
 
+    //const uploadData = new FormData();
+    if (isImgUpload) {
+      //uploadData.append('imageFile', this.selectedFile, this.selectedFile.name);
+      this.selectedFile.imageName = this.selectedFile.name;
 
-      let isImgUpload = (this.selectedFile != undefined);
-
-      //debugger;
-
-      const uploadData = new FormData();
-      if (isImgUpload) {
-        uploadData.append('imageFile', this.selectedFile, this.selectedFile.name);
-        this.selectedFile.imageName = this.selectedFile.name;
-      }
-
-      
-      let imgUploadObs = isImgUpload ? this.httpClient.post('http://localhost:8080/books/upload', uploadData, { observe: 'response' }) : of({});
-
-
-      imgUploadObs.pipe(
-        switchMap(() => this.httpClientService.updateBook(this.book, this.auth.role.toLowerCase()))
-      ).subscribe(
-        (res) => {
-          this.msg = "";
-          this.bookAddedEvent.emit();
-          this.router.navigate([this.auth.role.toLowerCase(), 'books']);
-        },
-        (err) => {
-          this.msg = this.replaceAll(err.message, "#", "<br>");
-        }
-      );
+      imgUploadObs = this.httpClientService.uploadImageBook(this.book, this.selectedFile);
     }
 
+
+    let fn = null;
+
+    if (this.book.id == null) {
+      fn = this.httpClientService.addBook.bind(this.httpClientService);
+    }else{
+
+      if (this.auth.role == "Seller"){
+        //faccio la chiamata che aggiorna solo il prezzo e inibisco il caricamento di immagini
+        fn = this.httpClientService.updateBookJustPrice.bind(this.httpClientService);
+        imgUploadObs = of({});
+      }else{
+        fn = this.httpClientService.updateBook.bind(this.httpClientService);
+      }
+
+      
+    }
+
+
+    imgUploadObs.pipe(
+      switchMap(() => fn(this.book, this.auth.role.toLowerCase()))
+    ).subscribe(
+      (res) => {
+        this.msg = "";
+        this.bookAddedEvent.emit();
+        this.router.navigate([this.auth.role.toLowerCase(), 'books']);
+      },
+      (err: HttpErrorResponse) => {
+
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+        
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+    
+      }
+    );
+
   }
+
+
+
 
   getImageColor(src: string, cb: any) {
     var image = new Image();
@@ -217,7 +209,7 @@ export class AddbookComponent implements OnInit {
   }
 
   closeFunction() {
-    this.router.navigate(['admin', 'books']);
+    this.router.navigate([this.auth.role.toLowerCase(), 'books']);
   }
 
 

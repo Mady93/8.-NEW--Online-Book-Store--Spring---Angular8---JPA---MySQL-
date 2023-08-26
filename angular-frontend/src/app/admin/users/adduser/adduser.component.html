@@ -1,42 +1,49 @@
-<div style="text-align: center;">
-  <h1>Add User</h1>
+<div>
+
+  <div style="text-align: center;">
+    <h1>Add User</h1>
+  </div>
+
+  <form #recievedUser="ngForm">
+    <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+
+
+    <label for="name">Name</label>
+    <input type="text" class="form-control" id="name" placeholder="name" [(ngModel)]="user.name" name="name">
+
+    <!-- <label for="type">Type</label>
+    <input type="text" class="form-control" id="type" placeholder="type" [(ngModel)]="user.type" name="type"> -->
+
+    <mat-form-field>
+      <mat-label>Type</mat-label>
+      <select [(ngModel)]="user.type" matNativeControl required name="type">
+        <option value="Admin">Admin</option>
+        <option value="User">User</option>
+        <option value="Seller">Seller</option>
+        <option value="Order">Order</option>
+      </select>
+    </mat-form-field>
+    
+
+    <label for="email">Email</label>
+    <input type="email" class="form-control" id="email" placeholder="email" [(ngModel)]="user.email" name="email">
+
+
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" placeholder="password" [(ngModel)]="user.password"
+      name="password">
+
+    <br>
+
+    <div style="text-align: center;">
+      <button type="button" class="btn btn-success" (click)="addUser()">Save</button>
+    </div>
+
+  </form>
+
+  <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+  <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
+
 </div>
-
-<form #recievedUser="ngForm">
-  <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
-    <span aria-hidden="true">&times;</span>
-  </button>
-  
-
-  <label for="name">Name</label>
-  <input type="text" class="form-control" id="name" placeholder="name" [(ngModel)]="user.name" name="name">
-
-  <label for="type">Type</label>
-  <input type="text" class="form-control" id="type" placeholder="type" [(ngModel)]="user.type" name="type">
-
-
-  <!--<label for="type">Type</label>
-  <select class="custom-form-control-select form-control" id="type" [(ngModel)]="user.type" name="type">
-    <option disabled default [selected]="true">Select..</option>
-    <option [value]='Admin'>Admin</option>
-    <option [value]='User'>User</option>
-    <option [value]='Seller'>Seller</option>
-  </select>
--->
-
-  <label for="email">Email</label>
-  <input type="email" class="form-control" id="email" placeholder="email" [(ngModel)]="user.email" name="email">
-
-
-  <label for="password">Password</label>
-  <input type="password" class="form-control" id="password" placeholder="password" [(ngModel)]="user.password" name="password">
-
-   <br>
- 
-   <div style="text-align: center;">
-    <button type="button" class="btn btn-success" (click)="addUser()">Save</button>
-   </div>
-
-   <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
-
-</form>

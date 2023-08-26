@@ -24,17 +24,21 @@
           <option [value]="'Admin'">Admin</option>
           <option [value]="'User'">User</option>
           <option [value]="'Seller'">Seller</option>
+          <option [value]="'Order'">Order</option>
         </select>
       </td>
     </tr>
 
   </table>
   <br>
+
   <div style="text-align: center;">
     <a class="btn btn-small btn-danger" (click)="deleteUser()">Delete</a>
-
-    <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
-
   </div>
 
+</div>
+
+<div style="text-align: center;">
+  <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+  <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
 </div>

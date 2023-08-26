@@ -7,6 +7,8 @@ import { OrderComponent } from './components/order/order.component';
 import { RegisterLoginComponent } from './components/register-login/register-login.component';
 import { ErrorComponent } from './components/error/error.component';
 import { RoleGuardService } from './service/role-guard.service';
+import { InboxComponent } from './components/inbox/inbox.component';
+import { CommunicationComponent } from './components/communication/communication.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'shop', pathMatch: 'full' },
@@ -17,6 +19,8 @@ const routes: Routes = [
   { path: 'order', canActivate: [RoleGuardService], component: OrderComponent },
   { path: 'register', component: RegisterLoginComponent },
   { path: 'login', component: RegisterLoginComponent },
+  { path: 'communication',canActivate: [RoleGuardService], component: CommunicationComponent },
+  { path: 'inbox', canActivate: [RoleGuardService], component: InboxComponent },
   { path: '**', component: ErrorComponent }
 ];
 

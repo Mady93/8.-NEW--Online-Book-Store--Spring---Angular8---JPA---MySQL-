@@ -249,4 +249,18 @@ public class GlobalExceptionHandlerRestController {
 		return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
 	}
 
+
+	// Viene sollevata quando l'ultimo admin tenta di modificare il suo ruolo da admin a basso livello
+	@ExceptionHandler(MinAdminLimitRole.class)
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	public ErrorResponse<String> handleMinRoleAdminErrorResponse(Exception ex, WebRequest request) {
+		String path = getPath(request);
+		String[] stackTraceArray = getStackTraceAsArray(ex);
+		String message = ex.getMessage();
+		int status = HttpStatus.NOT_ACCEPTABLE.value();
+		String errors = HttpStatus.NOT_ACCEPTABLE.getReasonPhrase();
+
+		return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
+	}
+
 }

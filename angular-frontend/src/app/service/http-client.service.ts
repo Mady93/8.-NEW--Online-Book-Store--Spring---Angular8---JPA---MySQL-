@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { User } from '../model/User ';
 import { Book } from '../model/Book';
 import { catchError } from 'rxjs/operators';
@@ -12,7 +12,7 @@ import { OrderBook } from '../model/OrderBook';
 })
 export class HttpClientService {
 
-  private baseURL = 'http://localhost:3000'; // Dichiarazione come membro della classe
+  private baseURL = 'http://localhost:3000'; // Dichiarazione come membro della classe -- porta middleware
 
   constructor(private httpClient: HttpClient) { }
 
@@ -52,8 +52,7 @@ export class HttpClientService {
     return this.httpClient.post<User>(`${this.baseURL}/users/setRole`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
-  } 
-
+  }
   countUsers(): Observable<number> {
     return this.httpClient.get<number>(`${this.baseURL}/users/count`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
@@ -112,10 +111,10 @@ export class HttpClientService {
     const formData = new FormData();
     formData.append('imageFile', imageFile, imageFile.name);
 
-    const headers = { 'Content-Type': 'application/json' };
-    const body = JSON.stringify(book);
+    //const headers = { 'Content-Type': 'application/json' };
+    //const body = JSON.stringify(book);
 
-    return this.httpClient.post<Book>(`${this.baseURL}/books/upload`, formData, { params: { imageFile: imageFile.name }, headers: headers }).pipe(
+    return this.httpClient.post<Book>(`${this.baseURL}/books/upload`, formData).pipe(
         catchError((err: HttpErrorResponse) => this.handleError(err))
       );
   }
@@ -133,6 +132,7 @@ export class HttpClientService {
   }
 
   addBook(newBook: Book): Observable<Book> {
+    debugger;
     const headers = { 'Content-Type': 'application/json' };
     const body = JSON.stringify(newBook);
     return this.httpClient.post<Book>(`${this.baseURL}/books/add`, body, { headers: headers }).pipe(
@@ -152,14 +152,26 @@ export class HttpClientService {
     );
   }
 
-  updateBook(updatedBook: Book, role: string): Observable<Book> {
+  updateBook(updatedBook: Book): Observable<Book> {
+
 
     delete updatedBook.picByte;
     delete updatedBook.retrievedImage;
 
     let url: string = `${this.baseURL}/books/update/${updatedBook.id}`;
-    url += (role === "seller") ? '/price' : '';
+    const headers = { 'content-type': 'application/json' };
+    
+    const body = JSON.stringify(updatedBook);
+    return this.httpClient.put<Book>(url, body, { headers: headers }).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+  }
 
+  updateBookJustPrice(updatedBook: Book): Observable<Book>{
+    delete updatedBook.picByte;
+    delete updatedBook.retrievedImage;
+
+    let url: string = `${this.baseURL}/books/update/${updatedBook.id}/price`;
     const headers = { 'content-type': 'application/json' };
     
     const body = JSON.stringify(updatedBook);
@@ -220,13 +232,6 @@ export class HttpClientService {
     );
   }
 
- 
-  deleteAlRecordsOnOrder():Observable<void> {
-    return this.httpClient.delete<void>(`${this.baseURL}/orders/deleteAll`).pipe(
-      catchError((err: HttpErrorResponse) => this.handleError(err))
-    );
-  }
-
 
 
 
@@ -246,29 +251,6 @@ export class HttpClientService {
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
-
-/*
-  deleteOrderBooksByBookId(bookId: number): Observable<void>{
-    return this.httpClient.delete<void>(`${this.baseURL}/order_book/${bookId}/delete`).pipe(
-      catchError((err: HttpErrorResponse) => this.handleError(err))
-    );
-  }*/
-
-  //aggiunto mo
-  deleteAllRecordsOnOrderBookByOrderId(orderId: number): Observable<void>{
-    return this.httpClient.delete<void>(`${this.baseURL}/order_book/${orderId}/delete/orderId`).pipe(
-      catchError((err: HttpErrorResponse) => this.handleError(err))
-    );
-  }
-  
-
-  deleteAllRecordsOnOrderBook():Observable<void> {
-    return this.httpClient.delete<void>(`${this.baseURL}/order_book/deleteAll`).pipe(
-      catchError((err: HttpErrorResponse) => this.handleError(err))
-    );
-  }
-
- 
 
 }
 

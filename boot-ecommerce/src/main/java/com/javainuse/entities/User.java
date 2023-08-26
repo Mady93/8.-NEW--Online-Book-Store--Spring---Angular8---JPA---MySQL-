@@ -46,7 +46,7 @@ public class User {
 	@Column(name = "name")
 	private String name;
 
-	@Pattern(regexp = "^(Admin|User|Seller)$", message = "Role type must be one of: Admin, User, Seller")
+	@Pattern(regexp = "^(Admin|User|Seller|Order)$", message = "Role type must be one of: Admin, User, Seller, Order")
     @Column(name = "type")
 	private String type;
 

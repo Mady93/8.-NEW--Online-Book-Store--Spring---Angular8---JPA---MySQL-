@@ -55,6 +55,8 @@ public class Order {
 	@Column(name = "state")
 	private String state;
 
+	//private boolean deleted;
+
 	@Temporal(TemporalType.TIMESTAMP)
 	@Generated(GenerationTime.INSERT)
 	@ColumnDefault("CURRENT_TIMESTAMP")

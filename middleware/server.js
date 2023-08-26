@@ -7,7 +7,7 @@ const { privateKey, publicKey } = require('./keys.js');
 const fetch = require('node-fetch');
 
 
-const refreshTokenTime = 1200;
+const refreshTokenTime = 600;
 const app = express();
 app.use(express.json());
 
@@ -60,36 +60,29 @@ const accessTable = [
 
     //Rotte users
     { path: /^\/users\/get/, groups: ["Admin"] },
-    { path: /^\/users\/\d+\/one$/, groups: ["Admin"] },
+    { path: /^\/users\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/users\/\d+\/delete$/, groups: ["Admin"] },
     { path: /^\/users\/deleteAll$/, groups: ["Admin"] },
     { path: /^\/users\/setRole$/, groups: ["Admin"] },
     { path: /^\/users\/deleteAll$/, groups: ["Admin"] },
 
     // Rotte orders
-    { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/orders\/\d+\/one$/, groups: ["Admin", "User", "Seller"] },
+    { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/orders\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/delete$/, groups: ["Admin"] },
-    { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller"] },
-   // { path: /^\/orders\/users\/\d+\/delete$/, groups: ["Admin"] },
-   // { path: /^\/orders\/users\/\d+\/deleteAll$/, groups: ["Admin"] },
-   // { path: /^\/orders\/\d+\/deleteAll$/, groups: ["Admin"] },
-
+    { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
+  
     // Rotte intersect table
-    { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/order_book\/\d+\/get$/, groups: ["Admin", "User", "Seller"] },
-    { path: /^\/order_book\/update\/\d+\/\d+$/, groups: ["Admin"] },
-   // { path: /^\/order_book\/\d+\/delete$/, groups: ["Admin"] },
-   // { path: /^\/order_book\/deleteAll$/, groups: ["Admin"] },
-   // { path: /^\/order_book\/\d+\/delete\/orderId$/, groups: ["Admin"] }, 
-    
-
+    { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/order_book\/\d+\/get$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/order_book\/update\/\d+\/\d+$/, groups: ["Admin", "User", "Seller", "Order"] },
+   
     // Rotte Books
     { path: /^\/books\/upload$/, groups: ["Admin"] },
     { path: /^\/books\/add$/, groups: ["Admin"] },
-    { path: /^\/books\/\d+\/one$/, groups: ["Admin"] },
+    { path: /^\/books\/\d+\/one$/, groups: ["Admin", "Seller"] },
     { path: /^\/books\/update\/\d+$/, groups: ["Admin", "Seller"] },
     { path: /^\/books\/\d+\/delete$/, groups: ["Admin"] },
     { path: /^\/books\/deleteAll$/, groups: ["Admin"] },
@@ -145,30 +138,68 @@ function checkAndRenewToken(uid, exp, role) {
 
             isMasterTokenValid(uid, (status, time) => {
 
+                
+
+                /*
+                //token renew limiter
+
                 let key = "" + uid;
 
                 if (tokenMap[key] === undefined || now > tokenMap[key]) {
-                    tokenMap[key] = (now + refreshTokenTime);
+                    let exp = (now + refreshTokenTime);
+                    tokenMap[key] = exp;
                 } else {
                     resolve({ state: 0 });
                 }
+                */
+
 
                 if (status == 200) {
-                    let t = (time > refreshTokenTime) ? refreshTokenTime : parseInt(time);
 
-                    t = t + "s";
 
-                    const refreshToken = jwt.sign({
-                        role: role
-                    },
-                        privateKey,
-                        {
-                            algorithm: 'RS256',
-                            expiresIn: t,
-                            subject: uid
-                        });
+                    if (time==0){
 
-                    resolve({ state: 1, token: refreshToken });
+                        resolve({state: 2});
+
+                    }else{
+
+
+                        let key = "" + uid;
+
+                        if (tokenMap[key] === undefined || now > tokenMap[key].exp) {
+                            let exp = (now + refreshTokenTime);
+                            tokenMap[key] = {exp: exp, tollerance: 3};
+                        } else if (tokenMap[key].tollerance>0) {
+                            tokenMap[key].tollerance--;
+                            resolve({state: 2});
+                        } else {
+                            resolve({state: 0});
+                        }
+
+
+                        //genero un nuovo token per il front-end
+                        let t = (time > refreshTokenTime) ? refreshTokenTime : parseInt(time);
+
+                        t = t + "s";
+
+                        const refreshToken = jwt.sign({
+                            role: role
+                        },
+                            privateKey,
+                            {
+                                algorithm: 'RS256',
+                                expiresIn: t,
+                                subject: uid
+                            });
+
+                        resolve({ state: 1, token: refreshToken });
+
+                    }
+
+
+
+
+                    
 
                 } else {
 
