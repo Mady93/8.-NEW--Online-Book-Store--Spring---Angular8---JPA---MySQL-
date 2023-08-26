@@ -53,6 +53,8 @@
         <app-addbook *ngIf="action === 'edit' || action === 'add'" [book]="selectedBook"
           (bookAddedEvent)="refreshData()"></app-addbook>
       </div>
+
+      {{selectedBook | json}}
   
     </div>
   </div>

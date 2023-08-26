@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { Book } from 'src/app/model/Book';
 import { HttpClientService } from 'src/app/service/http-client.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from 'src/app/service/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -21,7 +21,7 @@ export class ViewbookComponent implements OnInit {
   msg: any;
   ok: any;
 
-  constructor(private httpClientService: HttpClientService, private router: Router, private auth: AuthService) { }
+  constructor(private httpClientService: HttpClientService, private router: Router, private auth: AuthService, private activedRoute: ActivatedRoute) { }
 
   ngOnInit() {
   }
@@ -68,7 +68,17 @@ export class ViewbookComponent implements OnInit {
 
 
   editBook() {
-    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'edit', id: this.book.id } });
+
+
+    let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
+
+    qp.action = 'edit'
+    qp.id = this.book.id
+
+    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp });
+
+
+    //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'edit', id: this.book.id } });
   }
 
 

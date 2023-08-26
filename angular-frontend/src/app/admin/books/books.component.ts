@@ -15,7 +15,7 @@ export class BooksComponent implements OnInit {
   books: Array<Book>;
   booksRecieved: Array<Book>;
   action: string;
-  selectedBook: Book;
+  selectedBook: Book;// = new Book();
 
 
   // Aggiunto paginazione
@@ -48,6 +48,7 @@ export class BooksComponent implements OnInit {
   }
 
   refreshData() {
+    //debugger;
     this.httpClientService.countBooks().subscribe({
       next: (num: number) => {
         console.log("Length array = " + num);
@@ -113,12 +114,30 @@ export class BooksComponent implements OnInit {
     });
   }
 
+
+  /* funzione che preserva i queryparam attualmente presenti e permette di sovrascriverne i valori */
+  navigate(path: any, newQp: any)
+  {
+    let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
+
+    for (let key of Object.keys(newQp))
+    {
+      qp[key] = newQp[key];
+    }
+
+    return this.router.navigate(path, { queryParams: qp });
+  }
+
+
+
   renderPage(event: number) {
     this.page = (event);
 
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
-    if (qp.action == 'view') delete qp.action;
+    if (qp.action) delete qp.action;
 
+
+    qp.page = this.page;
 
 
     this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp });
@@ -146,20 +165,36 @@ export class BooksComponent implements OnInit {
     }
   }
 
-  addBook() {
 
-    let t = document.querySelector("form");
 
-    if (t != undefined) t.style.backgroundImage = "none";
+  async addBook() {
 
-    this.selectedBook = new Book();
-    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'add', page: this.page } });
+    //let t = document.querySelector("form");
+
+    //if (t != undefined) t.style.backgroundImage = "none";
+    
+    
+    //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'add' } });
+    //this.selectedBook = {id: null, name: "", author: "", price: 0, picByte: null, isAdded: false, isDeleted: false, retrievedImage: null};
+    
+    this.navigate([this.auth.role.toLowerCase(), 'books'], { action: 'add' }).then(
+      ()=>{
+        this.selectedBook = new Book();
+      }
+    )
+    
+    //this.selectedBook = new Book();
+    //location.href = "/"+this.auth.role.toLowerCase()+'/books?action=add';
 
   }
 
   viewBook(id: number) {
-    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { id, action: 'view', page: this.page } });
+    //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { id, action: 'view' } });
+    this.navigate([this.auth.role.toLowerCase(), 'books'], {id: id, action: 'view' });
   }
+
+
+
 
   deleteAll(){
     this.httpClientService.deleteBooks().subscribe({

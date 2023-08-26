@@ -21,7 +21,8 @@ export class AddbookComponent implements OnInit {
   @Output()
   bookAddedEvent = new EventEmitter();
   private selectedFile;
-  imgURL: any;
+  //imgURL: any;
+  bColor: any = {r: 128, g: 128, b: 128};
 
   msg: any;
   ok: any;
@@ -37,17 +38,20 @@ export class AddbookComponent implements OnInit {
 
     let act = this.activedRoute.snapshot.queryParams["action"];
 
+    
     if (act == "edit") {
 
-      this.setImage(this.book.retrievedImage);
+      this.setButtonColor(this.book.retrievedImage);
 
     }
+    
 
   }
 
-  private setImage(url) {
+  
 
-    document.querySelector("form").style.backgroundImage = "url('" + url + "')";
+  private setButtonColor(url) {
+
     this.getImageColor(url, (r, g, b) => {
 
       let t = { r: r, g: g, b: b };
@@ -75,7 +79,8 @@ export class AddbookComponent implements OnInit {
         t.b = 255 - t.b;
       }
 
-      (<HTMLElement>document.querySelector(".btn-success")).style.backgroundColor = "rgba(" + t.r + "," + t.g + "," + t.b + "," + 255 + ")";
+      this.bColor = {r: t.r, g: t.g, b: t.b};
+      //(<HTMLElement>document.querySelector(".btn-success")).style.backgroundColor = "rgba(" + t.r + "," + t.g + "," + t.b + "," + 255 + ")";
 
     });
 
@@ -88,8 +93,9 @@ export class AddbookComponent implements OnInit {
     let reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = (event2) => {
-      this.imgURL = reader.result;
-      this.setImage(this.imgURL);
+      //this.imgURL = reader.result;
+      this.setButtonColor(reader.result);
+      this.book.retrievedImage = reader.result.toString();
     };
 
   }
