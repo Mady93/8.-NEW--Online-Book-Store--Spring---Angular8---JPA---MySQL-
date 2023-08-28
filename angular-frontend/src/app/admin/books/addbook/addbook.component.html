@@ -7,7 +7,7 @@
     <h1>{{book.id == null ? 'Add' : 'Edit'}} Book - {{book.id}}</h1>
   </div>
   
-  <form #recievedUser="ngForm" [style.backgroundImage]="'url(' + book.retrievedImage + ')'">
+  <form #recievedUser="ngForm" [style.backgroundImage]="'url(data:image/jpeg;base64,' + book.picByte + ')'">
   
     
     <button type="button" class="close" aria-label="Close" (click)="closeFunction()">

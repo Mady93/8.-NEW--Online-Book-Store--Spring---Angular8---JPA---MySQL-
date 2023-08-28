@@ -57,7 +57,7 @@ public class BookController {
 		
 		@GetMapping(path = "/count")
 		public ResponseEntity<Integer> countBooks() throws ResourceNotFoundException, IllegalArgumentException {
-			Long count = bookRepository.count();
+			Long count = bookRepository.countNotDeleted();
 			if (count == 0) {
 				throw new ResourceNotFoundException(
 						"Unable to perform the count. No books resource was found in the database");
@@ -71,7 +71,9 @@ public class BookController {
 		public ResponseEntity<List<Book>> getBooks(@RequestParam("page") int page, @RequestParam("size") int size)
 				throws ResourceNotFoundException, IllegalArgumentException {
 			Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
-			Page<Book> pagedResult = bookRepository.findAll(pageable);
+			//Page<Book> pagedResult = bookRepository.findAll(pageable);
+			//Page<Book> pagedResult = bookRepository.findByNotDeleted(pageable);
+			Page<Book> pagedResult = bookRepository.findByNotDeleted(pageable);
 			if (pagedResult.hasContent()) {
 				return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
 			} else {
@@ -195,14 +197,18 @@ public class BookController {
 		 */
 
 
-		 @DeleteMapping(path = "/{bookId:\\d+}/delete")
+		@DeleteMapping(path = "/{bookId:\\d+}/delete")
 		public ResponseEntity<Object> deleteBook(@PathVariable("bookId") Long bookId)
 				throws ResourceNotFoundException, IllegalArgumentException {
 
 			Optional<Book> optional = bookRepository.findById(bookId);
 			if (optional.isPresent()) {
 
-				bookService.deleteBookAndRelatedData(bookId);
+				Book book = optional.get();
+
+				book.setDeleted(true);
+				bookRepository.save(book);
+
 
 				String message = "Book and associated data have been deleted successfully";
 				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
@@ -218,7 +224,8 @@ public class BookController {
 
 			List<Book> list = (List<Book>) bookRepository.findAll();
 			if (!list.isEmpty()) {
-				bookService.deleteAll();
+				//bookService.deleteAll();
+				bookService.deleteAllBooks();
 
 				String message = "Books and their associated data have been deleted successfully";
 				return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
@@ -228,5 +235,37 @@ public class BookController {
 						"Unable to perform the deletion. No books resource was found in the database");
 			}
 		}
+
+
+
+
+		@GetMapping(path = "/{name}/find")
+		public ResponseEntity<List<Book>> findBook(@PathVariable("name") String name) throws ResourceNotFoundException, IllegalArgumentException {
+
+			System.out.println(name);
+			//bookRepository.findAll(null, null)
+
+			List<Book> res = bookRepository.findByNameContaining(name);
+
+			return new ResponseEntity<>(res, HttpStatus.OK);
+			
+		}
+
+		/*
+		public ResponseEntity<List<Book>> getBooks(@RequestParam("page") int page, @RequestParam("size") int size)
+				throws ResourceNotFoundException, IllegalArgumentException {
+			Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+			//Page<Book> pagedResult = bookRepository.findAll(pageable);
+			//Page<Book> pagedResult = bookRepository.findByNotDeleted(pageable);
+			Page<Book> pagedResult = bookRepository.findByNotDeleted(pageable);
+			if (pagedResult.hasContent()) {
+				return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
+			} else {
+				throw new ResourceNotFoundException(
+						"Unable to retrieve the page: " + page + ". No books resource was found in the database");
+			}
+		}
+		*/
+
 
 }

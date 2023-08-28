@@ -7,7 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-viewuser',
   templateUrl: './viewuser.component.html',
-  styleUrls: ['./viewuser.component.css']
+  styleUrls: ['./viewuser.component.scss']
 })
 export class ViewuserComponent implements OnInit {
 

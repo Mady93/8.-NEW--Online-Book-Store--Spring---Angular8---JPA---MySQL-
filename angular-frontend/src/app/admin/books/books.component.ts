@@ -8,7 +8,7 @@ import { AuthService } from 'src/app/service/auth.service';
 @Component({
   selector: 'app-books',
   templateUrl: './books.component.html',
-  styleUrls: ['./books.component.css']
+  styleUrls: ['./books.component.scss']
 })
 export class BooksComponent implements OnInit {
 
@@ -157,7 +157,7 @@ export class BooksComponent implements OnInit {
       bookwithRetrievedImageField.id = book.id;
       bookwithRetrievedImageField.name = book.name;
       //populate retrieved image field so that book image can be displayed
-      bookwithRetrievedImageField.retrievedImage = 'data:image/jpeg;base64,' + book.picByte;
+      //bookwithRetrievedImageField.retrievedImage = 'data:image/jpeg;base64,' + book.picByte;
       bookwithRetrievedImageField.author = book.author;
       bookwithRetrievedImageField.price = book.price;
       bookwithRetrievedImageField.picByte = book.picByte;
@@ -169,25 +169,19 @@ export class BooksComponent implements OnInit {
 
   async addBook() {
 
-    //let t = document.querySelector("form");
-
-    //if (t != undefined) t.style.backgroundImage = "none";
+    let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
     
+    qp.action = 'add';
+    delete qp.id;
     
-    //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'add' } });
-    //this.selectedBook = {id: null, name: "", author: "", price: 0, picByte: null, isAdded: false, isDeleted: false, retrievedImage: null};
-    
-    this.navigate([this.auth.role.toLowerCase(), 'books'], { action: 'add' }).then(
-      ()=>{
-        this.selectedBook = new Book();
-      }
-    )
-    
-    //this.selectedBook = new Book();
-    //location.href = "/"+this.auth.role.toLowerCase()+'/books?action=add';
-
+    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp }).then(()=>{
+      this.selectedBook = new Book();
+    });
   }
 
+
+
+  
   viewBook(id: number) {
     //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { id, action: 'view' } });
     this.navigate([this.auth.role.toLowerCase(), 'books'], {id: id, action: 'view' });

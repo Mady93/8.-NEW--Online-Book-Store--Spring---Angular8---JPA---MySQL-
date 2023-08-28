@@ -4,17 +4,24 @@ details {
     padding: 5px;
     margin: 30px;
     margin-bottom: 0px;
+    position: relative;
 }
+
 
 details table {
     margin-bottom: 0px;
+}
+
+summary{
+    display: flow-root;
+    padding: 5px;
 }
 
 img {
     width: 128px;
 }
 
-label {
+.bookName {
     position: absolute;
     bottom: 0px;
     left: 0px;
@@ -23,6 +30,48 @@ label {
     font-weight: bold;
     padding: 5px;
     width: 100%;
+}
+
+.notAvailable{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.8);
+    color: red;
+    font-weight: bold;
+    padding: 5px;
+    width: 100%;
+    font-size: 32px;
+    transform: translateY(-50%);
+    top: 50%;
+}
+
+
+.deleteBtn
+{
+
+    all: unset;
+    /*position: absolute;
+    right: 0px;*/
+    background: #f55e5e;
+    border: 1px solid red;
+    border-radius: 5px;
+    padding: 2px;
+    float: right;
+}
+
+
+.editBtn
+{
+
+    all: unset;
+    /*position: absolute;
+    right: 0px;*/
+    background: #52f52e;
+    border: 1px solid rgb(23, 117, 4);
+    border-radius: 5px;
+    padding: 2px;
+    float: right;
 }
 
 
@@ -53,4 +102,15 @@ th,td {
 
 .custom {
     margin-top: 50px!important;
+}
+
+.search
+{
+    display: inline-block;
+    margin-left: 50px;
+}
+
+.search > *
+{
+    margin-left: 5px;
 }

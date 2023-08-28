@@ -11,7 +11,7 @@ import { AuthService } from 'src/app/service/auth.service';
 @Component({
   selector: 'app-addbook',
   templateUrl: './addbook.component.html',
-  styleUrls: ['./addbook.component.css']
+  styleUrls: ['./addbook.component.scss']
 })
 export class AddbookComponent implements OnInit {
 
@@ -41,14 +41,14 @@ export class AddbookComponent implements OnInit {
     
     if (act == "edit") {
 
-      this.setButtonColor(this.book.retrievedImage);
+      this.setButtonColor("data:image/jpeg;base64,"+this.book.picByte);
 
     }
     
 
   }
 
-  
+
 
   private setButtonColor(url) {
 
@@ -95,7 +95,8 @@ export class AddbookComponent implements OnInit {
     reader.onload = (event2) => {
       //this.imgURL = reader.result;
       this.setButtonColor(reader.result);
-      this.book.retrievedImage = reader.result.toString();
+      //debugger;
+      this.book.picByte = reader.result.toString().substring(23);
     };
 
   }
@@ -114,8 +115,7 @@ export class AddbookComponent implements OnInit {
 
 
   
-  saveBook()
-  {
+  saveBook() {
 
     //debugger;
 
@@ -149,12 +149,18 @@ export class AddbookComponent implements OnInit {
       
     }
 
-
+    debugger;
     imgUploadObs.pipe(
       switchMap(() => fn(this.book, this.auth.role.toLowerCase()))
     ).subscribe(
       (res) => {
+       // this.ok = res.message;
         this.msg = "";
+
+       /* setTimeout(() => {
+          this.ok = '';
+        }, 2000);*/
+
         this.bookAddedEvent.emit();
         this.router.navigate([this.auth.role.toLowerCase(), 'books']);
       },

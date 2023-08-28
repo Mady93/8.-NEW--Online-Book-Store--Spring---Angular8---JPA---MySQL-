@@ -69,4 +69,9 @@ public class Order {
 		this.createdAt = new Date();
 	}
 
+	public String getUserEmail()
+	{
+		return this.user.getEmail();
+	}
+
 }

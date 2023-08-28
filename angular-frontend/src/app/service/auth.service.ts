@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { catchError, shareReplay, tap } from 'rxjs/operators';
 import { User } from '../model/User ';
 import { HttpClientService } from './http-client.service';
@@ -13,8 +13,10 @@ import { OrderBook } from '../model/OrderBook';
 export class AuthService {
 
   role: string = "";
-  uid: number = 0;
+  uid: number = null;
   exp: number;
+  private upd = new Subject<void>();
+  
 
   constructor(private http: HttpClient, private httpClientService: HttpClientService) {
     this.checkState();
@@ -31,10 +33,21 @@ export class AuthService {
     token = token.substring(a+1,b);
     let data = JSON.parse(atob(token));
 
+    //debugger;
+
     this.role = data.role;
     this.uid = data.sub;
     this.exp = data.exp;
+
+    this.upd.next();
+
   }
+
+
+  update(): Observable<void> {
+    return this.upd.asObservable();
+  }
+
 
   buy() {
 
@@ -103,6 +116,7 @@ export class AuthService {
     return this.http.post<any>(url, body, { headers: headers, observe: 'response' }).pipe(
         tap(response => {
           if (response.status === 200) {
+            //debugger;
             const token = response.headers.get("Authorization");
             localStorage.setItem('token', token); // Salva il token nella localStorage
             this.checkState(); // Aggiorna i dati dell'utente loggato
@@ -117,7 +131,7 @@ export class AuthService {
   }
 
   logout() {
-    this.uid = 0;
+    this.uid = null;
     localStorage.removeItem("token");
     this.role = "";
   }

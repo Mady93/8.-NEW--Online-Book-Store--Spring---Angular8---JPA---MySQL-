@@ -137,12 +137,12 @@ form  : FormGroup;
         this.auth.login(email, password).subscribe({
           next: (res: any) => {
 
-            this.ok = res.message;
+            //debugger;
+            this.ok = res.body.message;
 
             setTimeout(() => {
               this.ok = '';
               this.router.navigate(["/shop"]);
-              //location.href="/shop";
             }, 2000); 
           
           },

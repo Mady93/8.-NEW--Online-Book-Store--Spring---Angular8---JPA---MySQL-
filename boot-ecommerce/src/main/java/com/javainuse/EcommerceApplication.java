@@ -144,7 +144,7 @@ public class EcommerceApplication implements CommandLineRunner {
        
          
 		// Create Orders
-		Order order1 = new Order(user1,"Send");
+		Order order1 = new Order(user1,"Working");
 		order1.setUser(user1);
 
 		Order order2 = new Order(user1,"Send");

@@ -69,45 +69,9 @@ GET http://127.0.0.1:3000/api/joinTables/3/count
 ###
 
 
-GET http://127.0.0.1:8080/books/get?page=0&size=4
-
-
-
-###
-
-
-
-
-DELETE http://127.0.0.1:8080/joinTable/deleteAll
-Host: localhost:3000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0
-Accept: */*
-Accept-Language: it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3
-Accept-Encoding: gzip, deflate, br
-Access-Control-Request-Method: DELETE
-Access-Control-Request-Headers: authorization
-Referer: http://127.0.0.1:4200/
-//Origin: http://127.0.0.1:4200
-Connection: keep-alive
-Sec-Fetch-Dest: empty
-Sec-Fetch-Mode: cors
-Sec-Fetch-Site: cross-site
-
+GET http://127.0.0.1:8080/books/dea/find
 
 
 ###
 
-DELETE http://127.0.0.1:8080/orders/deleteAll
-Host: localhost:3000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0
-Accept: */*
-Accept-Language: it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3
-Accept-Encoding: gzip, deflate, br
-Access-Control-Request-Method: DELETE
-Access-Control-Request-Headers: authorization
-Referer: http://127.0.0.1:4200/
-//Origin: http://127.0.0.1:4200
-Connection: keep-alive
-Sec-Fetch-Dest: empty
-Sec-Fetch-Mode: cors
-Sec-Fetch-Site: cross-site
+

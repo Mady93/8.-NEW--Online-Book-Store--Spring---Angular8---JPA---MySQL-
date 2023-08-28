@@ -10,21 +10,6 @@ export class RoleGuardService implements CanActivate {
 
   constructor(private router: Router,private authService: AuthService) { }
 
-
-  /*
-   { path: 'admin/users', canActivate: [RoleGuardService], component: UsersComponent },
-  { path: 'admin/books', canActivate: [RoleGuardService], component: BooksComponent },
-  { path: 'seller/books', canActivate: [RoleGuardService], component: BooksComponent },
-  { path: 'shop', component: ShopbookComponent },
-  { path: 'order', canActivate: [RoleGuardService], component: OrderComponent },
-  { path: 'register', component: RegisterLoginComponent },
-  { path: 'login', component: RegisterLoginComponent },
-  { path: 'communication', component: CommunicationComponent },
-  { path: 'inbox', component: InboxComponent },
- 
-  */
-
-
   resources: any = {
     "/admin/users": ["Admin"],
     "/admin/books": ["Admin"],

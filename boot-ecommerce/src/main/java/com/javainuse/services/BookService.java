@@ -13,6 +13,16 @@ public class BookService {
     @PersistenceContext
     private EntityManager entityManager;
 
+
+
+
+    @Transactional
+    public void deleteAllBooks() {
+        entityManager.createQuery("UPDATE Book SET isDeleted = true").executeUpdate();
+    }
+
+
+
     @Transactional
     public void deleteBookAndRelatedData(Long bookId) {
 

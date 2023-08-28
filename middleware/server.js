@@ -5,9 +5,11 @@ const routes = require('./controller.js');
 const { createProxyMiddleware, fixRequestBody } = require('http-proxy-middleware');
 const { privateKey, publicKey } = require('./keys.js');
 const fetch = require('node-fetch');
+const constants = require('./define.js');
+const url = require('url');
 
 
-const refreshTokenTime = 600;
+//const refreshTokenTime = 20;
 const app = express();
 app.use(express.json());
 
@@ -69,7 +71,7 @@ const accessTable = [
     // Rotte orders
     { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/orders\/\d+\/delete$/, groups: ["Admin"] },
+    { path: /^\/orders\/\d+\/delete$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
@@ -99,6 +101,7 @@ function getPermissionByPath(path) {
     return null;
 }
 
+
 function sendJWT(cb) {
     const url = "http://127.0.0.1:8080/users/setPubKey";
     const options = {
@@ -114,6 +117,7 @@ function sendJWT(cb) {
             cb(x.status);
         });
 }
+
 
 function isMasterTokenValid(uid, cb) {
 
@@ -131,27 +135,16 @@ function isMasterTokenValid(uid, cb) {
         })
 }
 
+
 function checkAndRenewToken(uid, exp, role) {
     const now = Math.floor(Date.now() / 1000);
+    console.log(exp-now);
     if (exp && now > exp) {
         return new Promise((resolve, reject) => {
 
             isMasterTokenValid(uid, (status, time) => {
 
-                
 
-                /*
-                //token renew limiter
-
-                let key = "" + uid;
-
-                if (tokenMap[key] === undefined || now > tokenMap[key]) {
-                    let exp = (now + refreshTokenTime);
-                    tokenMap[key] = exp;
-                } else {
-                    resolve({ state: 0 });
-                }
-                */
 
 
                 if (status == 200) {
@@ -159,7 +152,7 @@ function checkAndRenewToken(uid, exp, role) {
 
                     if (time==0){
 
-                        resolve({state: 2});
+                        resolve({state: 3});
 
                     }else{
 
@@ -167,7 +160,7 @@ function checkAndRenewToken(uid, exp, role) {
                         let key = "" + uid;
 
                         if (tokenMap[key] === undefined || now > tokenMap[key].exp) {
-                            let exp = (now + refreshTokenTime);
+                            let exp = (now + constants.REFRESH_TOKEN_TIME);
                             tokenMap[key] = {exp: exp, tollerance: 3};
                         } else if (tokenMap[key].tollerance>0) {
                             tokenMap[key].tollerance--;
@@ -178,7 +171,7 @@ function checkAndRenewToken(uid, exp, role) {
 
 
                         //genero un nuovo token per il front-end
-                        let t = (time > refreshTokenTime) ? refreshTokenTime : parseInt(time);
+                        let t = (time > constants.REFRESH_TOKEN_TIME) ? constants.REFRESH_TOKEN_TIME : parseInt(time);
 
                         t = t + "s";
 
@@ -216,8 +209,167 @@ function checkAndRenewToken(uid, exp, role) {
     }
 }
 
+
+function handleToken(token)
+{
+
+    return new Promise((resolve, reject) => {
+
+        let role = "*";
+        let exp = 0;
+
+        let response = {uid: null, role: "*", exp: 0, tokenRefreshResponse: null};
+
+        if (token != null && token.indexOf("Bearer") == 0) {
+            token = token.substr(7);
+
+            try {
+
+                jwt.verify(token, publicKey, { algorithms: ['RS256'], ignoreExpiration: true }, (err, decoded) => {
+
+                    if (err) console.log(err);
+
+                    role = decoded.role;
+                    uid = decoded.sub;
+                    exp = decoded.exp;
+
+                    response.uid = uid;
+                    response.role = role;
+                    response.exp = exp;
+            
+                    // se il token e' scaduto e il token master e' ancora valido effettuto un refresh 
+                    checkAndRenewToken(uid, exp, role).then(res0 => {
+    
+                        let trr = {status: 200, headers: {}, msg: ""};
+    
+                        switch (res0.state) {
+                            case 0:
+                                trr.status = 406;
+                                trr.msg = "Expired token invalidated, use the new token";
+                                //resolve(ret);
+                                break;
+                            case 1:
+                                trr.Authorization = res0.token;
+                            case 2:
+                                break;
+                            case 3:
+                                trr.status = 401;
+                                trr.msg = "Master token expired";
+                        }
+
+                        response.tokenRefreshResponse = trr;
+                        resolve(response);
+
+
+                    });
+                });
+        
+            } catch (err) {
+        
+                //return res.status(401).json(err);
+                //resolve({status: 401, msg: err});
+                response.tokenRefreshResponse = {status: 401, msg: err};
+                resolve(response);
+        
+            }
+            
+        }
+        else
+        {
+            resolve(response);
+        }
+
+    });
+
+}
+
+
+function isUidCoherent(url, uid)
+{
+    let ret = true;
+    let x = url.match(/orders\/(\d+)/);
+
+    if (x && x[1]){
+        let qpuid = x[1];
+        ret = (qpuid==uid);
+    }
+
+    return ret;
+}
+
+
+function checkToken(req, res, next) {
+
+    let path = req.originalUrl;
+    let authUsers = getPermissionByPath(path);
+    let token = req.headers.authorization;
+
+    if (req.method === "OPTIONS" || path.endsWith("/register")) {
+        next();
+        return;
+    }
+
+
+    handleToken(token).then(res0 => {
+
+        let response = {status: 200, headers: {}};
+
+        //verifico se ho qualche risposta http da inoltrare
+        let httpRes = res0.tokenRefreshResponse;
+        if (httpRes)
+        {
+            if (httpRes.status != 200) res.status(httpRes.status).send(httpRes.msg);
+            if (httpRes.Authorization) res.setHeader('Authorization', httpRes.Authorization);
+        }
+
+
+        //letto uid e role
+        uid = res0.uid;
+        role = res0.role;
+
+        /* se ho un uid, estratto dal token e' sicuramente valido lo passo al backend per ulteriori controlli*/
+        if (uid)
+        {
+            /*
+            let parsedUrl = url.parse(path);
+            let queryParams = querystring.parse(parsedUrl.query);
+            queryParams.vuid = uid;
+            queryParams.vrole = role;
+
+            req.url = parsedUrl.pathname+"?"+querystring.stringify(queryParams);
+            */
+
+            //req.query.myQueryParam = 'valore_del_query_parametro';
+            req.query.vuid = uid;
+            req.query.vrole = role;
+        }
+
+        
+        
+
+
+        if (authUsers == null || authUsers.includes(role)) {
+            // Puoi andare avanti
+            next();
+        } else {
+            // Rispondi con status 403 Forbidden
+            const timestamp = Date.now();
+            res.status(401).json({ message: "Unauthorized", timestamp: timestamp, status: 401 });
+        }
+
+    });
+
+    
+
+}
+
+
+
+
+
+
 // Middleware per verificare il token JWT
-async function checkToken(req, res, next) {
+async function checkToken0(req, res, next) {
 
     //debugger;
     let path = req.originalUrl;
@@ -284,6 +436,12 @@ async function checkToken(req, res, next) {
     }
 
 }
+
+
+
+
+
+
 
 // Endpoint per il login
 app.options('/login', (req, res) => {

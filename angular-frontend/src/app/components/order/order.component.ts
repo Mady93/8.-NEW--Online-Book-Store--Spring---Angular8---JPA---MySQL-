@@ -4,6 +4,7 @@ import { Order } from 'src/app/model/Order';
 import { AuthService } from 'src/app/service/auth.service';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Book } from 'src/app/model/Book';
 
 @Component({
   selector: 'app-order',
@@ -20,6 +21,9 @@ export class OrderComponent implements OnInit {
   size: number = 3;
   orders: Order[] = [];
   allOrders: number = 0;
+  results: Book[] = [];
+  selectedResult: Book = null;
+  selectedOrderId: number;
 
   ordersDetails: { orders: any[], total: number }[] = [];
 
@@ -121,6 +125,81 @@ export class OrderComponent implements OnInit {
     this.page = (event);
     this.ordersDetails = [];
     this.fetchOrdersByUid(1);
+  }
+
+
+  deleteOrder(oid: number){
+    //TODO
+  }
+
+  addBook(oid: number){
+
+    if (!this.selectedResult) return;
+
+    let ob: OrderBook = new OrderBook();
+    ob.book = this.selectedResult;
+    ob.order = this.orders.find(order => {
+      return order.id === +oid;
+    });
+    ob.quantity = 1;
+    delete ob.book.picByte;
+
+    this.service.addOrderBook(ob).subscribe({
+      next: () => {
+        this.fetchOrderById(oid);
+      }
+    })
+    
+  }
+
+
+  updateQuantity(ob: OrderBook){
+
+    delete ob.book.picByte;
+
+    this.service.updateOrderBook(ob).subscribe({
+      next: () => {
+        this.fetchOrderById(ob.order.id);
+        console.log("update successfully");//TODO_MSG
+      }
+    });
+
+  }
+
+
+
+  findBook(event, oid: number){
+
+    this.selectedResult = null;
+    this.selectedOrderId = oid;
+
+    let that = this;
+
+    let name = event.target.value;
+    this.service.findBookByName(name).subscribe({
+      next: (books: Book[]) => {
+
+        //creo un array di id di libri gia' presenti nell'ordine
+        let alreadyPresentBid = that.ordersDetails[oid].orders.map(x=>x.id.bookId)
+        //filtro i libri che sono gia presenti nel carrello
+        this.results = books.filter(x=>!alreadyPresentBid.includes(x.id));
+        //prendo come default il primo risultato filtrato
+        if (this.results.length>0) this.selectedResult = this.results[0];
+
+      },
+      error: () => {
+
+      }
+    });
+
+  }
+
+  selectNewBook(event)
+  {
+    let bid: number = parseInt(event.target.value);
+    this.selectedResult = this.results.find(book => {
+      return book.id === +bid;
+    });
   }
 
 }

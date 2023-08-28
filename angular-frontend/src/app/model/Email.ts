@@ -1,4 +1,4 @@
-export class Book {
+export class Email {
     from: string;
     to: string;
     subject: string;

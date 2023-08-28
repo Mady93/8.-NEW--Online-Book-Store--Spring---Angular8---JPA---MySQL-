@@ -8,7 +8,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 @Component({
   selector: 'app-viewbook',
   templateUrl: './viewbook.component.html',
-  styleUrls: ['./viewbook.component.css']
+  styleUrls: ['./viewbook.component.scss']
 })
 export class ViewbookComponent implements OnInit {
 

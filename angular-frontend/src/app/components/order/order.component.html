@@ -1,14 +1,30 @@
+
+
+
 <div class="align">
   <h1 class="size">My Orders</h1>
 </div>
 
 <div *ngIf="allOrders > 0" class="custom">
 
-  <details *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}"
+  <details *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}; let i = index"
     (click)="openDetail(order.id)"> 
     <summary>
-      <!--<b>Order of: {{order.createdAt | date: 'dd/MM/yyyy'}}</b>-->
-      <b>Order of: {{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}}</b>
+
+      <b>{{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}} - ({{order.state}})</b>
+      
+      <input class="deleteBtn" *ngIf="order.state=='Working'" type="button" (click)="deleteOrder(order.id)" value="Delete order"/>
+
+      <div class="search" *ngIf="order.state=='Working'">
+        <input type="text" placeholder="Cerca libro" (keyup)="findBook($event, order.id)" #inp/>
+        <select *ngIf="selectedOrderId == order.id" (change)="selectNewBook($event)">
+          <option value="{{res.id}}" *ngFor="let res of results">{{res.name}}</option>
+        </select>
+        <input *ngIf="selectedOrderId == order.id" class="editBtn" type="button" (click)="addBook(order.id)" value="Add"/>
+      </div>
+      
+      
+      
     </summary>
    
     <div class="table-responsive">
@@ -24,13 +40,20 @@
         <tbody>
           <tr *ngFor="let ele of ordersDetails[order.id]?.orders">
             <td>
-              <div style="position: relative; display: inline-block;">
-                <img src="data:image/jpeg;base64,{{ele.book.picByte}}" />
-                <label>{{ele.book.name}}</label>
+              <div style="position: relative;">
+                <div style="position: relative; display: inline-block;">
+                  <img src="data:image/jpeg;base64,{{ele.book.picByte}}" />
+                  <label class="bookName">{{ele.book.name}}</label>
+                  
+                </div>
+                <label *ngIf="ele.book.isDeleted" class="notAvailable">Not available</label>
               </div>
             </td>
             <td>{{ele.book.author}}</td>
-            <td>{{ele.quantity}}</td>
+
+            <td *ngIf="order.state!='Working'">{{ele.quantity}}</td>
+            <td *ngIf="order.state=='Working'"><input type="number" (change)="updateQuantity(ele)" [(ngModel)]="ele.quantity"/></td>
+
             <td>{{ele.book.price | currency:'USD'}}</td>
           </tr>
           <tr>
@@ -56,3 +79,5 @@
   <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
   <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
 </div>
+
+

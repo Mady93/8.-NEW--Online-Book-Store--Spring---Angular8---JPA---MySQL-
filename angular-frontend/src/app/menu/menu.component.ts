@@ -8,7 +8,7 @@ import { HttpClientService } from '../service/http-client.service';
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css']
+  styleUrls: ['./menu.component.scss']
 })
 export class MenuComponent implements OnInit {
 
@@ -51,15 +51,29 @@ export class MenuComponent implements OnInit {
     }); 
     
 
-    this.updateUserData();
+    /*faccio un subscribe alla variabile uid, che si accorge di un cambio a caldo dovuto ad un login*/
+    this.authService.update().subscribe({
+      next: ()=>{
+        this.updateUserData(this.authService.uid);
+      }
+    });
+
+    /*prendo le info dell'utente loggato basandomi sull'id dell'utente che ho in questo momento*/
+    this.updateUserData(this.authService.uid);
+
     
   }
 
 
-  private updateUserData() {
-    const userId = this.authService.uid;
 
-    this.httpClienteService.getUser(userId).subscribe(
+
+
+  private updateUserData(uid: number) {
+
+    if (!uid) return;
+
+
+    this.httpClienteService.getUser(uid).subscribe(
       (userData) => {
         //debugger;
         this.userName = userData.name;
@@ -68,7 +82,7 @@ export class MenuComponent implements OnInit {
         console.error('Errore nel recuperare i dati utente:', error);
       }
     );
-    
+  
   }
 
   

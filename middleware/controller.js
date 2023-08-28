@@ -2,6 +2,8 @@ const jwt = require('jsonwebtoken');
 const http = require('http');
 const fetch = require('node-fetch');
 const { privateKey } = require('./keys.js');
+const constants = require('./define.js');
+
 
 
 /*
@@ -67,7 +69,7 @@ exports.loginRoute = (req, res) => {
                                 privateKey,
                                 {
                                     algorithm: 'RS256',
-                                    expiresIn: '1200s',
+                                    expiresIn: constants.REFRESH_TOKEN_TIME+'s',
                                     subject: data.id
                                 });
 

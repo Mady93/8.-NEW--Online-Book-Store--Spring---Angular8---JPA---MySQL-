@@ -6,11 +6,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { User } from '../model/User ';
 import { faCartPlus, faCartShopping, faDollarSign, faQuestion, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../service/auth.service';
+import { B64_IMG_PREFIX } from 'src/define';
 
 @Component({
   selector: 'app-shopbook',
   templateUrl: './shopbook.component.html',
-  styleUrls: ['./shopbook.component.css']
+  styleUrls: ['./shopbook.component.scss']
 })
 
 export class ShopbookComponent implements OnInit {
@@ -60,6 +61,7 @@ export class ShopbookComponent implements OnInit {
 
 
 
+
     if (localStorage["boughtCart"] === "true")
     {
       localStorage["boughtCart"] = false;
@@ -72,13 +74,10 @@ export class ShopbookComponent implements OnInit {
     }
 
     this.refreshData();
+    
   }
 
 
-  //Aggiunto quantity nel localStorage
-  updateQuantity() {
-    localStorage.setItem('cart', JSON.stringify(this.cartBooks));
-  }
 
   //Modificato in quanto si necessita di un refresh per ricevere il next dei valori successivi della paginazione
   refreshData() {
@@ -112,17 +111,18 @@ export class ShopbookComponent implements OnInit {
         this.allBooks = 0;
         this.books = [];
         this.msg = this.replaceAll(err.message, "#", "<br>");
-
-        /*setTimeout(() => {
-          this.msg = '';
-        }, 1000);
-      */
-        
       },
       complete: () => {
         console.log("Complete getBooks()");
       }
     });
+
+
+
+
+
+
+
   }
 
 
@@ -145,16 +145,61 @@ export class ShopbookComponent implements OnInit {
       bookwithRetrievedImageField.id = book.id;
       bookwithRetrievedImageField.name = book.name;
       //populate retrieved image field so that book image can be displayed
-      bookwithRetrievedImageField.retrievedImage = 'data:image/jpeg;base64,' + book.picByte;
+      //bookwithRetrievedImageField.retrievedImage = 'data:image/jpeg;base64,' + book.picByte;
       bookwithRetrievedImageField.author = book.author;
       bookwithRetrievedImageField.price = book.price;
       bookwithRetrievedImageField.picByte = book.picByte;
+      bookwithRetrievedImageField.isDeleted = book.isDeleted;
       this.books.push(bookwithRetrievedImageField);
     }
+
+    
+    //ciclo che inibisce il pulsante addCart per gli ogetti gia' nel carrello
+    for (let ele of this.cartBooks) {
+      let book = this.books.find(book => {
+        return book.id === +ele.id;
+      });
+
+      if (book) book.isAdded = true;
+    }
+    
   }
+
+
+
+
+  //Aggiunto quantity nel localStorage
+  updateQuantity() {
+    localStorage.setItem('cart', JSON.stringify(this.cartBooks));
+  }
+
+
 
   addToCart(bookId) {
 
+
+    let book = this.books.find(book => {
+      return book.id === +bookId;
+    });
+
+    let cartData = [];
+    let data = localStorage.getItem('cart');
+
+    if (data !== null) {
+      cartData = JSON.parse(data);
+    }
+
+    delete book.picByte;
+    book["q"] = 1;
+
+    cartData.push(book);
+    this.cartBooks = cartData;
+    localStorage.setItem('cart', JSON.stringify(cartData));
+    //make the isAdded field of the book added to cart as true
+    book.isAdded = true;
+
+
+    /*
     //retrieve book from books array using the book id
     let book = this.books.find(book => {
       return book.id === +bookId;
@@ -188,11 +233,14 @@ export class ShopbookComponent implements OnInit {
     localStorage.setItem('cart', JSON.stringify(cartData));
     //make the isAdded field of the book added to cart as true
     book.isAdded = true;
+    */
   }
 
+  /*
   updateCartData(cartData) {
     this.cartBooks = cartData;
   }
+  */
 
   goToCart() {
     this.router.navigate(['/order']);

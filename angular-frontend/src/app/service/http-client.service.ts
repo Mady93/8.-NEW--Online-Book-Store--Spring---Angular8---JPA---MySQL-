@@ -106,7 +106,13 @@ export class HttpClientService {
   // BOOK
 
 
-  // Non ancora usato
+  findBookByName(name: string): Observable<Book[]> {
+    return this.httpClient.get<Book[]>(`${this.baseURL}/books/${name}/find`).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+  }
+
+
   uploadImageBook(book: Book, imageFile: any): Observable<Book> {
     const formData = new FormData();
     formData.append('imageFile', imageFile, imageFile.name);
@@ -132,7 +138,9 @@ export class HttpClientService {
   }
 
   addBook(newBook: Book): Observable<Book> {
-    debugger;
+
+    delete newBook.picByte;
+
     const headers = { 'Content-Type': 'application/json' };
     const body = JSON.stringify(newBook);
     return this.httpClient.post<Book>(`${this.baseURL}/books/add`, body, { headers: headers }).pipe(
@@ -156,7 +164,7 @@ export class HttpClientService {
 
 
     delete updatedBook.picByte;
-    delete updatedBook.retrievedImage;
+    //delete updatedBook.retrievedImage;
 
     let url: string = `${this.baseURL}/books/update/${updatedBook.id}`;
     const headers = { 'content-type': 'application/json' };
@@ -169,7 +177,7 @@ export class HttpClientService {
 
   updateBookJustPrice(updatedBook: Book): Observable<Book>{
     delete updatedBook.picByte;
-    delete updatedBook.retrievedImage;
+    //delete updatedBook.retrievedImage;
 
     let url: string = `${this.baseURL}/books/update/${updatedBook.id}/price`;
     const headers = { 'content-type': 'application/json' };
@@ -248,6 +256,17 @@ export class HttpClientService {
 
   getOrderBooksByOrderId(orderId: number): Observable<OrderBook[]>{
     return this.httpClient.get<OrderBook[]>(`${this.baseURL}/order_book/${orderId}/get`).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+  }
+
+
+  updateOrderBook(ob: OrderBook): Observable<OrderBook> {
+
+    const headers = { 'Content-Type': 'application/json' };
+    const body = JSON.stringify(ob);
+
+    return this.httpClient.put<OrderBook>(`${this.baseURL}/order_book/update/${ob.book.id}/${ob.order.id}`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }

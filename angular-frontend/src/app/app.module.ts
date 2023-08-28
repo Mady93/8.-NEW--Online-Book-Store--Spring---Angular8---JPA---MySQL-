@@ -10,6 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { MatTableModule } from '@angular/material';
 //import { ToastrModule } from 'ngx-toastr';
 
 
@@ -66,6 +67,7 @@ import { CommunicationComponent } from './components/communication/communication
     MatIconModule,
     FontAwesomeModule,
     //ToastrModule.forRoot()
+    MatTableModule,
   ],
   providers: [
     HttpClientService,

@@ -3,9 +3,11 @@ package com.javainuse.entities;
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
-import javax.validation.constraints.NotBlank;
+//import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 //import com.javainuse.validators.ByteArrayNotEmpty;
 //import com.javainuse.validators.MaxLength;
@@ -15,7 +17,8 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 
-
+@NamedQuery(name = "Book.findByNotDeleted", query = "SELECT b FROM Book b WHERE b.isDeleted IN('false')")
+@NamedQuery(name = "Book.countNotDeleted", query = "SELECT count(b) FROM Book b WHERE b.isDeleted IN('false')")
 @Entity
 @Table(name = "books")
 @Data
@@ -35,12 +38,12 @@ public class Book {
 
 
 	@NotNull(message = "Name cannot be null")
-	@NotBlank(message = "Name cannot be blank")
+	//@NotBlank(message = "Name cannot be blank")
 	@Column(name = "name")
 	private String name;
 
 	@NotNull(message = "Author cannot be null")
-	@NotBlank(message = "Author cannot be blank")
+	//@NotBlank(message = "Author cannot be blank")
 	//@Pattern(regexp = "^[a-zA-Z\\s]*$", message = "Author can only contain letters and spaces")
 	@Pattern(regexp = "^[\\p{L}\\s.,'’‘-]*$", message = "Author can only contain characters, spaces, special characters and accented characters")
 	@Column(name = "author")
@@ -63,6 +66,13 @@ public class Book {
 		this.author = author;
 		this.price = price;
 		this.picByte = picByte;
+	}
+
+
+	@JsonProperty("isDeleted")
+	boolean getIsDeleted()
+	{
+		return this.isDeleted;
 	}
 
 

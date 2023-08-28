@@ -8,7 +8,7 @@ import { faAdd } from '@fortawesome/free-solid-svg-icons';
 @Component({
   selector: 'app-adduser',
   templateUrl: './adduser.component.html',
-  styleUrls: ['./adduser.component.css']
+  styleUrls: ['./adduser.component.scss']
 })
 export class AdduserComponent implements OnInit {
 
@@ -55,7 +55,7 @@ export class AdduserComponent implements OnInit {
   
         setTimeout(() => {
           this.msg = '';
-        }, 1000);
+        }, 2000);
       },
       complete: () => {
       }

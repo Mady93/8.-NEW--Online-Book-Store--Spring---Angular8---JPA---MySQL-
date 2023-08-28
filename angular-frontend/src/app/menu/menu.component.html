@@ -36,7 +36,7 @@
                     class="white"></fa-icon> Inbox</a>
             </li>
 
-            <li *ngIf="['Admin','User','Seller'].includes(authService.role)">
+            <li *ngIf="['Admin','User','Seller','Order'].includes(authService.role)">
                 <a class="nav-link" (click)="authService.logout()" routerLink="/shop"><fa-icon [icon]="iconaProfiles"
                     class="white"></fa-icon> Logout</a>
             </li>
@@ -44,7 +44,7 @@
         </ul>
 
         <ul class="navbar-nav profile">
-            <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin','User','Seller'].includes(authService.role)">
+            <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin','User','Seller','Order'].includes(authService.role)">
                 <a ngbDropdownToggle class="nav-link" id="ordersDropdown" role="button" aria-haspopup="true"
                     aria-expanded="false">
 

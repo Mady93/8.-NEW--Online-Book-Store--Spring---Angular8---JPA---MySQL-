@@ -27,23 +27,6 @@ Content-Type: application/json
 }
 
 
-
-###
-
-
-OPTIONS http://127.0.0.1:3000/orders/1/add
-Host: localhost:8080
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0
-Accept: */*
-Accept-Language: it-IT,it;q=0.8,en-US;q=0.5,en;q=0.3
-Accept-Encoding: gzip, deflate, br
-Access-Control-Request-Method: GET
-Access-Control-Request-Headers: authorization
-Referer: http://127.0.0.1:4200/
-Origin: http://127.0.0.1:4200/
-
-
-
 ###
 
 
@@ -58,7 +41,10 @@ Authorization: Bearer {{tokenAdmin}}
 GET http://127.0.0.1:3000/users/1/one
 Authorization: Bearer {{tokenUser}}
 
+###
 
+GET http://127.0.0.1:3000/books/1/one
+Authorization: Bearer {{tokenAdmin}}
 
 
 ###

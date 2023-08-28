@@ -91,6 +91,7 @@ public class OrderBookController {
 
 	}
 
+
 	
 	@PutMapping(path = "/update/{bookId:\\d+}/{orderId:\\d+}", consumes = "application/json")
 	public ResponseEntity<Object> putOrderBook(@PathVariable("bookId") Long bookId,
@@ -107,12 +108,19 @@ public class OrderBookController {
 						"The order intersection row with ID: " + OrderBooksId + " was not found in the database");
 			}
 
-			existingOrderBook.setQuantity(updatedOrderBook.getQuantity());
-			existingOrderBook.setPrice(updatedOrderBook.getPrice());
+			Integer q = updatedOrderBook.getQuantity();
+			String message;
 
-			orderBookRepository.save(existingOrderBook);
+			if (q>0) {
+				existingOrderBook.setQuantity(updatedOrderBook.getQuantity());
+				orderBookRepository.save(existingOrderBook);
+				message = "The order intersection row with ID: " + OrderBooksId + " was updated successfully";
+			}else{
+				orderBookRepository.delete(existingOrderBook);
+				message = "The book in current order has been cancelled";
+			}
 
-			String message = "The order intersection row with ID: " + OrderBooksId + " was updated successfully";
+			
 			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 		} else {
 			throw new ResourceNotFoundException(
