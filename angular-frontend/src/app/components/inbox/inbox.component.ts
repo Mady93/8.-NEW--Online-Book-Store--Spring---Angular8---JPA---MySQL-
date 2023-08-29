@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Order } from 'src/app/model/Order';
-import { Book } from 'src/app/model/Book';
+import { HttpClientService } from 'src/app/service/http-client.service';
+import { AuthService } from 'src/app/service/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { OrderBook } from 'src/app/model/OrderBook';
+
 @Component({
   selector: 'app-inbox',
   templateUrl: './inbox.component.html',
@@ -8,26 +12,141 @@ import { Book } from 'src/app/model/Book';
 })
 export class InboxComponent implements OnInit {
 
-  //page
+  constructor(private service: HttpClientService, private auth: AuthService) { }
+
   page: number = 1;
   size: number = 3;
   orders: Order[] = [];
   allOrders: number = 0;
+  ordersDetails: { orders: any[], total: number }[] = [];
 
-
-  displayedColumns: string[] = ['Title', 'Author', 'Quantity', 'Price'];
-  /*
-  dataSource: Book[] = [
-    { Title: 'Book 1', Author: 'Author 1', Quantity: 1, Price: 20 },
-    { Title: 'Book 2', Author: 'Author 2', Quantity: 2, Price: 15 },
-    { Title: 'Book 3', Author: 'Author 3', Quantity: 3, Price: 49 },
-  ];
-  */
-  constructor() { }
+  msg: any;
+  ok: any;
 
   ngOnInit() {
- 
+    this.fetchOrders();
+  }
+
+  openDetail(oid: number) {
+    if (this.ordersDetails[oid] === undefined) this.fetchOrderById(oid);
   }
 
 
+  fetchOrderById(oid: number) {
+
+    this.service.getOrderBooksByOrderId(oid).subscribe({
+      next: (jt: OrderBook[]) => {
+        this.msg = "";
+        this.ok = "";
+        this.ordersDetails[oid] = { orders: [], total: 0 };
+
+        let total = 0;
+        for (let ele of jt) total += ele.quantity * ele.price;
+
+        this.ordersDetails[oid].orders = jt;
+        this.ordersDetails[oid].total = total;
+
+      },
+      error: (err: HttpErrorResponse) => {
+
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+        
+
+      },
+      complete: () => { }
+    });
+
+  }
+
+
+
+
+  // Aggiunto regex errori
+  escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
+
+  // Aggiunto regex errori
+  replaceAll(str, find, replace) {
+    return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+  }
+
+  fetchOrders() {
+    this.service.countTotalOrders().subscribe({
+      next: (num: number) => {
+        this.ok = "";
+        this.msg = "";
+        this.allOrders = num;
+  
+        this.service.getWorkingOrders(this.page, this.size).subscribe({
+          next: (orders: Order[]) => {
+            this.msg = "";
+            this.ok = "";
+            this.orders = orders; 
+          },
+          error: (err: HttpErrorResponse) => {
+            this.msg = this.replaceAll(err.message, "#", "<br>");
+  
+            setTimeout(() => {
+              this.msg = '';
+            }, 2000);
+          },
+          complete: () => { }
+        });
+      },
+      error: (err: HttpErrorResponse) => {
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+
+      },
+      complete: () => { }
+    });
+  }
+  
+
+  renderPage(event: number) {
+    this.page = (event);
+    this.ordersDetails = [];
+    this.fetchOrders();
+  }
+
+  updateOrderState(order: Order) {
+   // debugger;
+    this.service.updateOrder(order, "Send").subscribe({
+      next: (res: any) => {
+        this.ok = res.message; 
+
+        setTimeout(() => {
+          this.ok = '';
+          this.fetchOrders(); 
+        }, 2000);
+
+      },
+      error: (err: HttpErrorResponse) => {
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+  
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+      },
+      complete: () => { }
+    });
+  }
+  
+
+
+
 }
+
+
+
+
+
+

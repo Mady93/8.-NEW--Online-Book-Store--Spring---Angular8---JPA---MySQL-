@@ -1,7 +1,9 @@
 package com.javainuse.controllers;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -29,13 +31,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.javainuse.entities.Email;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.User;
 import com.javainuse.exceptions.ResourceNotFoundException;
+import com.javainuse.repositories.EmailRepository;
 import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
 import com.javainuse.services.EmailService;
+import com.javainuse.services.OrderBookService;
 import com.javainuse.services.OrderService;
 
 @RestController
@@ -47,12 +52,21 @@ public class OrderController {
 	private final OrderRepository orderRepository;
 	private final UserRepository userRepository;
 	private final OrderService orderService;
+	private final OrderBookService orderBookService;
+
+		//faccio l'autowire del servizio mail
+	private final EmailService emailService;
+	private final EmailRepository emailRepository;
+	
 
 	@Autowired
-	public OrderController(OrderRepository orderRepository, UserRepository userRepository, OrderService orderService) {
+	public OrderController(OrderRepository orderRepository, UserRepository userRepository, OrderService orderService, EmailService emailService, OrderBookService orderBookService, EmailRepository emailRepository) {
 		this.orderRepository = orderRepository;
 		this.userRepository = userRepository;
 		this.orderService = orderService;
+		this.emailService = emailService;
+		this.emailRepository = emailRepository;
+		this.orderBookService = orderBookService;
 	}
 
 	@GetMapping(path = "/{userId:\\d+}/add")
@@ -130,7 +144,7 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 
-
+/* 
 	@DeleteMapping(path = "/{orderId:\\d+}/delete")
 	public ResponseEntity<Order> getOrderById(@PathVariable("orderId") Long orderId)
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -144,14 +158,56 @@ public class OrderController {
 				
 		return ResponseEntity.ok().body(order);
 	}
+*/
+
+
+@DeleteMapping(path = "/{orderId:\\d+}/delete")
+public ResponseEntity<Object> deleteOrder(@PathVariable("orderId") Long orderId)
+		throws ResourceNotFoundException, IllegalArgumentException {
+
+	Optional<Order> orderOptional = orderRepository.findById(orderId);
+	Order order = orderOptional.orElseThrow(
+			() -> new ResourceNotFoundException("Order with ID: " + orderId + " not found in the database"));
+
+	// Prima di eliminare l'ordine, elimina i record correlati nella tabella
+	// "order_books"
+	// che fanno riferimento all'ordine
+	orderBookService.deleteByOrder(order);
+	orderRepository.delete(order);
+
+	String successMessage = "Order deleted successfully";
+    Map<String, Object> response = new HashMap<>();
+    response.put("order", order);
+    response.put("message", successMessage);
+
+    return ResponseEntity.ok().body(response);
+
+}
 
 
 
 
 
-	//faccio l'autowire del servizio mail
-	@Autowired
-	EmailService emailService;
+ /* 
+	@PutMapping(path = "/update/{orderId:\\d+}/{state}", consumes = "application/json")
+	public ResponseEntity<Object> updateState(@PathVariable("orderId") Long orderId, @PathVariable("state") String state)
+				throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
+
+		Optional<Order> op = orderRepository.findById(orderId);
+		Order order = op.orElseThrow(
+				() -> new ResourceNotFoundException("Order with ID: " + orderId + " not found in the database"));
+
+		order.setState(state);
+		orderRepository.save(order);
+
+		//notifico all'utente il cambio di stato dell'ordine
+		//emailService.sendEmail(order.getUserEmail(),"Order #"+order.getId(), "Dear customer, your order has been changed in: "+state);
+		emailService.sendEmail("bingone3@gmail.com", "Order #"+order.getId(), "Dear customer, your order has been changed in: "+state);
+
+		return ResponseEntity.status(200).body(order);
+
+	}
+*/
 
 
 	@PutMapping(path = "/update/{orderId:\\d+}/{state}", consumes = "application/json")
@@ -166,17 +222,62 @@ public class OrderController {
 		orderRepository.save(order);
 
 		//notifico all'utente il cambio di stato dell'ordine
-		emailService.sendEmail(order.getUserEmail(), "Order #"+order.getId(), "Dear customer, your order has been approved");
+		//emailService.sendEmail(order.getUserEmail(),"Order #"+order.getId(), "Dear customer, your order has been changed in: "+state);
+		
+		String userEmail = order.getUser().getEmail();
+		emailService.sendEmail(userEmail, "Order #" + order.getId(), "Dear customer, your order has been changed to: " + state);
+		
 
-		return ResponseEntity.status(200).body(order);
+		Email email = new Email();
+		email.setFrom("Order manager");
+		email.setSubject("Order #" + order.getId());
+		email.setBody("Dear customer, your order has been changed to: " + state);
+		email.setTo(order.getUser().getEmail());
+		email.setUser(order.getUser());
+		emailRepository.save(email);
+
+
+		//emailService.sendEmail("bingone3@gmail.com", "Order #"+order.getId(), "Dear customer, your order has been changed in: "+state);
+		String successMessage = "Order: "+order.getId()+" has been updated successfully to state: " +state;
+		Map<String, Object> response = new HashMap<>();
+		response.put("order", order);
+		response.put("message", successMessage);
+		return ResponseEntity.status(200).body(response);
 
 	}
 
 
+
+
+	@GetMapping(path = "/count/all")
+	public ResponseEntity<Integer> countAllOrders()
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Long count = orderRepository.countTotalOrdersInWorkingState();
+		if (count == 0) {
+			throw new ResourceNotFoundException(
+					"Unable to perform the count. No orders resource was found in the database!");
+		} else {
+			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
+		}
+	}
+
+
+
+	@GetMapping(path="/inbox/all")
+	public ResponseEntity<List<Order>> getOrders(@RequestParam("page") int page,
+			@RequestParam("size") int size)
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+		Page<Order> pagedResult = orderRepository.getOrdersInWorkingStateWithDetails(pageable);
+		if (pagedResult.hasContent()) {
+			return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
+		} else {
+			throw new ResourceNotFoundException(
+					"Unable to retrieve the page: " + page
+							+ " because no orders resource was found in the database");
+		}
+	}
+
 }
-
 	
 	
-	
-
-

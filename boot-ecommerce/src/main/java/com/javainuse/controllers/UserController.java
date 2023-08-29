@@ -230,7 +230,7 @@ public ResponseEntity<Object> login(@RequestBody User user)
 
 
 	@GetMapping(path = "/{uid:\\d+}/getTokenTime")
-	public ResponseEntity<Object> refreshToken(@PathVariable Long uid) throws Exception {
+	public ResponseEntity<Object> refreshToken(@PathVariable("uid") Long uid) throws Exception {
 
 		Optional<User> optional = userRepository.findById(uid);
 		User user = optional.orElseThrow(

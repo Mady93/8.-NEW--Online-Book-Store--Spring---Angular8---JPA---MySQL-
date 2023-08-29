@@ -1,25 +1,69 @@
-<mat-table [dataSource]="dataSource" class="mat-elevation-z8">
-  <ng-container matColumnDef="title">
-    <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
-    <mat-cell *matCellDef="let book">{{ book.Title }}</mat-cell>
-  </ng-container>
 
-  <ng-container matColumnDef="author">
-    <mat-header-cell *matHeaderCellDef>Author</mat-header-cell>
-    <mat-cell *matCellDef="let book">{{ book.Author }}</mat-cell>
-  </ng-container>
+<div class="align">
+  <h1 class="size">Accept Orders</h1>
+</div>
 
-  <ng-container matColumnDef="quantity">
-    <mat-header-cell *matHeaderCellDef>Quantity</mat-header-cell>
-    <mat-cell *matCellDef="let book">{{ book.Quantity }}</mat-cell>
-  </ng-container>
+<div *ngIf="allOrders > 0" class="custom">
 
-  <ng-container matColumnDef="price">
-    <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
-    <mat-cell *matCellDef="let book">{{ book.Price }}</mat-cell>
-  </ng-container>
+  <div *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}; let i = index">
 
-  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-</mat-table>
+  <details *ngIf="order.user.id !=auth.uid" (click)="openDetail(order.id)">
+
+    <summary>
+
+      <b>{{order.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}} - (State: <span style="color: brown;">{{order.state}}</span>)</b>
+
+      <input class="deleteBtn" type="button" (click)="updateOrderState(order)" value="Update order state" />
+
+    </summary>
+
+    <div class="table-responsive" *ngIf="order.state=='Working'">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ele of ordersDetails[order.id]?.orders">
+            <td>
+              <div style="position: relative;">
+                <div style="position: relative; display: inline-block;">
+                  <img src="data:image/jpeg;base64,{{ele.book.picByte}}" />
+                  <label class="bookName">{{ele.book.name}}</label>
+                  
+                </div>
+              </div>
+            </td>
+            <td>{{ele.book.author}}</td>
+            <td>{{ele.quantity}}</td>
+            <td>{{ele.book.price | currency:'USD'}}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Total: {{ ordersDetails[order.id]?.total | currency:'USD' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+  </details>
+
+</div>
+
+</div>
+
+<div class="custom-margin d-flex justify-content-center" *ngIf="allOrders > 0">
+  <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
+</div>
+
+<div class="custom-margin">
+  <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+  <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
+</div>
 

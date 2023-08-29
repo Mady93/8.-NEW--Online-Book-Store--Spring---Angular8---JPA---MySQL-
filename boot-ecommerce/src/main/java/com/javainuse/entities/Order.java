@@ -36,9 +36,10 @@ import lombok.ToString;
 @NamedQuery(name = "Order.findOrderByUserId", query = "SELECT o FROM Order o WHERE o.user.id = :userId")
 @NamedQuery(name = "Order.countOrderByUserId", query = "SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId")
 @NamedQuery(name = "Order.findOrdersByUser", query = "SELECT o FROM Order o WHERE o.user = :user")
-
 @NamedQuery(name = "Order.countOrders", query = "SELECT COUNT(o) FROM Order o")
 
+@NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query ="SELECT o FROM Order o WHERE o.state = 'Working'")
+@NamedQuery(name = "Order.countTotalOrdersInWorkingState", query ="SELECT COUNT(o) FROM Order o WHERE o.state = 'Working'")
 public class Order {
 
 	@Id

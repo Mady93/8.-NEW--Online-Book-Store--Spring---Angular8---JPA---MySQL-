@@ -23,9 +23,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Book> getOrderBooksById(Long orderId);
 
-    long countOrders();
-
-    // aggiunto mo
     List<Order> findByUserId(Long userId);
+
+
+    // aggiunti mo
+    Long countTotalOrdersInWorkingState();
+
+    Page<Order> getOrdersInWorkingStateWithDetails(Pageable pageable);
 
 }

@@ -60,7 +60,7 @@ let tokenMap = {};
 
 const accessTable = [
 
-    //Rotte users
+    //Routes User
     { path: /^\/users\/get/, groups: ["Admin"] },
     { path: /^\/users\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/users\/\d+\/delete$/, groups: ["Admin"] },
@@ -68,20 +68,24 @@ const accessTable = [
     { path: /^\/users\/setRole$/, groups: ["Admin"] },
     { path: /^\/users\/deleteAll$/, groups: ["Admin"] },
 
-    // Rotte orders
+    // Routes Order
     { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/delete$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/orders\/count\/all(\?.*)?$/, groups: ["Order"] },
+    { path: /^\/orders\/inbox\/all(\?.*)?$/, groups: ["Order"] },
+    { path: /^\/orders\/update\/\d+\/[a-zA-Z]+(\?.*)?$/, groups: ["Order"] },
+   
   
-    // Rotte intersect table
+    // Routes intersect table
     { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/order_book\/\d+\/get$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/order_book\/update\/\d+\/\d+$/, groups: ["Admin", "User", "Seller", "Order"] },
    
-    // Rotte Books
+    // Routes Book
     { path: /^\/books\/upload$/, groups: ["Admin"] },
     { path: /^\/books\/add$/, groups: ["Admin"] },
     { path: /^\/books\/\d+\/one$/, groups: ["Admin", "Seller"] },
@@ -89,6 +93,9 @@ const accessTable = [
     { path: /^\/books\/\d+\/delete$/, groups: ["Admin"] },
     { path: /^\/books\/deleteAll$/, groups: ["Admin"] },
 
+     // Routes Email
+     { path: /^\/emails\/\d+\/list$/, groups: ["Admin", "User", "Seller", "Order"] }
+    
 ];
 
 function getPermissionByPath(path) {

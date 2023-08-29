@@ -81,10 +81,10 @@ export class OrderComponent implements OnInit {
 
         this.msg = this.replaceAll(err.message, "#", "<br>");
 
-        /*setTimeout(() => {
+        setTimeout(() => {
           this.msg = '';
-        }, 1000);
-        */
+        }, 2000);
+        
 
       },
       complete: () => { }
@@ -105,6 +105,9 @@ export class OrderComponent implements OnInit {
 
         this.ordersDetails[oid].orders = jt;
         this.ordersDetails[oid].total = total;
+
+        if (jt.length==0) this.deleteOrder(oid);
+
       },
       error: (err: HttpErrorResponse) => {
 
@@ -124,12 +127,36 @@ export class OrderComponent implements OnInit {
   renderPage(event: number) {
     this.page = (event);
     this.ordersDetails = [];
-    this.fetchOrdersByUid(1);
+    this.fetchOrdersByUid(this.auth.uid);
   }
 
 
   deleteOrder(oid: number){
     //TODO
+    this.service.deleteOrder(oid).subscribe({
+      next: (res: any)=>{
+        this.msg = "";
+        this.ok = res.message;
+
+        setTimeout(() => {
+          this.ok = '';
+          this.fetchOrdersByUid(this.auth.uid);
+        }, 2000);
+
+      },
+      error: (err: HttpErrorResponse) => {
+
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+        
+
+      },
+      complete: () => { }
+
+    })
   }
 
   addBook(oid: number){
@@ -157,11 +184,31 @@ export class OrderComponent implements OnInit {
 
     delete ob.book.picByte;
 
+    var that = this;
+
     this.service.updateOrderBook(ob).subscribe({
-      next: () => {
-        this.fetchOrderById(ob.order.id);
-        console.log("update successfully");//TODO_MSG
-      }
+      next: (res: any) => {
+
+        this.msg = "";
+        this.ok = res.message;
+
+        setTimeout(() => {
+          this.ok = '';
+          this.fetchOrderById(ob.order.id);
+        }, 2000);
+        //console.log("update successfully");//TODO_MSG
+      },
+      error: (err: HttpErrorResponse) => {
+
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+        
+
+      },
+      complete: () => { }
     });
 
   }
