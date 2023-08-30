@@ -70,7 +70,7 @@ const accessTable = [
 
     // Routes Order
     { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/orders\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/orders\/\d+\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/delete$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },

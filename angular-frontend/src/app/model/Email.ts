@@ -1,10 +1,10 @@
-import { User } from "./User ";
+import { Order } from "./Order";
 
 export class Email {
     from: string;
     to: string;
     subject: string;
     body: string;
-    user: User;
+    order: Order;
     sendedAt: Date;
 }

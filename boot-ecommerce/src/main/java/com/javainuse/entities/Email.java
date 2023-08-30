@@ -12,6 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -35,9 +36,9 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "emails")
-@NamedQuery(
-    name = "Email.getEmailByUserId", query = "SELECT m FROM Email m WHERE m.user.id = :userId"
-)public class Email {
+//@NamedQuery(name = "Email.getEmailByUserId", query = "SELECT m FROM Email m WHERE m.user.id = :userId")
+@NamedQuery(name = "Email.getEmailByUserId", query = "SELECT DISTINCT m FROM Email m, Order o WHERE m.order.user.id = :userId")
+public class Email {
 
 	@Id
 	@Column(name = "id")
@@ -60,10 +61,17 @@ import lombok.ToString;
 	@Column(name = "body")
 	private String body;
 
+	/*
 	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "userId", referencedColumnName = "id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
+	*/
+
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
+	@JoinColumn(name = "orderId", referencedColumnName = "id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Order order;
 	
 	@Temporal(TemporalType.TIMESTAMP)
     @Generated(GenerationTime.INSERT)
@@ -71,13 +79,13 @@ import lombok.ToString;
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date sendedAt; 
 	
-	public Email(String from,String to, String subject, String body,User user) {
-		
+	public Email(String from,String to, String subject, String body/*, User user*/, Order order) {
 		this.from = from;
 		this.to = to;
 		this.subject = subject;
 		this.body = body;
-		this.user = user;
+		//this.user = user;
+		this.order = order;
 		this.sendedAt = new Date();
 	} 
 	

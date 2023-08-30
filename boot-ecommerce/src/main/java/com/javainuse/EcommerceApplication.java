@@ -11,11 +11,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.javainuse.entities.Book;
+import com.javainuse.entities.Email;
 import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.OrderBook.OrderBooksId;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
 import com.javainuse.repositories.BookRepository;
+import com.javainuse.repositories.EmailRepository;
 import com.javainuse.repositories.OrderBookRepository;
 import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
@@ -39,6 +41,9 @@ public class EcommerceApplication implements CommandLineRunner {
 		
 		@Autowired
 		OrderRepository orderRepository;
+
+		@Autowired
+		EmailRepository emailRepository;
 
 		@Autowired
 	    private OrderBookRepository orderBookRepository;
@@ -133,17 +138,18 @@ public class EcommerceApplication implements CommandLineRunner {
 
 		
       
-         userRepository.save(user1);
-         userRepository.save(user2);
-         userRepository.save(user3);
-         userRepository.save(user4);
-         userRepository.save(user5);
+		userRepository.save(user1);
+		userRepository.save(user2);
+		userRepository.save(user3);
+		userRepository.save(user4);
+		userRepository.save(user5);
 
-		 userRepository.save(user6);
-		 userRepository.save(user7);
+		userRepository.save(user6);
+		userRepository.save(user7);
 		userRepository.save(user8);
 
-       
+
+		
          
 		// Create Orders
 		Order order1 = new Order(user1,"Working");
@@ -212,6 +218,11 @@ public class EcommerceApplication implements CommandLineRunner {
 		Order o13 = orderRepository.save(order13);
 		Order o14 = orderRepository.save(order14);
 		Order o15 = orderRepository.save(order15);
+
+
+		Email email1 = new Email("stocazzo", "tu madre", "prrrrrrr", "kebab pizza patatine sushi sashimi fettuccine alfredo", order1);
+		emailRepository.save(email1);
+
 		
 		
 		OrderBook.OrderBooksId orderBooksId1 = new OrderBooksId(o1.getId(), b1.getId());

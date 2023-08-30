@@ -219,8 +219,8 @@ export class HttpClientService {
     );
   }
 
-  getOrder(id: number): Observable<Order> {
-    return this.httpClient.get<Order>(`${this.baseURL}/orders/${id}/one`).pipe(
+  getOrder(uid: number, oid: number): Observable<Order> {
+    return this.httpClient.get<Order>(`${this.baseURL}/orders/${uid}/${oid}/one`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }

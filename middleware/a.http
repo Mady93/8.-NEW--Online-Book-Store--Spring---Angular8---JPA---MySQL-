@@ -80,3 +80,8 @@ Content-Type: application/json
     "email": "cat95@gmail.com",
     "password": "banana33"
 }
+
+
+###
+
+GET http://localhost:8080/orders/inbox/all?page=1&size=3

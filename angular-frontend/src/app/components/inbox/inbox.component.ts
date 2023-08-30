@@ -118,13 +118,18 @@ export class InboxComponent implements OnInit {
   }
 
   updateOrderState(order: Order) {
-   // debugger;
+    //debugger;
     this.service.updateOrder(order, "Send").subscribe({
       next: (res: any) => {
         this.ok = res.message; 
 
         setTimeout(() => {
           this.ok = '';
+
+          //fix aggiornamento indice pagina
+          if (this.allOrders == 1) this.page = 1;
+          else if ((this.allOrders-((this.page-1)*this.size)) == 1) this.page--;
+
           this.fetchOrders(); 
         }, 2000);
 

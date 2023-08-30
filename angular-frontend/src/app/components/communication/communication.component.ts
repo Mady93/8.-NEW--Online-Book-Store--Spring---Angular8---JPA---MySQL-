@@ -13,7 +13,7 @@ export class CommunicationComponent implements OnInit {
 
   msg: any; 
   emailData: Email[]; // Array di email da visualizzare
-  displayedColumns: string[] = ['from', 'to', 'subject', 'body', 'sendedAt']; // Nomi delle colonne visualizzate
+  displayedColumns: string[] = ['from', 'to', 'subject', 'body', 'sendedAt', 'viewOrder']; // Nomi delle colonne visualizzate
 
   constructor(private httpClientService: HttpClientService, private auth: AuthService) { }
 

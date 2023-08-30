@@ -233,7 +233,8 @@ public ResponseEntity<Object> deleteOrder(@PathVariable("orderId") Long orderId)
 		email.setSubject("Order #" + order.getId());
 		email.setBody("Dear customer, your order has been changed to: " + state);
 		email.setTo(order.getUser().getEmail());
-		email.setUser(order.getUser());
+		//email.setUser(order.getUser());
+		email.setOrder(order);
 		emailRepository.save(email);
 
 

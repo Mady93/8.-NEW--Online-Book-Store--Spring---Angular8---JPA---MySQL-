@@ -5,6 +5,7 @@ import { AuthService } from 'src/app/service/auth.service';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Book } from 'src/app/model/Book';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-order',
@@ -13,7 +14,7 @@ import { Book } from 'src/app/model/Book';
 })
 export class OrderComponent implements OnInit {
 
-  constructor(private service: HttpClientService, private auth: AuthService) { }
+  constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute) { }
 
 
 
@@ -32,11 +33,17 @@ export class OrderComponent implements OnInit {
 
 
   ngOnInit() {
-    this.fetchOrdersByUid(this.auth.uid);
+
+    const id = this.route.snapshot.queryParamMap.get('id');
+
+    if (id == undefined) this.fetchOrdersByUid(this.auth.uid);
+    else this.fetchOrderById(parseInt(id));
+
+
   }
 
   openDetail(oid: number) {
-    if (this.ordersDetails[oid] === undefined) this.fetchOrderById(oid);
+    if (this.ordersDetails[oid] === undefined) this.fetchOrderBookByOrderid(oid);
   }
 
   // Aggiunto regex errori
@@ -48,6 +55,23 @@ export class OrderComponent implements OnInit {
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
+
+
+  fetchOrderById(oid: number) {
+
+    let uid: number = this.auth.uid;
+
+    this.service.getOrder(uid, oid).subscribe({
+      next: (order: Order) => {
+        this.orders = [];
+        this.orders.push(order);
+
+        this.allOrders = 1;
+
+      }
+    });
+  }
+
 
   fetchOrdersByUid(uid: number) {
 
@@ -70,7 +94,7 @@ export class OrderComponent implements OnInit {
             setTimeout(() => {
               this.msg = '';
             }, 2000);
-            
+
 
           },
           complete: () => { }
@@ -84,7 +108,7 @@ export class OrderComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-        
+
 
       },
       complete: () => { }
@@ -92,7 +116,7 @@ export class OrderComponent implements OnInit {
 
   }
 
-  fetchOrderById(oid: number) {
+  fetchOrderBookByOrderid(oid: number) {
 
     this.service.getOrderBooksByOrderId(oid).subscribe({
       next: (jt: OrderBook[]) => {
@@ -106,7 +130,7 @@ export class OrderComponent implements OnInit {
         this.ordersDetails[oid].orders = jt;
         this.ordersDetails[oid].total = total;
 
-        if (jt.length==0) this.deleteOrder(oid);
+        if (jt.length == 0) this.deleteOrder(oid);
 
       },
       error: (err: HttpErrorResponse) => {
@@ -116,7 +140,7 @@ export class OrderComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-        
+
 
       },
       complete: () => { }
@@ -131,15 +155,16 @@ export class OrderComponent implements OnInit {
   }
 
 
-  deleteOrder(oid: number){
+  deleteOrder(oid: number) {
     //TODO
     this.service.deleteOrder(oid).subscribe({
-      next: (res: any)=>{
+      next: (res: any) => {
         this.msg = "";
         this.ok = res.message;
 
         setTimeout(() => {
           this.ok = '';
+         
           this.fetchOrdersByUid(this.auth.uid);
         }, 2000);
 
@@ -151,7 +176,7 @@ export class OrderComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-        
+
 
       },
       complete: () => { }
@@ -159,7 +184,7 @@ export class OrderComponent implements OnInit {
     })
   }
 
-  addBook(oid: number){
+  addBook(oid: number) {
 
     if (!this.selectedResult) return;
 
@@ -173,14 +198,14 @@ export class OrderComponent implements OnInit {
 
     this.service.addOrderBook(ob).subscribe({
       next: () => {
-        this.fetchOrderById(oid);
+        this.fetchOrderBookByOrderid(oid);
       }
     })
-    
+
   }
 
 
-  updateQuantity(ob: OrderBook){
+  updateQuantity(ob: OrderBook) {
 
     delete ob.book.picByte;
 
@@ -194,7 +219,7 @@ export class OrderComponent implements OnInit {
 
         setTimeout(() => {
           this.ok = '';
-          this.fetchOrderById(ob.order.id);
+          this.fetchOrderBookByOrderid(ob.order.id);
         }, 2000);
         //console.log("update successfully");//TODO_MSG
       },
@@ -205,7 +230,7 @@ export class OrderComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-        
+
 
       },
       complete: () => { }
@@ -215,7 +240,7 @@ export class OrderComponent implements OnInit {
 
 
 
-  findBook(event, oid: number){
+  findBook(event, oid: number) {
 
     this.selectedResult = null;
     this.selectedOrderId = oid;
@@ -227,11 +252,11 @@ export class OrderComponent implements OnInit {
       next: (books: Book[]) => {
 
         //creo un array di id di libri gia' presenti nell'ordine
-        let alreadyPresentBid = that.ordersDetails[oid].orders.map(x=>x.id.bookId)
+        let alreadyPresentBid = that.ordersDetails[oid].orders.map(x => x.id.bookId)
         //filtro i libri che sono gia presenti nel carrello
-        this.results = books.filter(x=>!alreadyPresentBid.includes(x.id));
+        this.results = books.filter(x => !alreadyPresentBid.includes(x.id));
         //prendo come default il primo risultato filtrato
-        if (this.results.length>0) this.selectedResult = this.results[0];
+        if (this.results.length > 0) this.selectedResult = this.results[0];
 
       },
       error: () => {
@@ -241,8 +266,7 @@ export class OrderComponent implements OnInit {
 
   }
 
-  selectNewBook(event)
-  {
+  selectNewBook(event) {
     let bid: number = parseInt(event.target.value);
     this.selectedResult = this.results.find(book => {
       return book.id === +bid;
