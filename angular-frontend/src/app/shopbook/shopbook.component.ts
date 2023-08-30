@@ -6,7 +6,6 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { User } from '../model/User ';
 import { faCartPlus, faCartShopping, faDollarSign, faQuestion, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../service/auth.service';
-import { B64_IMG_PREFIX } from 'src/define';
 
 @Component({
   selector: 'app-shopbook',
@@ -32,9 +31,7 @@ export class ShopbookComponent implements OnInit {
   page: number = 1;
   size: number = 8;
 
-  // Aggiunto errori
   msg: any;
-  status: any;
 
   constructor(private router: Router, private httpClientService: HttpClientService, public authService: AuthService) { }
 
@@ -60,10 +57,7 @@ export class ShopbookComponent implements OnInit {
     }
 
 
-
-
-    if (localStorage["boughtCart"] === "true")
-    {
+    if (localStorage["boughtCart"] === "true") {
       localStorage["boughtCart"] = false;
       this.authService.buy().then(res => {
         this.emptyCart();
@@ -74,9 +68,8 @@ export class ShopbookComponent implements OnInit {
     }
 
     this.refreshData();
-    
-  }
 
+  }
 
 
   //Modificato in quanto si necessita di un refresh per ricevere il next dei valori successivi della paginazione
@@ -100,7 +93,7 @@ export class ShopbookComponent implements OnInit {
             setTimeout(() => {
               this.msg = '';
             }, 1000);
-            
+
           },
           complete: () => {
             console.log("Completed countBooks()");
@@ -116,12 +109,6 @@ export class ShopbookComponent implements OnInit {
         console.log("Complete getBooks()");
       }
     });
-
-
-
-
-
-
 
   }
 
@@ -153,7 +140,7 @@ export class ShopbookComponent implements OnInit {
       this.books.push(bookwithRetrievedImageField);
     }
 
-    
+
     //ciclo che inibisce il pulsante addCart per gli ogetti gia' nel carrello
     for (let ele of this.cartBooks) {
       let book = this.books.find(book => {
@@ -162,10 +149,8 @@ export class ShopbookComponent implements OnInit {
 
       if (book) book.isAdded = true;
     }
-    
+
   }
-
-
 
 
   //Aggiunto quantity nel localStorage
@@ -174,9 +159,7 @@ export class ShopbookComponent implements OnInit {
   }
 
 
-
   addToCart(bookId) {
-
 
     let book = this.books.find(book => {
       return book.id === +bookId;
@@ -198,57 +181,17 @@ export class ShopbookComponent implements OnInit {
     //make the isAdded field of the book added to cart as true
     book.isAdded = true;
 
-
-    /*
-    //retrieve book from books array using the book id
-    let book = this.books.find(book => {
-      return book.id === +bookId;
-    });
-    let cartData = [];
-    //retrieve cart data from localstorage
-    let data = localStorage.getItem('cart');
-    console.log(data);
-    //parse it to json 
-    if (data !== null) {
-      cartData = JSON.parse(data);
-    }
-    //console.log('hii');
-    // add the selected book to cart data
-
-
-    let t = {
-      id: book.id,
-      name: book.name,
-      author: book.author,
-      price: book.price,
-      //picByte: book.picByte,
-      q: 1
-    };
-
-    cartData.push(t);
-    //updated the cartBooks
-    this.updateCartData(cartData);
-    //save the updated cart data in localstorage
-
-    localStorage.setItem('cart', JSON.stringify(cartData));
-    //make the isAdded field of the book added to cart as true
-    book.isAdded = true;
-    */
   }
 
-  /*
-  updateCartData(cartData) {
-    this.cartBooks = cartData;
-  }
-  */
 
   goToCart() {
     this.router.navigate(['/order']);
   }
 
+
   buyCart() {
 
-    if (!this.authService.isLogged()){
+    if (!this.authService.isLogged()) {
       localStorage["boughtCart"] = true;
       location.href = "/login";
       return;
@@ -258,7 +201,7 @@ export class ShopbookComponent implements OnInit {
       this.emptyCart();
       location.href = "/order";
     }, err => {
-    
+
     });
 
   }

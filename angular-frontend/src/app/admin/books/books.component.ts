@@ -15,15 +15,13 @@ export class BooksComponent implements OnInit {
   books: Array<Book>;
   booksRecieved: Array<Book>;
   action: string;
-  selectedBook: Book;// = new Book();
-
+  selectedBook: Book;
 
   // Aggiunto paginazione
   allBooks: number;
   page: number = 1;
   size: number = 5;
 
- 
   msg: any;
   ok: any;
 
@@ -48,7 +46,6 @@ export class BooksComponent implements OnInit {
   }
 
   refreshData() {
-    //debugger;
     this.httpClientService.countBooks().subscribe({
       next: (num: number) => {
         console.log("Length array = " + num);
@@ -87,26 +84,23 @@ export class BooksComponent implements OnInit {
             setTimeout(() => {
               this.msg = '';
             }, 2000);
-      
-            
+
           },
           complete: () => {
             console.log("Completed getBooks()");
           }
         });
-
-
       },
       error: (err: HttpErrorResponse) => {
         this.allBooks = 0;
         this.books = [];
         this.msg = this.replaceAll(err.message, "#", "<br>");
 
-       /* setTimeout(() => {
-          this.msg = '';
-        }, 2000);
-      */
-        
+        /* setTimeout(() => {
+           this.msg = '';
+         }, 2000);
+       */
+
       },
       complete: () => {
         console.log("Completed countBooks()")
@@ -116,18 +110,15 @@ export class BooksComponent implements OnInit {
 
 
   /* funzione che preserva i queryparam attualmente presenti e permette di sovrascriverne i valori */
-  navigate(path: any, newQp: any)
-  {
+  navigate(path: any, newQp: any) {
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
 
-    for (let key of Object.keys(newQp))
-    {
+    for (let key of Object.keys(newQp)) {
       qp[key] = newQp[key];
     }
 
     return this.router.navigate(path, { queryParams: qp });
   }
-
 
 
   renderPage(event: number) {
@@ -136,9 +127,7 @@ export class BooksComponent implements OnInit {
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
     if (qp.action) delete qp.action;
 
-
     qp.page = this.page;
-
 
     this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp });
     this.refreshData();
@@ -166,31 +155,26 @@ export class BooksComponent implements OnInit {
   }
 
 
-
   async addBook() {
 
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
-    
+
     qp.action = 'add';
     delete qp.id;
-    
-    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp }).then(()=>{
+
+    this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp }).then(() => {
       this.selectedBook = new Book();
     });
   }
 
 
-
-  
   viewBook(id: number) {
     //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { id, action: 'view' } });
-    this.navigate([this.auth.role.toLowerCase(), 'books'], {id: id, action: 'view' });
+    this.navigate([this.auth.role.toLowerCase(), 'books'], { id: id, action: 'view' });
   }
 
 
-
-
-  deleteAll(){
+  deleteAll() {
     this.httpClientService.deleteBooks().subscribe({
       next: (res: any) => {
         this.ok = res.message;
@@ -201,7 +185,7 @@ export class BooksComponent implements OnInit {
           this.books = [];
           this.refreshData();
         }, 2000);
-        
+
       },
       error: (err: HttpErrorResponse) => {
 
@@ -210,8 +194,7 @@ export class BooksComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-      
-        
+
       },
       complete: () => {
       }

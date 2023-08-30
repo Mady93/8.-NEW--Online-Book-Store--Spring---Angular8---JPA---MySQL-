@@ -14,10 +14,6 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class OrderComponent implements OnInit {
 
-  constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute) { }
-
-
-
   page: number = 1;
   size: number = 3;
   orders: Order[] = [];
@@ -31,6 +27,7 @@ export class OrderComponent implements OnInit {
   msg: any;
   ok: any;
 
+  constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute) { }
 
   ngOnInit() {
 
@@ -38,8 +35,6 @@ export class OrderComponent implements OnInit {
 
     if (id == undefined) this.fetchOrdersByUid(this.auth.uid);
     else this.fetchOrderById(parseInt(id));
-
-
   }
 
   openDetail(oid: number) {
@@ -65,9 +60,7 @@ export class OrderComponent implements OnInit {
       next: (order: Order) => {
         this.orders = [];
         this.orders.push(order);
-
         this.allOrders = 1;
-
       }
     });
   }
@@ -109,7 +102,6 @@ export class OrderComponent implements OnInit {
           this.msg = '';
         }, 2000);
 
-
       },
       complete: () => { }
     });
@@ -141,7 +133,6 @@ export class OrderComponent implements OnInit {
           this.msg = '';
         }, 2000);
 
-
       },
       complete: () => { }
     });
@@ -156,7 +147,6 @@ export class OrderComponent implements OnInit {
 
 
   deleteOrder(oid: number) {
-    //TODO
     this.service.deleteOrder(oid).subscribe({
       next: (res: any) => {
         this.msg = "";
@@ -164,7 +154,9 @@ export class OrderComponent implements OnInit {
 
         setTimeout(() => {
           this.ok = '';
-         
+          //fix aggiornamento indice pagina
+          if (this.allOrders == 1) this.page = 1;
+          else if ((this.allOrders - ((this.page - 1) * this.size)) == 1) this.page--;
           this.fetchOrdersByUid(this.auth.uid);
         }, 2000);
 
@@ -208,7 +200,6 @@ export class OrderComponent implements OnInit {
   updateQuantity(ob: OrderBook) {
 
     delete ob.book.picByte;
-
     var that = this;
 
     this.service.updateOrderBook(ob).subscribe({
@@ -221,7 +212,7 @@ export class OrderComponent implements OnInit {
           this.ok = '';
           this.fetchOrderBookByOrderid(ob.order.id);
         }, 2000);
-        //console.log("update successfully");//TODO_MSG
+
       },
       error: (err: HttpErrorResponse) => {
 
@@ -230,7 +221,6 @@ export class OrderComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-
 
       },
       complete: () => { }

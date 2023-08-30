@@ -17,15 +17,15 @@ export class UsersComponent implements OnInit {
   action: string;
   selectedUser: User;
 
-    // Aggiunto paginazione
-    allUsers: number;
-    page: number = 1;
-    size: number = 3;
-  
-    // Aggiunto errori
-    msg: any;
-    ok: any;
-    status: any;
+  // Aggiunto paginazione
+  allUsers: number;
+  page: number = 1;
+  size: number = 3;
+
+  // Aggiunto errori
+  msg: any;
+  ok: any;
+  status: any;
 
   constructor(private httpClientService: HttpClientService, private router: Router, private activatedRoute: ActivatedRoute, private authService: AuthService) { }
 
@@ -37,20 +37,20 @@ export class UsersComponent implements OnInit {
 
   }
 
-    // Aggiunto regex errori
-    escapeRegExp(string) {
-      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-    }
-  
-    // Aggiunto regex errori
-    replaceAll(str, find, replace) {
-      return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
-    }
+  // Aggiunto regex errori
+  escapeRegExp(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+  }
+
+  // Aggiunto regex errori
+  replaceAll(str, find, replace) {
+    return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+  }
 
   refreshData() {
     this.httpClientService.countUsers().subscribe({
       next: (num: number) => {
-        console.log("Array length = "+num)
+        console.log("Array length = " + num)
         this.allUsers = num;
         this.msg = "";
         this.ok = ""
@@ -65,7 +65,7 @@ export class UsersComponent implements OnInit {
               (params) => {
                 this.action = params['action'];
                 const selectedUserId = params['id'];
-                
+
                 if (selectedUserId) {
                   this.selectedUser = this.users.find(user => user.id === +selectedUserId);
                 }
@@ -79,14 +79,14 @@ export class UsersComponent implements OnInit {
             setTimeout(() => {
               this.msg = '';
             }, 2000);
-      
-            
+
+
           },
           complete: () => {
             console.log("Completed getUsers()");
           }
         });
-  
+
       },
       error: (err: HttpErrorResponse) => {
         this.allUsers = 0;
@@ -104,25 +104,25 @@ export class UsersComponent implements OnInit {
       }
     });
   }
-  
-
- // evento per la paginazione
-renderPage(event: number) {
-  this.page = (event);
-
-  let qp = JSON.parse(JSON.stringify(this.activatedRoute.snapshot.queryParams));
-  if (qp.action=='view') delete qp.action;
 
 
+  // evento per la paginazione
+  renderPage(event: number) {
+    this.page = (event);
 
-  this.router.navigate(['admin','users'], {queryParams: qp});
-  this.refreshData();
-}
-  
-// ho aggiunto un query param page per mantenere pa paginazione al refresh della pagina sul browser
+    let qp = JSON.parse(JSON.stringify(this.activatedRoute.snapshot.queryParams));
+    if (qp.action == 'view') delete qp.action;
+
+
+
+    this.router.navigate(['admin', 'users'], { queryParams: qp });
+    this.refreshData();
+  }
+
+  // ho aggiunto un query param page per mantenere pa paginazione al refresh della pagina sul browser
   viewUser(id: number) {
     //debugger;
-    this.router.navigate(['admin','users'], {queryParams: {id, action: 'view', page: this.page}});
+    this.router.navigate(['admin', 'users'], { queryParams: { id, action: 'view', page: this.page } });
     this.refreshData();
   }
 
@@ -139,7 +139,7 @@ renderPage(event: number) {
   deleteAll() {
     this.httpClientService.deleteUsers().subscribe({
       next: (res: any) => {
-       
+
         this.ok = res.message;
         this.msg = "";
         this.allUsers = 0;
@@ -149,17 +149,17 @@ renderPage(event: number) {
           this.ok = '';
           this.refreshData();
         }, 2000);
-       
+
       },
       error: (err: HttpErrorResponse) => {
-        
+
         this.msg = this.replaceAll(err.message, "#", "<br>");
 
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-      
-        
+
+
       },
       complete: () => {
       }

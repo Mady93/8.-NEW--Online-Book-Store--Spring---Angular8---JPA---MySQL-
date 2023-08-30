@@ -39,13 +39,12 @@ export class AuthInterceptorService implements HttpInterceptor {
 
         err => {
           if (err.status == 401) {
-            //debugger;
             localStorage.removeItem("token");
             this.auth.logout();
             this.router.navigate(["/login"]);
           }
         }
-        
+
       )
     );
 

@@ -56,8 +56,8 @@ export class ViewbookComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-      
-        
+
+
       },
       complete: () => {
 
@@ -76,9 +76,6 @@ export class ViewbookComponent implements OnInit {
     qp.id = this.book.id
 
     this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: qp });
-
-
-    //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { action: 'edit', id: this.book.id } });
   }
 
 

@@ -10,8 +10,8 @@ import { AuthService } from 'src/app/service/auth.service';
   styleUrls: ['./register-login.component.scss']
 })
 export class RegisterLoginComponent implements OnInit {
-  
-form  : FormGroup;
+
+  form: FormGroup;
 
   msg: string[];
   ok: any;
@@ -24,30 +24,30 @@ form  : FormGroup;
 
   showPassword: boolean[] = [false, false];
 
-   constructor(private formBuilder: FormBuilder, private router: Router, private auth: AuthService) { }
+  constructor(private formBuilder: FormBuilder, private router: Router, private auth: AuthService) { }
 
   ngOnInit() {
 
-    this.isLogin = (this.router.url.indexOf("/login")>=0);
+    this.isLogin = (this.router.url.indexOf("/login") >= 0);
 
     this.form = this.formBuilder.group({
       name: [
         '',
         [
-        
+
         ],
       ],
       email: [
         '',
         [
-         Validators.email
+          Validators.email
 
         ],
       ],
       password: [
         '',
         [
-         
+
         ]
       ],
       repeatPassword: ['']
@@ -62,7 +62,7 @@ form  : FormGroup;
         this.validatePasswordConfirmation.bind(this)
       ]);
     }
-    
+
   }
 
 
@@ -83,8 +83,6 @@ form  : FormGroup;
   }
 
 
-
-
   get name(): FormControl {
     return <FormControl>this.form.controls['name'];
   }
@@ -97,11 +95,9 @@ form  : FormGroup;
     return <FormControl>this.form.controls['password'];
   }
 
- get repeatPassword(): FormControl {
+  get repeatPassword(): FormControl {
     return <FormControl>this.form.controls['repeatPassword'];
   }
-
-
 
   validatePwd(): ValidatorFn {
 
@@ -126,102 +122,93 @@ form  : FormGroup;
 
 
   action() {
-    //debugger;
 
-      let name = this.form.controls.name.value;
-      let email = this.form.controls.email.value;
-      let password = this.form.controls.password.value;
+    let name = this.form.controls.name.value;
+    let email = this.form.controls.email.value;
+    let password = this.form.controls.password.value;
 
-      if(this.isLogin) {
+    if (this.isLogin) {
 
-        this.auth.login(email, password).subscribe({
-          next: (res: any) => {
+      this.auth.login(email, password).subscribe({
+        next: (res: any) => {
 
-            //debugger;
-            this.ok = res.body.message;
+          this.ok = res.body.message;
 
-            setTimeout(() => {
-              this.ok = '';
-              this.router.navigate(["/shop"]);
-            }, 2000); 
-          
-          },
-          error: (err: HttpErrorResponse) => {
-           
-            this.msg = this.replaceAll(err.message, "#", "<br>");
-  
-            let t = err.message.split("#");
-            this.emailErr = t.filter(x => { return x.startsWith("Email") });
-            this.passwordErr = t.filter(x => { return x.startsWith("Password") });
-  
-  
-            this.msg = t.filter(x => !(x.startsWith("Email") || x.startsWith("Password"))).map(x => {
-              const [timestamp, status, message] = x.split(",");
-              return `Timestamp: ${timestamp}, Status: ${status}, Message: ${message.trim()}`;
-            });
-  
-  
-            setTimeout(() => {
-              this.emailErr = [];
-              this.passwordErr = [];
-            }, 2000); 
-  
-          },
-          complete: () => {
-            this.form.reset();
-          }
-        })
+          setTimeout(() => {
+            this.ok = '';
+            this.router.navigate(["/shop"]);
+          }, 2000);
 
-      } else {
+        },
+        error: (err: HttpErrorResponse) => {
 
-        //debugger;
-            if(!this.form.valid) return;
-        this.auth.register(name, email , password).subscribe({
+          this.msg = this.replaceAll(err.message, "#", "<br>");
 
-          next: (res: any) => {
-
-            this.ok = res.message;
-
-            setTimeout(() => {
-              this.ok = '';
-              this.router.navigate(["/login"]);
-            }, 2000); 
-           
-          },
-          error: (err: HttpErrorResponse) => {
-           
-            this.msg = this.replaceAll(err.message, "#", "<br>");
-  
-            let t = err.message.split("#");
-            this.nameErr = t.filter(x => { return x.startsWith("Name") });
-            this.emailErr = t.filter(x => { return x.startsWith("Email") });
-            this.passwordErr = t.filter(x => { return x.startsWith("Password") });
-  
-  
-            this.msg = t.filter(x => !(x.startsWith("Name") || x.startsWith("Email") || x.startsWith("Password"))).map(x => {
-              const [timestamp, status, message] = x.split(",");
-              return `Timestamp: ${timestamp}, Status: ${status}, Message: ${message.trim()}`;
-            });
-  
-  
-            setTimeout(() => {
-              this.nameErr = [];
-              this.emailErr = [];
-              this.passwordErr = [];
-            }, 2000); 
-  
-  
-          },
-          complete: () => {
-            this.form.reset();
-          }
-        });
-
-      }
+          let t = err.message.split("#");
+          this.emailErr = t.filter(x => { return x.startsWith("Email") });
+          this.passwordErr = t.filter(x => { return x.startsWith("Password") });
 
 
-    
+          this.msg = t.filter(x => !(x.startsWith("Email") || x.startsWith("Password"))).map(x => {
+            const [timestamp, status, message] = x.split(",");
+            return `Timestamp: ${timestamp}, Status: ${status}, Message: ${message.trim()}`;
+          });
+
+
+          setTimeout(() => {
+            this.emailErr = [];
+            this.passwordErr = [];
+          }, 2000);
+
+        },
+        complete: () => {
+          this.form.reset();
+        }
+      })
+
+    } else {
+
+      if (!this.form.valid) return;
+      this.auth.register(name, email, password).subscribe({
+
+        next: (res: any) => {
+
+          this.ok = res.message;
+
+          setTimeout(() => {
+            this.ok = '';
+            this.router.navigate(["/login"]);
+          }, 2000);
+
+        },
+        error: (err: HttpErrorResponse) => {
+
+          this.msg = this.replaceAll(err.message, "#", "<br>");
+
+          let t = err.message.split("#");
+          this.nameErr = t.filter(x => { return x.startsWith("Name") });
+          this.emailErr = t.filter(x => { return x.startsWith("Email") });
+          this.passwordErr = t.filter(x => { return x.startsWith("Password") });
+
+
+          this.msg = t.filter(x => !(x.startsWith("Name") || x.startsWith("Email") || x.startsWith("Password"))).map(x => {
+            const [timestamp, status, message] = x.split(",");
+            return `Timestamp: ${timestamp}, Status: ${status}, Message: ${message.trim()}`;
+          });
+
+          setTimeout(() => {
+            this.nameErr = [];
+            this.emailErr = [];
+            this.passwordErr = [];
+          }, 2000);
+
+        },
+        complete: () => {
+          this.form.reset();
+        }
+      });
     }
+  }
 
 }
 

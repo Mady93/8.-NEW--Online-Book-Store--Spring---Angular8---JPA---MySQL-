@@ -16,21 +16,21 @@ export class AuthService {
   uid: number = null;
   exp: number;
   private upd = new Subject<void>();
-  
+
 
   constructor(private http: HttpClient, private httpClientService: HttpClientService) {
     this.checkState();
   }
 
-  checkState(){
-    
+  checkState() {
+
     let token = localStorage.getItem("token");
     if (!token) return;
 
     let a = token.indexOf(".");
-    let b = token.indexOf(".", a+1);
-    
-    token = token.substring(a+1,b);
+    let b = token.indexOf(".", a + 1);
+
+    token = token.substring(a + 1, b);
     let data = JSON.parse(atob(token));
 
     //debugger;
@@ -51,8 +51,7 @@ export class AuthService {
 
   buy() {
 
-    if (this.uid==0) return;
-
+    if (this.uid == 0) return;
 
     let cart = JSON.parse(localStorage["cart"]);
     let order: Order;
@@ -61,23 +60,22 @@ export class AuthService {
     order.user = new User();
     order.user.id = this.uid;
 
-
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
       this.httpClientService.addOrder(this.uid).subscribe({
         next: (ret: any) => {
           let oid = ret.orderId;
-      
+
           // Creare un array di promesse per le chiamate addOrderBook
           const orderBookPromises = cart.map(ele => {
             let jt: OrderBook = new OrderBook();
             jt.book.id = ele.id;
             jt.order.id = oid;
             jt.quantity = ele.q;
-            
+
             // Restituire la promessa dalla chiamata addOrderBook
             return this.httpClientService.addOrderBook(jt).toPromise();
           });
-      
+
           // Attendere il completamento di tutte le promesse utilizzando Promise.all()
           Promise.all(orderBookPromises)
             .then(() => {
@@ -97,14 +95,7 @@ export class AuthService {
         }
       });
     });
-
-     
-    
   }
-
-
-
-
 
 
   login(email: string, password: string): Observable<HttpResponse<any>> {
@@ -112,23 +103,24 @@ export class AuthService {
     const headers = { 'Content-Type': 'application/json' };
     const body = { email, password };
 
-  
+
     return this.http.post<any>(url, body, { headers: headers, observe: 'response' }).pipe(
-        tap(response => {
-          if (response.status === 200) {
-            //debugger;
-            const token = response.headers.get("Authorization");
-            localStorage.setItem('token', token); // Salva il token nella localStorage
-            this.checkState(); // Aggiorna i dati dell'utente loggato
-          }
-        }),
-        catchError((error: HttpErrorResponse) => {
-          console.log('Errore durante il login:', error);
-          throw error;
-        }),
-        shareReplay()
-      );
+      tap(response => {
+        if (response.status === 200) {
+          //debugger;
+          const token = response.headers.get("Authorization");
+          localStorage.setItem('token', token); // Salva il token nella localStorage
+          this.checkState(); // Aggiorna i dati dell'utente loggato
+        }
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.log('Errore durante il login:', error);
+        throw error;
+      }),
+      shareReplay()
+    );
   }
+
 
   logout() {
     this.uid = null;
@@ -136,11 +128,13 @@ export class AuthService {
     this.role = "";
   }
 
+
   isLogged(): boolean {
     return (localStorage["token"] != null)
   }
 
-  register (name: string, email: string, password: string):Observable<any> {
+
+  register(name: string, email: string, password: string): Observable<any> {
 
     let user: User = new User();
     user.name = name;
@@ -150,7 +144,7 @@ export class AuthService {
     const url = 'http://localhost:3000/users/register'; // URL del tuo middleware Node.js
     const headers = { 'Content-Type': 'application/json' };
 
-    return this.http.post<any>(url, user, {headers: headers})
+    return this.http.post<any>(url, user, { headers: headers })
   }
 
 }

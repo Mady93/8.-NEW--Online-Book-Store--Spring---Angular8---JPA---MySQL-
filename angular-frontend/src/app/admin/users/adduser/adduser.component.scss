@@ -1,85 +1,73 @@
-
-
-
 .close {
-    all: unset;
-    position: absolute;
-    right: 0px;
-    top: 0px;
-    margin-top: -55px;
-    color: red;
-    font-weight: 800;
-    font-size: 32px;
-    cursor: pointer;
+  all: unset;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  margin-top: -55px;
+  color: red;
+  font-weight: 800;
+  font-size: 32px;
+  cursor: pointer;
 }
 
 form {
-    position: relative;
-    padding: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    box-shadow: 0px 0px 10px 5px gray;
-    display: inline-block;
-    min-width: 36vh;
+  position: relative;
+  padding: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0px 0px 10px 5px gray;
+  display: inline-block;
+  min-width: 36vh;
 }
 
 .btn {
-	width: 15vh;
+  width: 15vh;
 }
 
-  .custom-form-control-select {
-    /* Stili personalizzati per la select */
-    display: block;
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: 400;
-    color: #333;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-  
-  .custom-form-control-select:focus {
-    /* Stile quando la select viene selezionata */
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-    outline: none; /* Rimuovi l'outline di default */
-  }
-  
-  .custom-form-control-select option:checked {
-    background-color: #007bff;
-    color: #fff;
-  }
-  
-  /* Stile per le opzioni disabilitate */
-  .custom-form-control-select option:disabled {
-    color: #6c757d; /* Colore di default di Bootstrap per il testo disabilitato */
-  }
-  
-  /* Aggiungi una freccia personalizzata */
-  .custom-form-control-select::after {
-    content: "\f107"; /* Unicode per una freccia giù */
-    font-family: FontAwesome; /* Utilizza l'icon font desiderato */
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    pointer-events: none;
-  }
+.custom-form-control-select {
+  /* Stili personalizzati per la select */
+  display: block;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: 400;
+  color: #333;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.custom-form-control-select:focus {
+  /* Stile quando la select viene selezionata */
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  outline: none;
+  /* Rimuovi l'outline di default */
+}
+
+.custom-form-control-select option:checked {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Stile per le opzioni disabilitate */
+.custom-form-control-select option:disabled {
+  color: #6c757d;
+}
+
+.custom-form-control-select::after {
+  content: "\f107";
+  font-family: FontAwesome;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
 
 
-
-
-  mat-form-field
-  {
-    display: block;
-    margin-top: 15px;
-  }
-
-  
-  
-  
-  
-  
+mat-form-field {
+  display: block;
+  margin-top: 15px;
+}

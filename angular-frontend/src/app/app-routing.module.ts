@@ -19,7 +19,7 @@ const routes: Routes = [
   { path: 'order', canActivate: [RoleGuardService], component: OrderComponent },
   { path: 'register', component: RegisterLoginComponent },
   { path: 'login', component: RegisterLoginComponent },
-  { path: 'communication',canActivate: [RoleGuardService], component: CommunicationComponent },
+  { path: 'communication', canActivate: [RoleGuardService], component: CommunicationComponent },
   { path: 'inbox', canActivate: [RoleGuardService], component: InboxComponent },
   { path: '**', component: ErrorComponent }
 ];

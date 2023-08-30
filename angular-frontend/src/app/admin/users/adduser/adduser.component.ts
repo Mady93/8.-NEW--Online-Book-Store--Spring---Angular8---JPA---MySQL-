@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output,EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { User } from 'src/app/model/User ';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { Router } from '@angular/router';
@@ -43,7 +43,7 @@ export class AdduserComponent implements OnInit {
     this.httpClientService.addUser(this.user).subscribe({
       next: (res: any) => {
         this.ok = res.message; // Mostra il messaggio "ok"
-  
+
         setTimeout(() => {
           this.ok = ''; // Pulisci il messaggio "ok" dopo 1 secondo
           this.userAddedEvent.emit(); // Emetti l'evento
@@ -52,7 +52,7 @@ export class AdduserComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.msg = this.replaceAll(err.message, "#", "<br>");
-  
+
         setTimeout(() => {
           this.msg = '';
         }, 2000);
@@ -63,7 +63,7 @@ export class AdduserComponent implements OnInit {
   }
 
 
-  closeFunction(){
+  closeFunction() {
     this.router.navigate(['admin', 'users']);
   }
 

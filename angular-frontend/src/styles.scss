@@ -1,4 +1,5 @@
-html,body {
+html,
+body {
     height: 100%;
 }
 
@@ -17,11 +18,10 @@ body {
 
 
 .success {
-	margin-top: 2rem;
+    margin-top: 2rem;
     color: green;
     font-size: 18px;
     text-align: center;
     font-weight: bold;
     font-family: 'Times New Roman', Times, serif;
 }
-

@@ -52,12 +52,12 @@ export class ViewuserComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
 
-       this.msg = this.replaceAll(err.message, "#", "<br>");
+        this.msg = this.replaceAll(err.message, "#", "<br>");
 
-       setTimeout(() => {
-        this.msg = '';
-      }, 2000);
-      
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+
       },
       complete: () => {
 
@@ -70,25 +70,25 @@ export class ViewuserComponent implements OnInit {
   }
 
   onRoleChange(newRole: string) {
-    //debugger;
+    
     this.httpClientService.setRole(this.user.id, newRole).subscribe({
       next: (res: any) => {
         console.log(res);
         this.ok = res.res;
 
-      setTimeout(() => {
-        this.ok = '';
-      }, 2000);
-      
+        setTimeout(() => {
+          this.ok = '';
+        }, 2000);
+
       },
       error: (err: HttpErrorResponse) => {
-      
+
         this.msg = this.replaceAll(err.message, "#", "<br>");
 
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-        
+
       },
       complete: () => {
 

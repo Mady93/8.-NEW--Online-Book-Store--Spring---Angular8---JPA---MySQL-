@@ -48,45 +48,35 @@ export class MenuComponent implements OnInit {
           this.showViewOrders = false;
         }
       }
-    }); 
-    
+    });
+
 
     /*faccio un subscribe alla variabile uid, che si accorge di un cambio a caldo dovuto ad un login*/
     this.authService.update().subscribe({
-      next: ()=>{
+      next: () => {
         this.updateUserData(this.authService.uid);
       }
     });
 
     /*prendo le info dell'utente loggato basandomi sull'id dell'utente che ho in questo momento*/
     this.updateUserData(this.authService.uid);
-
-    
   }
-
-
-
 
 
   private updateUserData(uid: number) {
 
     if (!uid) return;
 
-
     this.httpClienteService.getUser(uid).subscribe(
       (userData) => {
-        //debugger;
+        
         this.userName = userData.name;
       },
       (error) => {
         console.error('Errore nel recuperare i dati utente:', error);
       }
     );
-  
   }
-
-  
-
 
 
 }

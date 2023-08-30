@@ -1,5 +1,4 @@
 details {
-  //background-color: aquamarine;
   background-color: #0dcaf0;
   padding: 5px;
   margin: 30px;
@@ -12,7 +11,7 @@ details table {
   margin-bottom: 0px;
 }
 
-summary{
+summary {
   display: flow-root;
   padding: 5px;
 }
@@ -32,7 +31,7 @@ img {
   width: 100%;
 }
 
-.notAvailable{
+.notAvailable {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -47,12 +46,8 @@ img {
 }
 
 
-.deleteBtn
-{
-
+.deleteBtn {
   all: unset;
-  /*position: absolute;
-  right: 0px;*/
   background: #f55e5e;
   border: 1px solid red;
   border-radius: 5px;
@@ -61,12 +56,8 @@ img {
 }
 
 
-.editBtn
-{
-
+.editBtn {
   all: unset;
-  /*position: absolute;
-  right: 0px;*/
   background: #52f52e;
   border: 1px solid rgb(23, 117, 4);
   border-radius: 5px;
@@ -75,7 +66,8 @@ img {
 }
 
 
-th,td {
+th,
+td {
   text-align: center;
 }
 
@@ -92,8 +84,8 @@ th,td {
 }
 
 .align {
-  margin-top: 10px!important;
-  margin-left: 10px; 
+  margin-top: 10px !important;
+  margin-left: 10px;
 }
 
 .size {
@@ -101,16 +93,14 @@ th,td {
 }
 
 .custom {
-  margin-top: 50px!important;
+  margin-top: 50px !important;
 }
 
-.search
-{
+.search {
   display: inline-block;
   margin-left: 50px;
 }
 
-.search > *
-{
+.search>* {
   margin-left: 5px;
 }

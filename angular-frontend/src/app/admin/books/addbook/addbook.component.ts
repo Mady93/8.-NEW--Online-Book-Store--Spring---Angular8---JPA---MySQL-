@@ -21,8 +21,7 @@ export class AddbookComponent implements OnInit {
   @Output()
   bookAddedEvent = new EventEmitter();
   private selectedFile;
-  //imgURL: any;
-  bColor: any = {r: 128, g: 128, b: 128};
+  bColor: any = { r: 128, g: 128, b: 128 };
 
   msg: any;
   ok: any;
@@ -38,13 +37,10 @@ export class AddbookComponent implements OnInit {
 
     let act = this.activedRoute.snapshot.queryParams["action"];
 
-    
+
     if (act == "edit") {
-
-      this.setButtonColor("data:image/jpeg;base64,"+this.book.picByte);
-
+      this.setButtonColor("data:image/jpeg;base64," + this.book.picByte);
     }
-    
 
   }
 
@@ -79,8 +75,7 @@ export class AddbookComponent implements OnInit {
         t.b = 255 - t.b;
       }
 
-      this.bColor = {r: t.r, g: t.g, b: t.b};
-      //(<HTMLElement>document.querySelector(".btn-success")).style.backgroundColor = "rgba(" + t.r + "," + t.g + "," + t.b + "," + 255 + ")";
+      this.bColor = { r: t.r, g: t.g, b: t.b };
 
     });
 
@@ -102,8 +97,8 @@ export class AddbookComponent implements OnInit {
   }
 
 
-   // Aggiunto regex errori
-   escapeRegExp(string) {
+  // Aggiunto regex errori
+  escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
@@ -113,15 +108,10 @@ export class AddbookComponent implements OnInit {
   }
 
 
-
-  
   saveBook() {
-
-    //debugger;
 
     let isImgUpload = (this.selectedFile != undefined);
     let imgUploadObs = of({});
-
 
     //const uploadData = new FormData();
     if (isImgUpload) {
@@ -136,30 +126,29 @@ export class AddbookComponent implements OnInit {
 
     if (this.book.id == null) {
       fn = this.httpClientService.addBook.bind(this.httpClientService);
-    }else{
+    } else {
 
-      if (this.auth.role == "Seller"){
+      if (this.auth.role == "Seller") {
         //faccio la chiamata che aggiorna solo il prezzo e inibisco il caricamento di immagini
         fn = this.httpClientService.updateBookJustPrice.bind(this.httpClientService);
         imgUploadObs = of({});
-      }else{
+      } else {
         fn = this.httpClientService.updateBook.bind(this.httpClientService);
       }
 
-      
     }
 
-    debugger;
+    
     imgUploadObs.pipe(
       switchMap(() => fn(this.book, this.auth.role.toLowerCase()))
     ).subscribe(
       (res) => {
-       // this.ok = res.message;
+        // this.ok = res.message;
         this.msg = "";
 
-       /* setTimeout(() => {
-          this.ok = '';
-        }, 2000);*/
+        /* setTimeout(() => {
+           this.ok = '';
+         }, 2000);*/
 
         this.bookAddedEvent.emit();
         this.router.navigate([this.auth.role.toLowerCase(), 'books']);
@@ -167,24 +156,21 @@ export class AddbookComponent implements OnInit {
       (err: HttpErrorResponse) => {
 
         this.msg = this.replaceAll(err.message, "#", "<br>");
-        
+
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-    
+
       }
     );
 
   }
 
 
-
-
   getImageColor(src: string, cb: any) {
     var image = new Image();
     image.src = src;
 
-    //debugger;
     image.onload = function () {
       var canvas = document.createElement('canvas');
       canvas.width = image.width;
@@ -215,14 +201,11 @@ export class AddbookComponent implements OnInit {
       data.b = Math.round(data.b / 20);
 
       cb(data.r, data.g, data.b);
-
     };
-
   }
 
   closeFunction() {
     this.router.navigate([this.auth.role.toLowerCase(), 'books']);
   }
-
 
 }

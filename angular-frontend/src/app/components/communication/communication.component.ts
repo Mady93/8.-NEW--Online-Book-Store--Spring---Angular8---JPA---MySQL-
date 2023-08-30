@@ -11,7 +11,7 @@ import { HttpClientService } from 'src/app/service/http-client.service';
 })
 export class CommunicationComponent implements OnInit {
 
-  msg: any; 
+  msg: any;
   emailData: Email[]; // Array di email da visualizzare
   displayedColumns: string[] = ['from', 'to', 'subject', 'body', 'sendedAt', 'viewOrder']; // Nomi delle colonne visualizzate
 
@@ -30,8 +30,8 @@ export class CommunicationComponent implements OnInit {
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
-  
-  getEmByUserId(){
+
+  getEmByUserId() {
     const userId = this.auth.uid; // Ottieni l'uid dall'AuthService
     this.httpClientService.getEmailsByUserId(userId).subscribe({
       next: (res: Email[]) => {
@@ -40,10 +40,10 @@ export class CommunicationComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.msg = this.replaceAll(err.message, "#", "<br>");
 
-       /* setTimeout(() => {
-          this.msg = '';
-        }, 2000);*/
-        
+        /* setTimeout(() => {
+           this.msg = '';
+         }, 2000);*/
+
       },
       complete: () => { }
     })

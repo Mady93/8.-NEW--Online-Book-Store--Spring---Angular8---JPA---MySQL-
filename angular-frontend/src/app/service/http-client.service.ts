@@ -47,7 +47,7 @@ export class HttpClientService {
 
   setRole(uid: number, role: string): Observable<User> {
 
-    let body = {uid: uid, role: role};
+    let body = { uid: uid, role: role };
     const headers = { 'Content-Type': 'application/json' };
 
     return this.httpClient.post<User>(`${this.baseURL}/users/setRole`, body, { headers: headers }).pipe(
@@ -74,7 +74,7 @@ export class HttpClientService {
     );
   }
 
- 
+
   getUser(id: number): Observable<User> {
     return this.httpClient.get<User>(`${this.baseURL}/users/${id}/one`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
@@ -122,8 +122,8 @@ export class HttpClientService {
     //const body = JSON.stringify(book);
 
     return this.httpClient.post<Book>(`${this.baseURL}/books/upload`, formData).pipe(
-        catchError((err: HttpErrorResponse) => this.handleError(err))
-      );
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
   }
 
   countBooks(): Observable<number> {
@@ -169,20 +169,20 @@ export class HttpClientService {
 
     let url: string = `${this.baseURL}/books/update/${updatedBook.id}`;
     const headers = { 'content-type': 'application/json' };
-    
+
     const body = JSON.stringify(updatedBook);
     return this.httpClient.put<Book>(url, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
-  updateBookJustPrice(updatedBook: Book): Observable<Book>{
+  updateBookJustPrice(updatedBook: Book): Observable<Book> {
     delete updatedBook.picByte;
     //delete updatedBook.retrievedImage;
 
     let url: string = `${this.baseURL}/books/update/${updatedBook.id}/price`;
     const headers = { 'content-type': 'application/json' };
-    
+
     const body = JSON.stringify(updatedBook);
     return this.httpClient.put<Book>(url, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
@@ -225,7 +225,7 @@ export class HttpClientService {
     );
   }
 
-  
+
   deleteOrder(id: number): Observable<void> {
     return this.httpClient.delete<void>(`${this.baseURL}/orders/${id}/delete`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
@@ -247,14 +247,14 @@ export class HttpClientService {
   }
 
   getWorkingOrders(page: number, size: number): Observable<Order[]> {
-  
+
 
     return this.httpClient.get<Order[]>(`${this.baseURL}/orders/inbox/all?page=${page - 1}&size=${size}`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
- 
+
 
 
 
@@ -270,7 +270,7 @@ export class HttpClientService {
   }
 
 
-  getOrderBooksByOrderId(orderId: number): Observable<OrderBook[]>{
+  getOrderBooksByOrderId(orderId: number): Observable<OrderBook[]> {
     return this.httpClient.get<OrderBook[]>(`${this.baseURL}/order_book/${orderId}/get`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
@@ -291,7 +291,7 @@ export class HttpClientService {
 
 
 
-  
+
   // Email
   getEmailsByUserId(userId: number): Observable<Email[]> {
     return this.httpClient.get<Email[]>(`${this.baseURL}/emails/${userId}/list`).pipe(

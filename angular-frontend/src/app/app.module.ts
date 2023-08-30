@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -54,7 +54,7 @@ import { CommunicationComponent } from './components/communication/communication
     ErrorComponent,
     InboxComponent,
     CommunicationComponent
-    ],
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -81,7 +81,7 @@ import { CommunicationComponent } from './components/communication/communication
       useClass: AuthInterceptorService,
       multi: true
     }
-    ],
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

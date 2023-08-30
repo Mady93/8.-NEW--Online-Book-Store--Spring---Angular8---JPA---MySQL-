@@ -1,12 +1,14 @@
-table, th, td {
-    padding: 10px;
+table,
+th,
+td {
+	padding: 10px;
 	border: 1px solid black;
 	border-collapse: collapse;
 }
 
-.close{
-    all: unset;
-    position: absolute;
+.close {
+	all: unset;
+	position: absolute;
 	right: 0px;
 	top: 0px;
 	margin-top: -20px;
@@ -17,19 +19,17 @@ table, th, td {
 	cursor: pointer;
 }
 
-.bookDetails{
-    position: relative;
+.bookDetails {
+	position: relative;
 	display: inline-block;
 	left: 50%;
 	transform: translateX(-50%);
 }
 
-td:nth-child(2){
-    /* background: red; */
-    width: 25vh;
+td:nth-child(2) {
+	width: 25vh;
 }
 
 .btn {
 	width: 15vh;
 }
-

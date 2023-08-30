@@ -54,15 +54,13 @@ export class InboxComponent implements OnInit {
         setTimeout(() => {
           this.msg = '';
         }, 2000);
-        
+
 
       },
       complete: () => { }
     });
 
   }
-
-
 
 
   // Aggiunto regex errori
@@ -81,16 +79,16 @@ export class InboxComponent implements OnInit {
         this.ok = "";
         this.msg = "";
         this.allOrders = num;
-  
+
         this.service.getWorkingOrders(this.page, this.size).subscribe({
           next: (orders: Order[]) => {
             this.msg = "";
             this.ok = "";
-            this.orders = orders; 
+            this.orders = orders;
           },
           error: (err: HttpErrorResponse) => {
             this.msg = this.replaceAll(err.message, "#", "<br>");
-  
+
             setTimeout(() => {
               this.msg = '';
             }, 2000);
@@ -109,7 +107,7 @@ export class InboxComponent implements OnInit {
       complete: () => { }
     });
   }
-  
+
 
   renderPage(event: number) {
     this.page = (event);
@@ -121,22 +119,22 @@ export class InboxComponent implements OnInit {
     //debugger;
     this.service.updateOrder(order, "Send").subscribe({
       next: (res: any) => {
-        this.ok = res.message; 
+        this.ok = res.message;
 
         setTimeout(() => {
           this.ok = '';
 
           //fix aggiornamento indice pagina
           if (this.allOrders == 1) this.page = 1;
-          else if ((this.allOrders-((this.page-1)*this.size)) == 1) this.page--;
+          else if ((this.allOrders - ((this.page - 1) * this.size)) == 1) this.page--;
 
-          this.fetchOrders(); 
+          this.fetchOrders();
         }, 2000);
 
       },
       error: (err: HttpErrorResponse) => {
         this.msg = this.replaceAll(err.message, "#", "<br>");
-  
+
         setTimeout(() => {
           this.msg = '';
         }, 2000);
@@ -144,7 +142,7 @@ export class InboxComponent implements OnInit {
       complete: () => { }
     });
   }
-  
+
 
 
 
