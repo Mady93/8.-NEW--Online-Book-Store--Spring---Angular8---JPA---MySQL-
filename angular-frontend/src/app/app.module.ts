@@ -11,7 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatTableModule } from '@angular/material';
-//import { ToastrModule } from 'ngx-toastr';
+//import { ToastrModule } from 'ngx-toastr'; 
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatExpansionModule } from '@angular/material/expansion';
 
@@ -68,7 +68,7 @@ import { CommunicationComponent } from './components/communication/communication
     MatInputModule,
     MatIconModule,
     FontAwesomeModule,
-    //ToastrModule.forRoot()
+    //ToastrModule.forRoot(),
     MatTableModule,
     MatPaginatorModule,
     MatExpansionModule

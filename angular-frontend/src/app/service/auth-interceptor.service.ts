@@ -12,6 +12,10 @@ export class AuthInterceptorService implements HttpInterceptor {
 
   constructor(private auth: AuthService, private router: Router) { }
 
+  /* intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>: 
+  Questo metodo è il cuore dell'interceptor. Riceve la richiesta HTTP in ingresso e 
+  il gestore successivo. Il codice aggiunge l'intestazione di autorizzazione al token JWT, 
+  se disponibile, attraverso la clonazione della richiesta originale. */
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
     let res = req;
@@ -24,6 +28,13 @@ export class AuthInterceptorService implements HttpInterceptor {
       });
     }
 
+    // return next.handle(res).pipe(tap(...)): Viene inviata la richiesta modificata e si ascolta la risposta utilizzando l'operatore tap. Questo operatore consente di eseguire azioni sulle risposte HTTP senza modificarle.
+    /* Dentro il blocco tap, se la risposta è un'istanza di HttpResponse con uno status 200 o 201, 
+    viene verificato se c'è un'intestazione di autorizzazione nell'header. 
+    Se presente, il token viene estratto e memorizzato in localStorage.
+    In caso di errore (err), se lo status è 401 (non autorizzato), 
+    il token viene rimosso da localStorage, l'utente viene scollegato tramite il metodo logout() 
+    del servizio AuthService, e viene reindirizzato alla pagina di login tramite il servizio Router. */
     return next.handle(res).pipe(
       tap(
         event => {

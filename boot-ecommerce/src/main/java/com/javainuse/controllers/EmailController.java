@@ -27,15 +27,17 @@ public class EmailController {
 	public EmailController(EmailRepository emailRepository) {
 		this.emailRepository = emailRepository;
 	}
-	
+
 	@GetMapping("/{userId:\\d+}/list")
-	public ResponseEntity<List<Email>> getEmails(@PathVariable("userId") Long userId) throws ResourceNotFoundException, IllegalArgumentException {
+	public ResponseEntity<List<Email>> getEmails(@PathVariable("userId") Long userId)
+			throws ResourceNotFoundException, IllegalArgumentException {
 
 		List<Email> userList = (List<Email>) emailRepository.getEmailByUserId(userId);
 		return Optional.of(userList)
 				.filter(list -> !list.isEmpty())
 				.map(list -> new ResponseEntity<>(list, HttpStatus.OK))
 				.orElseThrow(() -> new ResourceNotFoundException(
-						"Unable to retrieve the list. No emails resource was found in the database for the user with ID: "+userId));
+						"Unable to retrieve the list. No emails resource was found in the database for the user with ID: "
+								+ userId));
 	}
 }

@@ -78,13 +78,13 @@ const accessTable = [
     { path: /^\/orders\/count\/all(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/inbox\/all(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/update\/\d+\/[a-zA-Z]+(\?.*)?$/, groups: ["Order"] },
-   
-  
+
+
     // Routes intersect table
     { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/order_book\/\d+\/get$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/order_book\/update\/\d+\/\d+$/, groups: ["Admin", "User", "Seller", "Order"] },
-   
+
     // Routes Book
     { path: /^\/books\/upload$/, groups: ["Admin"] },
     { path: /^\/books\/add$/, groups: ["Admin"] },
@@ -93,9 +93,9 @@ const accessTable = [
     { path: /^\/books\/\d+\/delete$/, groups: ["Admin"] },
     { path: /^\/books\/deleteAll$/, groups: ["Admin"] },
 
-     // Routes Email
-     { path: /^\/emails\/\d+\/list$/, groups: ["Admin", "User", "Seller", "Order"] }
-    
+    // Routes Email
+    { path: /^\/emails\/\d+\/list$/, groups: ["Admin", "User", "Seller", "Order"] }
+
 ];
 
 function getPermissionByPath(path) {
@@ -145,7 +145,7 @@ function isMasterTokenValid(uid, cb) {
 
 function checkAndRenewToken(uid, exp, role) {
     const now = Math.floor(Date.now() / 1000);
-    console.log(exp-now);
+    console.log(exp - now);
     if (exp && now > exp) {
         return new Promise((resolve, reject) => {
 
@@ -157,23 +157,23 @@ function checkAndRenewToken(uid, exp, role) {
                 if (status == 200) {
 
 
-                    if (time==0){
+                    if (time == 0) {
 
-                        resolve({state: 3});
+                        resolve({ state: 3 });
 
-                    }else{
+                    } else {
 
 
                         let key = "" + uid;
 
                         if (tokenMap[key] === undefined || now > tokenMap[key].exp) {
                             let exp = (now + constants.REFRESH_TOKEN_TIME);
-                            tokenMap[key] = {exp: exp, tollerance: 3};
-                        } else if (tokenMap[key].tollerance>0) {
+                            tokenMap[key] = { exp: exp, tollerance: 3 };
+                        } else if (tokenMap[key].tollerance > 0) {
                             tokenMap[key].tollerance--;
-                            resolve({state: 2});
+                            resolve({ state: 2 });
                         } else {
-                            resolve({state: 0});
+                            resolve({ state: 0 });
                         }
 
 
@@ -196,11 +196,6 @@ function checkAndRenewToken(uid, exp, role) {
 
                     }
 
-
-
-
-                    
-
                 } else {
 
                     resolve({ state: 2 });
@@ -217,15 +212,14 @@ function checkAndRenewToken(uid, exp, role) {
 }
 
 
-function handleToken(token)
-{
+function handleToken(token) {
 
     return new Promise((resolve, reject) => {
 
         let role = "*";
         let exp = 0;
 
-        let response = {uid: null, role: "*", exp: 0, tokenRefreshResponse: null};
+        let response = { uid: null, role: "*", exp: 0, tokenRefreshResponse: null };
 
         if (token != null && token.indexOf("Bearer") == 0) {
             token = token.substr(7);
@@ -243,12 +237,12 @@ function handleToken(token)
                     response.uid = uid;
                     response.role = role;
                     response.exp = exp;
-            
+
                     // se il token e' scaduto e il token master e' ancora valido effettuto un refresh 
                     checkAndRenewToken(uid, exp, role).then(res0 => {
-    
-                        let trr = {status: 200, headers: {}, msg: ""};
-    
+
+                        let trr = { status: 200, headers: {}, msg: "" };
+
                         switch (res0.state) {
                             case 0:
                                 trr.status = 406;
@@ -270,19 +264,15 @@ function handleToken(token)
 
                     });
                 });
-        
+
             } catch (err) {
-        
-                //return res.status(401).json(err);
-                //resolve({status: 401, msg: err});
-                response.tokenRefreshResponse = {status: 401, msg: err};
+
+                response.tokenRefreshResponse = { status: 401, msg: err };
                 resolve(response);
-        
+
             }
-            
         }
-        else
-        {
+        else {
             resolve(response);
         }
 
@@ -291,14 +281,13 @@ function handleToken(token)
 }
 
 
-function isUidCoherent(url, uid)
-{
+function isUidCoherent(url, uid) {
     let ret = true;
     let x = url.match(/orders\/(\d+)/);
 
-    if (x && x[1]){
+    if (x && x[1]) {
         let qpuid = x[1];
-        ret = (qpuid==uid);
+        ret = (qpuid == uid);
     }
 
     return ret;
@@ -319,12 +308,11 @@ function checkToken(req, res, next) {
 
     handleToken(token).then(res0 => {
 
-        let response = {status: 200, headers: {}};
+        let response = { status: 200, headers: {} };
 
         //verifico se ho qualche risposta http da inoltrare
         let httpRes = res0.tokenRefreshResponse;
-        if (httpRes)
-        {
+        if (httpRes) {
             if (httpRes.status != 200) res.status(httpRes.status).send(httpRes.msg);
             if (httpRes.Authorization) res.setHeader('Authorization', httpRes.Authorization);
         }
@@ -335,9 +323,9 @@ function checkToken(req, res, next) {
         role = res0.role;
 
         /* se ho un uid, estratto dal token e' sicuramente valido lo passo al backend per ulteriori controlli*/
-        if (uid)
-        {
-            /*
+        if (uid) {
+
+             /*
             let parsedUrl = url.parse(path);
             let queryParams = querystring.parse(parsedUrl.query);
             queryParams.vuid = uid;
@@ -351,8 +339,8 @@ function checkToken(req, res, next) {
             req.query.vrole = role;
         }
 
-        
-        
+
+
 
 
         if (authUsers == null || authUsers.includes(role)) {
@@ -366,13 +354,9 @@ function checkToken(req, res, next) {
 
     });
 
-    
+
 
 }
-
-
-
-
 
 
 // Middleware per verificare il token JWT
@@ -443,10 +427,6 @@ async function checkToken0(req, res, next) {
     }
 
 }
-
-
-
-
 
 
 

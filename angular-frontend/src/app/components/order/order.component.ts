@@ -29,6 +29,7 @@ export class OrderComponent implements OnInit {
 
   constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute) { }
 
+  // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente. Ottiene l'ID dell'ordine dalla query parametrica dell'URL e decide se recuperare tutti gli ordini dell'utente o solo l'ordine con l'ID specificato.
   ngOnInit() {
 
     const id = this.route.snapshot.queryParamMap.get('id');
@@ -37,21 +38,23 @@ export class OrderComponent implements OnInit {
     else this.fetchOrderById(parseInt(id));
   }
 
+  // openDetail(oid: number): Questo metodo viene chiamato quando l'utente desidera visualizzare i dettagli di un ordine specifico. Richiama fetchOrderBookByOrderid(oid) solo se i dettagli dell'ordine non sono già stati caricati.
   openDetail(oid: number) {
     if (this.ordersDetails[oid] === undefined) this.fetchOrderBookByOrderid(oid);
   }
 
-  // Aggiunto regex errori
+  // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per effettuare la sostituzione di determinati caratteri nella stringa, utilizzate per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
-  // Aggiunto regex errori
+  // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per effettuare la sostituzione di determinati caratteri nella stringa, utilizzate per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
 
 
+  // fetchOrderById(oid: number): Questo metodo ottiene un singolo ordine attraverso il servizio HttpClientService e assegna i dettagli all'array orders.
   fetchOrderById(oid: number) {
 
     let uid: number = this.auth.uid;
@@ -66,6 +69,7 @@ export class OrderComponent implements OnInit {
   }
 
 
+  // fetchOrdersByUid(uid: number): Questo metodo ottiene tutti gli ordini dell'utente attraverso il servizio HttpClientService e gestisce la visualizzazione degli ordini.
   fetchOrdersByUid(uid: number) {
 
     this.service.countOrders(uid).subscribe({
@@ -108,6 +112,8 @@ export class OrderComponent implements OnInit {
 
   }
 
+
+  // fetchOrderBookByOrderid(oid: number): Questo metodo ottiene i dettagli degli oggetti dell'ordine attraverso il servizio HttpClientService, calcola il totale dell'importo e aggiorna gli ordiniDetails.
   fetchOrderBookByOrderid(oid: number) {
 
     this.service.getOrderBooksByOrderId(oid).subscribe({
@@ -139,6 +145,8 @@ export class OrderComponent implements OnInit {
 
   }
 
+
+  // renderPage(event: number): Questo metodo viene chiamato quando l'utente cambia pagina nella visualizzazione degli ordini. Aggiorna il numero di pagina e richiama fetchOrdersByUid(this.auth.uid).
   renderPage(event: number) {
     this.page = (event);
     this.ordersDetails = [];
@@ -146,6 +154,7 @@ export class OrderComponent implements OnInit {
   }
 
 
+  // deleteOrder(oid: number): Questo metodo permette di eliminare un ordine. Utilizza il servizio HttpClientService per effettuare la cancellazione e aggiorna la visualizzazione degli ordini.
   deleteOrder(oid: number) {
     this.service.deleteOrder(oid).subscribe({
       next: (res: any) => {
@@ -176,6 +185,8 @@ export class OrderComponent implements OnInit {
     })
   }
 
+
+  // addBook(oid: number): Questo metodo aggiunge un nuovo libro a un ordine. Utilizza il servizio HttpClientService per aggiungere un oggetto all'ordine e aggiorna la visualizzazione degli ordiniDetails.
   addBook(oid: number) {
 
     if (!this.selectedResult) return;
@@ -197,6 +208,7 @@ export class OrderComponent implements OnInit {
   }
 
 
+  // updateQuantity(ob: OrderBook): Questo metodo aggiorna la quantità di un oggetto in un ordine. Utilizza il servizio HttpClientService per aggiornare la quantità e aggiorna la visualizzazione degli ordiniDetails.
   updateQuantity(ob: OrderBook) {
 
     delete ob.book.picByte;
@@ -229,7 +241,7 @@ export class OrderComponent implements OnInit {
   }
 
 
-
+// findBook(event, oid: number): Questo metodo cerca un libro per nome e restituisce i risultati che non sono già presenti nell'ordine specificato.
   findBook(event, oid: number) {
 
     this.selectedResult = null;
@@ -253,9 +265,10 @@ export class OrderComponent implements OnInit {
 
       }
     });
-
   }
 
+
+  // selectNewBook(event): Questo metodo viene chiamato quando l'utente seleziona un nuovo libro da aggiungere all'ordine.
   selectNewBook(event) {
     let bid: number = parseInt(event.target.value);
     this.selectedResult = this.results.find(book => {

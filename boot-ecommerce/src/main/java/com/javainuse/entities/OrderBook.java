@@ -14,6 +14,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /*
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,6 +50,9 @@ public class OrderBook {
 	@CreationTimestamp
 	@Column(name = "added_at", nullable = false)
 	private Date addedAt;
+
+	@Column(name = "isDeleted")
+	private boolean isDeleted;
 
 	public OrderBooksId getId() {
 		return id;
@@ -95,9 +101,19 @@ public class OrderBook {
 	public void setAddedAt(Date addedAt) {
 		this.addedAt = addedAt;
 	}
+
+	public void setIsDeleted(Boolean isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+
+	@JsonProperty("isDeleted")
+	boolean getIsDeleted() {
+		return this.isDeleted;
+	}
+
 	public OrderBook() {
 	}
-	
+
 	public OrderBook(OrderBooksId id, Integer quantity, double price) {
 		this.id = id;
 		this.quantity = quantity;

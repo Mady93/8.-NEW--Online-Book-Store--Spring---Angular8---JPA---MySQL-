@@ -8,6 +8,8 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -38,8 +40,8 @@ import lombok.ToString;
 @NamedQuery(name = "Order.findOrdersByUser", query = "SELECT o FROM Order o WHERE o.user = :user")
 @NamedQuery(name = "Order.countOrders", query = "SELECT COUNT(o) FROM Order o")
 
-@NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query ="SELECT o FROM Order o WHERE o.state = 'Working'")
-@NamedQuery(name = "Order.countTotalOrdersInWorkingState", query ="SELECT COUNT(o) FROM Order o WHERE o.state = 'Working'")
+@NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Working'")
+@NamedQuery(name = "Order.countTotalOrdersInWorkingState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Working'")
 public class Order {
 
 	@Id
@@ -56,23 +58,28 @@ public class Order {
 	@Column(name = "state")
 	private String state;
 
-	//private boolean deleted;
-
 	@Temporal(TemporalType.TIMESTAMP)
 	@Generated(GenerationTime.INSERT)
 	@ColumnDefault("CURRENT_TIMESTAMP")
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Date createdAt;
 
+	@Column(name = "isDeleted")
+	private boolean isDeleted;
+	
 	public Order(User user, String state) {
 		this.user = user;
 		this.state = state;
 		this.createdAt = new Date();
 	}
 
-	public String getUserEmail()
-	{
+	public String getUserEmail() {
 		return this.user.getEmail();
+	}
+
+	@JsonProperty("isDeleted")
+	boolean getIsDeleted() {
+		return this.isDeleted;
 	}
 
 }

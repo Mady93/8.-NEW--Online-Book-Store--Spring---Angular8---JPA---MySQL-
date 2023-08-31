@@ -25,29 +25,31 @@ export class AdduserComponent implements OnInit {
   constructor(private httpClientService: HttpClientService,
     private router: Router) { }
 
+    // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente e imposta il tipo di utente predefinito come "User".
   ngOnInit() {
     this.user.type = "User";
   }
 
-  // Aggiunto regex errori
+  // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per effettuare la sostituzione di determinati caratteri nella stringa, utilizzate per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
-  // Aggiunto regex errori
+    // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per effettuare la sostituzione di determinati caratteri nella stringa, utilizzate per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
 
+  // addUser(): Questo metodo invia una richiesta al server per aggiungere un nuovo utente utilizzando il servizio HttpClientService. Gestisce le risposte e gli errori del server, mostrando messaggi di conferma o di errore. Dopo aver aggiunto l'utente con successo, emette l'evento userAddedEvent per segnalare agli altri componenti che un nuovo utente è stato aggiunto. Inoltre, reindirizza l'utente alla pagina degli utenti.
   addUser() {
     this.httpClientService.addUser(this.user).subscribe({
       next: (res: any) => {
-        this.ok = res.message; // Mostra il messaggio "ok"
+        this.ok = res.message;
 
         setTimeout(() => {
-          this.ok = ''; // Pulisci il messaggio "ok" dopo 1 secondo
-          this.userAddedEvent.emit(); // Emetti l'evento
-          this.router.navigate(['admin', 'users']); // Naviga alla pagina
+          this.ok = ''; 
+          this.userAddedEvent.emit(); 
+          this.router.navigate(['admin', 'users']); 
         }, 2000);
       },
       error: (err: HttpErrorResponse) => {
@@ -62,7 +64,7 @@ export class AdduserComponent implements OnInit {
     });
   }
 
-
+// closeFunction(): Questo metodo reindirizza l'utente alla pagina degli utenti senza effettuare alcuna operazione.
   closeFunction() {
     this.router.navigate(['admin', 'users']);
   }

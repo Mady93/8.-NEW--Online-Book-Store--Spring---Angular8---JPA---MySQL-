@@ -26,6 +26,7 @@ export class RegisterLoginComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder, private router: Router, private auth: AuthService) { }
 
+  // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente. Si occupa di inizializzare il formulario e le sue validazioni in base al tipo di operazione (registrazione o accesso).
   ngOnInit() {
 
     this.isLogin = (this.router.url.indexOf("/login") >= 0);
@@ -65,12 +66,13 @@ export class RegisterLoginComponent implements OnInit {
 
   }
 
-
+// toggleShowPassword(n): Questo metodo permette di mostrare o nascondere la password nell'input corrispondente, a seconda dell'indice n passato come parametro.
   toggleShowPassword(n) {
     this.showPassword[n] = !this.showPassword[n];
   }
 
 
+  // validatePasswordConfirmation(control: FormControl): Questo metodo valida se la password inserita e la sua conferma coincidono.
   private validatePasswordConfirmation(control: FormControl): ValidationErrors | null {
     const password = this.form.get('password').value;
     const repeatPassword = control.value;
@@ -99,6 +101,7 @@ export class RegisterLoginComponent implements OnInit {
     return <FormControl>this.form.controls['repeatPassword'];
   }
 
+  // validatePwd(): Questo metodo è un validatore personalizzato che verifica che due campi password abbiano lo stesso valore.
   validatePwd(): ValidatorFn {
 
     return (control: AbstractControl): ValidationErrors | null => {
@@ -109,18 +112,20 @@ export class RegisterLoginComponent implements OnInit {
     };
   }
 
-
+// escapeRegExp(string): Questo metodo esegue l'escape dei caratteri speciali in una stringa, utilizzando una regex.
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
-
+// replaceAll(str, find, replace): Questo metodo sostituisce tutte le occorrenze di una sottostringa con un'altra nella stringa di input.
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
 
 
-
+// action(): Questo metodo è chiamato quando l'utente esegue un'azione (registrazione o accesso). Richiama i metodi appropriati del servizio AuthService per l'accesso o la registrazione e gestisce le risposte e gli errori restituiti dal servizio.
+// Nel caso dell'accesso, gestisce la visualizzazione dei messaggi di errore per l'email e la password, se presenti.
+// Nel caso della registrazione, gestisce la visualizzazione dei messaggi di errore per il nome, l'email e la password, se presenti.
   action() {
 
     let name = this.form.controls.name.value;

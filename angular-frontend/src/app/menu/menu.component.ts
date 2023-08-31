@@ -25,6 +25,7 @@ export class MenuComponent implements OnInit {
   iconaCommunication = faMailBulk;
   iconaInbox = faInbox;
 
+  // isLogin e showViewOrders vengono impostate per controllare la visibilità delle voci del menu in base alla situazione (accesso o registrazione e posizione dell'URL).
   isLogin: boolean = true;
   showViewOrders: boolean = false;
 
@@ -32,6 +33,7 @@ export class MenuComponent implements OnInit {
 
   constructor(public authService: AuthService, private router: Router, private httpClienteService: HttpClientService) { }
 
+  // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente. Si abbona agli eventi di navigazione (NavigationEnd) per monitorare la modifica dell'URL e determinare se l'utente è in fase di registrazione o accesso, nonché se si trova sulla pagina /shop.
   ngOnInit() {
 
     this.router.events.pipe(
@@ -50,7 +52,7 @@ export class MenuComponent implements OnInit {
       }
     });
 
-
+    // update(): Questo metodo è chiamato quando l'utente accede o effettua il logout. Aggiorna i dati dell'utente attualmente loggato utilizzando l'ID utente dal servizio AuthService.
     /*faccio un subscribe alla variabile uid, che si accorge di un cambio a caldo dovuto ad un login*/
     this.authService.update().subscribe({
       next: () => {
@@ -62,7 +64,7 @@ export class MenuComponent implements OnInit {
     this.updateUserData(this.authService.uid);
   }
 
-
+// updateUserData(uid: number): Questo metodo richiede i dati dell'utente tramite il servizio HttpClientService utilizzando l'ID utente fornito. Aggiorna il nome utente nel menu in base ai dati recuperati.
   private updateUserData(uid: number) {
 
     if (!uid) return;

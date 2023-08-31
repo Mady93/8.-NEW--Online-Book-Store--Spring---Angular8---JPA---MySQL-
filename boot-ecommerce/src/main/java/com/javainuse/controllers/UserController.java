@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +34,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.javainuse.details.ApiResponse;
-import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
 import com.javainuse.exceptions.MaxAdminLimitExceededException;
 import com.javainuse.exceptions.MinAdminLimitRole;
 import com.javainuse.exceptions.ResourceNotFoundException;
-import com.javainuse.repositories.OrderBookRepository;
-import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
 import com.javainuse.services.UserService;
 
@@ -64,7 +60,7 @@ public class UserController {
 
 	private final UserRepository userRepository;
 	private final UserService userService;
-	
+
 	private String pubKey;
 
 	@Autowired
@@ -145,45 +141,7 @@ public class UserController {
 		return ResponseEntity.status(200).body("");
 	}
 
-	/*
-	 @PostMapping(path = "/login", consumes = "application/json")
-	public ResponseEntity<Object> login(@RequestBody User user)
-			throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
-		HttpStatus retStatus = HttpStatus.OK;
-		User x = this.userRepository.findUserByEmail(user.getEmail());
-
-		ObjectMapper objectMapper = new ObjectMapper();
-		ObjectNode json = objectMapper.createObjectNode();
-
-		System.out.println(user.toString());
-		System.out.println(x != null ? x.toString() : "User not found");
-
-		if (x == null || !x.getPassword().equals(user.getPassword())) {
-			json.put("msg", "Authentication failed");
-			retStatus = HttpStatus.FORBIDDEN;
-		} else {
-			json.put("msg", "Login succeeded")
-					.put("id", String.valueOf(x.getId()))
-					.put("role", x.getType().toString());
-		}
-
-		return ResponseEntity.status(retStatus).body(json);
-	}
-	 */
-
-	/*
-	 @PostMapping(path = "/register", consumes = "application/json")
-	public ResponseEntity<Object> register(@RequestBody @Valid User user)
-			throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
-		HttpStatus retStatus = HttpStatus.CREATED;
-
-		userRepository.save(user);
-
-		return ResponseEntity.status(retStatus).body("");
-	}
-	 */
-
-	 @PostMapping(path = "/register", consumes = "application/json")
+	@PostMapping(path = "/register", consumes = "application/json")
 	public ResponseEntity<Object> register(@RequestBody @Valid User user)
 			throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
 
@@ -194,40 +152,26 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));
 	}
 
-
-
-
 	@PostMapping(path = "/login", consumes = "application/json")
-public ResponseEntity<Object> login(@RequestBody User user)
-        throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
-    User existingUser = userRepository.findUserByEmail(user.getEmail());
+	public ResponseEntity<Object> login(@RequestBody User user)
+			throws MethodArgumentNotValidException, IllegalArgumentException, ResourceNotFoundException {
+		User existingUser = userRepository.findUserByEmail(user.getEmail());
 
-    ObjectMapper objectMapper = new ObjectMapper();
-    ObjectNode json = objectMapper.createObjectNode();
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode json = objectMapper.createObjectNode();
 
-   // System.out.println("Input User: " + user.toString());
-    //System.out.println("Existing User: " + (existingUser != null ? existingUser.toString() : "User not found"));
+		if (existingUser == null || !existingUser.getPassword().equals(user.getPassword())) {
+			json.put("message", "Authentication failed");
 
-    if (existingUser == null || !existingUser.getPassword().equals(user.getPassword())) {
-        json.put("message", "Authentication failed");
+			throw new ResourceNotFoundException("The user resource was not found in the database");
 
-		throw new ResourceNotFoundException("The user resource was not found in the database");
-        //return ResponseEntity.status(HttpStatus.FORBIDDEN).body(json.toString());
-    } else {
-        json.put("message", "Login succeeded")
-            .put("id", String.valueOf(existingUser.getId()))
-            .put("role", existingUser.getType().toString());
-        return ResponseEntity.status(HttpStatus.OK).body(json.toString());
-    }
-}
-
-
-
-
-
-
-
-
+		} else {
+			json.put("message", "Login succeeded")
+					.put("id", String.valueOf(existingUser.getId()))
+					.put("role", existingUser.getType().toString());
+			return ResponseEntity.status(HttpStatus.OK).body(json.toString());
+		}
+	}
 
 	@GetMapping(path = "/{uid:\\d+}/getTokenTime")
 	public ResponseEntity<Object> refreshToken(@PathVariable("uid") Long uid) throws Exception {
@@ -270,7 +214,6 @@ public ResponseEntity<Object> login(@RequestBody User user)
 		}
 	}
 
-	// metodo per admin - crea l'utente
 	@PostMapping(path = "/add", consumes = "application/json")
 	public ResponseEntity<Object> postUserAdmin(@RequestBody @Valid User user)
 			throws MethodArgumentNotValidException, IllegalArgumentException, DataIntegrityViolationException {
@@ -280,32 +223,11 @@ public ResponseEntity<Object> login(@RequestBody User user)
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));
 	}
 
-	// metodo per admin - l'unico che puo modificare il ruolo
-	/*@PostMapping(path = "/setRole", consumes = "application/json")
-	public ResponseEntity<Object> setRole(@RequestBody JsonNode data)
-			throws MethodArgumentNotValidException, IllegalArgumentException {
-
-		Long uid = data.get("uid").asLong();
-		Optional<User> optional = userRepository.findById(uid);
-		User user = optional.orElseThrow(
-				() -> new ResourceNotFoundException("Unable to retrieve the resource. The user resource with ID: "
-						+ uid + " was not found in the database"));
-
-		String role = data.get("role").asText();
-		user.setType(role);
-
-		userRepository.save(user);
-
-		return ResponseEntity.status(HttpStatus.OK).body("{'response': 'Role changed'}");
-	}*/
-
-
-
-
-	// Vincoli :  massimo 5 admin e minimo 1 admin
+	// Vincoli : massimo 5 admin e minimo 1 admin
 	@PostMapping(path = "/setRole", consumes = "application/json")
 	public ResponseEntity<Object> setRole(@RequestBody JsonNode data)
-			throws MethodArgumentNotValidException, IllegalArgumentException, MaxAdminLimitExceededException, MinAdminLimitRole {
+			throws MethodArgumentNotValidException, IllegalArgumentException, MaxAdminLimitExceededException,
+			MinAdminLimitRole {
 
 		Long uid = data.get("uid").asLong();
 		Optional<User> optional = userRepository.findById(uid);
@@ -324,7 +246,8 @@ public ResponseEntity<Object> login(@RequestBody User user)
 			}
 
 		} else if ("User".equalsIgnoreCase(role) || "Seller".equalsIgnoreCase(role)) {
-			// Verifica se l'utente è l'ultimo admin e sta cercando di cambiare il ruolo a "User" o "Seller"
+			// Verifica se l'utente è l'ultimo admin e sta cercando di cambiare il ruolo a
+			// "User" o "Seller"
 			long adminCount = userRepository.countByType("Admin");
 			if (adminCount == 1 && user.getType().equalsIgnoreCase("admin")) {
 				throw new MinAdminLimitRole("You cannot change the role of the last admin!");
@@ -338,7 +261,6 @@ public ResponseEntity<Object> login(@RequestBody User user)
 		responseMap.put("res", "Role successfully modified!");
 		return ResponseEntity.status(HttpStatus.OK).body(responseMap);
 	}
-
 
 	@GetMapping(path = "/{id:\\d+}/one")
 	public ResponseEntity<User> getUserById(@PathVariable("id") Long id)

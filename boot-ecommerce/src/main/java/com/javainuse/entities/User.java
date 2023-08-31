@@ -30,11 +30,9 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @NamedQuery(name = "User.existsByEmail", query = "SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email")
-//aggiunti
 @NamedQuery(name = "User.findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
 @NamedQuery(name = "User.findUserByType", query = "SELECT u FROM User u WHERE u.type = :code")
 @NamedQuery(name = "User.countByType", query = "SELECT COUNT(u) FROM User u WHERE u.type IN ('Admin')")
-
 public class User {
 
 	@Id
@@ -47,10 +45,8 @@ public class User {
 	private String name;
 
 	@Pattern(regexp = "^(Admin|User|Seller|Order)$", message = "Role type must be one of: Admin, User, Seller, Order")
-    @Column(name = "type")
+	@Column(name = "type")
 	private String type;
-
-
 
 	@NotNull(message = "Email cannot be null")
 	@Pattern(regexp = "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\." + "[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@"
@@ -58,7 +54,7 @@ public class User {
 			+ "(?:[A-Za-z0-9-]*[A-Za-z0-9])?", message = "Email format not valid")
 	@Column(name = "email", unique = true)
 	private String email;
-	
+
 	@NotNull(message = "Password cannot be null")
 	@Pattern(regexp = "^.{8,}$", message = "Password must be at least 8 characters long")
 	@Column(name = "password")
@@ -68,8 +64,9 @@ public class User {
 	@Column(name = "token")
 	private String token;
 
-
-
+	@Column(name = "isDeleted")
+	private boolean isDeleted;
+	
 	public User(String name, String type, String email, String password) {
 		this.name = name;
 		this.type = type;
@@ -77,7 +74,6 @@ public class User {
 		this.setPassword(password);
 		this.token = "";
 	}
-
 
 	public static String md5(String data) throws NoSuchAlgorithmException {
 		MessageDigest md = MessageDigest.getInstance("MD5");
@@ -108,10 +104,10 @@ public class User {
 	}
 
 	public void setPassword(String password) {
-		
-		if (password == "") this.password = "";
-		else
-		{
+
+		if (password == "")
+			this.password = "";
+		else {
 			try {
 				this.password = User.md5(password);
 			} catch (Exception ex) {
@@ -120,24 +116,23 @@ public class User {
 		}
 	}
 
-
 	@JsonIgnore
 	@JsonProperty(value = "token")
 	public String getToken() {
 		return this.token;
 	}
 
-	
-
 	public void setType(String type) {
-        if (type == null || type.isEmpty()) {
-            this.type = "User"; // Imposta il valore predefinito "User" se il valore è vuoto
-        } else {
-            this.type = type;
-        }
-    }
+		if (type == null || type.isEmpty()) {
+			this.type = "User"; // Imposta il valore predefinito "User" se il valore è vuoto
+		} else {
+			this.type = type;
+		}
+	}
 
-
-
+	@JsonProperty("isDeleted")
+	boolean getIsDeleted() {
+		return this.isDeleted;
+	}
 
 }

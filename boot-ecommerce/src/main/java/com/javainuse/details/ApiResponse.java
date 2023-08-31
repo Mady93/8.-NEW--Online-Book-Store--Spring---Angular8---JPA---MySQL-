@@ -1,7 +1,7 @@
 package com.javainuse.details;
 
 public class ApiResponse {
-	
+
 	private int status;
 	private String message;
 

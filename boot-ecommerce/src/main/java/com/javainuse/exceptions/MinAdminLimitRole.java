@@ -1,10 +1,10 @@
 package com.javainuse.exceptions;
 
 public class MinAdminLimitRole extends RuntimeException {
-	
-	private static final long serialVersionUID = 1L;
 
-	public MinAdminLimitRole() {
+    private static final long serialVersionUID = 1L;
+
+    public MinAdminLimitRole() {
         super();
     }
 
@@ -15,5 +15,5 @@ public class MinAdminLimitRole extends RuntimeException {
     public MinAdminLimitRole(String message, Throwable cause) {
         super(message, cause);
     }
-	
+
 }

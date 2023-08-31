@@ -7,5 +7,6 @@ import com.javainuse.entities.Email;
 
 @Repository
 public interface EmailRepository extends JpaRepository<Email, Long> {
+
     List<Email> getEmailByUserId(Long userId);
 }

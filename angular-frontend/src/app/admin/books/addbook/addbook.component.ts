@@ -33,19 +33,20 @@ export class AddbookComponent implements OnInit {
     private httpClient: HttpClient,
     private auth: AuthService) { }
 
+    // ngOnInit(): Questo metodo viene chiamato quando il componente viene inizializzato. Controlla se è presente un parametro "action" nell'URL e, se è "edit", imposta il colore di un pulsante in base all'immagine del libro.
   ngOnInit() {
 
     let act = this.activedRoute.snapshot.queryParams["action"];
 
-
     if (act == "edit") {
+
       this.setButtonColor("data:image/jpeg;base64," + this.book.picByte);
     }
 
   }
 
 
-
+// setButtonColor(url): Questo metodo ottiene i dati del colore dell'immagine e imposta un colore di sfondo per un pulsante in base a tali dati.
   private setButtonColor(url) {
 
     this.getImageColor(url, (r, g, b) => {
@@ -81,6 +82,7 @@ export class AddbookComponent implements OnInit {
 
   }
 
+  // onFileChanged(event): Questo metodo viene chiamato quando un file immagine viene selezionato. Legge il file immagine, calcola il colore del pulsante basato sull'immagine e converte l'immagine in una stringa di byte per il salvataggio.
   public onFileChanged(event) {
     console.log(event);
     this.selectedFile = event.target.files[0];
@@ -88,9 +90,7 @@ export class AddbookComponent implements OnInit {
     let reader = new FileReader();
     reader.readAsDataURL(event.target.files[0]);
     reader.onload = (event2) => {
-      //this.imgURL = reader.result;
       this.setButtonColor(reader.result);
-      //debugger;
       this.book.picByte = reader.result.toString().substring(23);
     };
 
@@ -108,6 +108,8 @@ export class AddbookComponent implements OnInit {
   }
 
 
+  /* saveBook(): Questo metodo salva un libro. Gestisce l'invio dell'immagine del libro (se presente) e gestisce l'aggiunta o l'aggiornamento del libro chiamando i metodi del servizio HttpClientService.
+   In base al ruolo dell'utente autenticato (auth.role), può eseguire operazioni diverse. Inoltre, gestisce le risposte e gli errori da parte del server.*/
   saveBook() {
 
     let isImgUpload = (this.selectedFile != undefined);
@@ -120,7 +122,6 @@ export class AddbookComponent implements OnInit {
 
       imgUploadObs = this.httpClientService.uploadImageBook(this.book, this.selectedFile);
     }
-
 
     let fn = null;
 
@@ -138,7 +139,6 @@ export class AddbookComponent implements OnInit {
 
     }
 
-    
     imgUploadObs.pipe(
       switchMap(() => fn(this.book, this.auth.role.toLowerCase()))
     ).subscribe(
@@ -167,6 +167,7 @@ export class AddbookComponent implements OnInit {
   }
 
 
+  // getImageColor(src: string, cb: any): Questo metodo ottiene il colore medio dell'immagine utilizzando il canvas HTML5.
   getImageColor(src: string, cb: any) {
     var image = new Image();
     image.src = src;
@@ -204,6 +205,7 @@ export class AddbookComponent implements OnInit {
     };
   }
 
+  // closeFunction(): Questo metodo chiude Book Details = x
   closeFunction() {
     this.router.navigate([this.auth.role.toLowerCase(), 'books']);
   }

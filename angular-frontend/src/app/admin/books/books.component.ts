@@ -4,6 +4,7 @@ import { HttpClientService } from 'src/app/service/http-client.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from 'src/app/service/auth.service';
+//import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-books',
@@ -26,8 +27,9 @@ export class BooksComponent implements OnInit {
   ok: any;
 
   constructor(private httpClientService: HttpClientService,
-    private activedRoute: ActivatedRoute, private router: Router, private auth: AuthService) { }
+    private activedRoute: ActivatedRoute, private router: Router, private auth: AuthService, /*private toastr: ToastrService*/) { }
 
+    // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente. Recupera i libri da visualizzare in base alla pagina corrente e al numero di elementi per pagina.
   ngOnInit() {
     this.selectedBook = new Book();
     this.page = parseInt(this.activedRoute.snapshot.queryParamMap.get('page')) || 1;
@@ -35,16 +37,17 @@ export class BooksComponent implements OnInit {
   }
 
 
-  // Aggiunto regex errori
+  // escapeRegExp(string): Questo metodo restituisce una stringa in cui tutti i caratteri speciali che potrebbero influenzare una regex vengono fatti scappare.
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
-  // Aggiunto regex errori
+  // replaceAll(str, find, replace): Questo metodo sostituisce tutte le occorrenze di una determinata sottostringa con un'altra sottostringa all'interno di una stringa data.
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
 
+  // refreshData(): Questo metodo aggiorna i dati dei libri recuperandoli dal server utilizzando il servizio HttpClientService. Gestisce anche eventuali errori di connessione o risposte del server, mostrando i messaggi appropriati.
   refreshData() {
     this.httpClientService.countBooks().subscribe({
       next: (num: number) => {
@@ -109,7 +112,8 @@ export class BooksComponent implements OnInit {
   }
 
 
-  /* funzione che preserva i queryparam attualmente presenti e permette di sovrascriverne i valori */
+  // navigate(path: any, newQp: any): Questo metodo preserva i queryparam attualmente presenti e permette di sovrascriverne i valori 
+  // navigate(path: any, newQp: any): Questo metodo consente di navigare verso una nuova pagina mantenendo i parametri della query string attuali e sovrascrivendoli con i nuovi parametri specificati.
   navigate(path: any, newQp: any) {
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
 
@@ -121,6 +125,7 @@ export class BooksComponent implements OnInit {
   }
 
 
+// renderPage(event: number): Questo metodo viene chiamato quando l'utente cambia pagina. Aggiorna il numero di pagina nella query string dell'URL e aggiorna i dati dei libri.
   renderPage(event: number) {
     this.page = (event);
 
@@ -134,6 +139,7 @@ export class BooksComponent implements OnInit {
   }
 
 
+  //handleSuccessfulResponse(response): Questo metodo gestisce la risposta positiva dal server, popolando l'array books con gli oggetti Book ottenuti dalla risposta.
   // we will be taking the books response returned from the database
   // and we will be adding the retrieved   
   handleSuccessfulResponse(response) {
@@ -155,6 +161,7 @@ export class BooksComponent implements OnInit {
   }
 
 
+  // addBook(): Questo metodo reindirizza l'utente alla pagina di aggiunta di un nuovo libro, aggiungendo il parametro "action" alla query string dell'URL.
   async addBook() {
 
     let qp = JSON.parse(JSON.stringify(this.activedRoute.snapshot.queryParams));
@@ -168,16 +175,19 @@ export class BooksComponent implements OnInit {
   }
 
 
+  // viewBook(id: number): Questo metodo reindirizza l'utente alla pagina di visualizzazione dei dettagli di un libro specifico, includendo il parametro "id" nella query string dell'URL.
   viewBook(id: number) {
     //this.router.navigate([this.auth.role.toLowerCase(), 'books'], { queryParams: { id, action: 'view' } });
     this.navigate([this.auth.role.toLowerCase(), 'books'], { id: id, action: 'view' });
   }
 
 
+  // deleteAll(): Questo metodo elimina tutti i libri dal database attraverso una richiesta al server. Gestisce le risposte e gli errori del server, mostrando messaggi di conferma o di errore.
   deleteAll() {
     this.httpClientService.deleteBooks().subscribe({
       next: (res: any) => {
         this.ok = res.message;
+        
 
         setTimeout(() => {
           this.ok = '';

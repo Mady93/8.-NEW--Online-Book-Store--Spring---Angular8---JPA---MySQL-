@@ -10,8 +10,9 @@ import com.javainuse.entities.Book;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
-	
+
     Page<Book> findByNotDeleted(org.springframework.data.domain.Pageable pageable);
+
     long countNotDeleted();
 
     List<Book> findByNameContaining(String name);

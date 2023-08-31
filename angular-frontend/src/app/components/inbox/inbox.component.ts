@@ -23,15 +23,18 @@ export class InboxComponent implements OnInit {
   msg: any;
   ok: any;
 
+  // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente e richiama la funzione fetchOrders() per ottenere gli ordini dell'utente corrente.
   ngOnInit() {
     this.fetchOrders();
   }
 
+  // openDetail(oid: number): Questo metodo viene chiamato quando l'utente vuole visualizzare i dettagli di un ordine specifico. Richiama fetchOrderById(oid) solo se i dettagli dell'ordine non sono già stati caricati.
   openDetail(oid: number) {
     if (this.ordersDetails[oid] === undefined) this.fetchOrderById(oid);
   }
 
 
+  // fetchOrderById(oid: number): Questo metodo ottiene i dettagli di un ordine specifico attraverso il servizio HttpClientService. Calcola il totale degli importi degli oggetti dell'ordine e memorizza i dettagli nell'oggetto ordersDetails utilizzando l'ID dell'ordine come chiave.
   fetchOrderById(oid: number) {
 
     this.service.getOrderBooksByOrderId(oid).subscribe({
@@ -63,16 +66,17 @@ export class InboxComponent implements OnInit {
   }
 
 
-  // Aggiunto regex errori
+  // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
-  // Aggiunto regex errori
+  // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
 
+  // fetchOrders(): Questo metodo ottiene gli ordini dell'utente attraverso il servizio HttpClientService. Gestisce le risposte e gli errori del server, mostrando messaggi di errore se necessario, e assegna i dati degli ordini alla variabile orders per la visualizzazione.
   fetchOrders() {
     this.service.countTotalOrders().subscribe({
       next: (num: number) => {
@@ -109,14 +113,17 @@ export class InboxComponent implements OnInit {
   }
 
 
+  // renderPage(event: number): Questo metodo viene chiamato quando l'utente cambia pagina nella visualizzazione degli ordini. Aggiorna il numero di pagina e richiama fetchOrders() per ottenere gli ordini corrispondenti.
   renderPage(event: number) {
     this.page = (event);
     this.ordersDetails = [];
     this.fetchOrders();
   }
 
+
+  // updateOrderState(order: Order): Questo metodo viene chiamato quando l'utente aggiorna lo stato di un ordine a "Send". Utilizza il servizio HttpClientService per aggiornare lo stato dell'ordine. Gestisce le risposte e gli errori del server, mostrando messaggi di errore se necessario, e aggiorna la visualizzazione degli ordini chiamando fetchOrders()
   updateOrderState(order: Order) {
-    //debugger;
+
     this.service.updateOrder(order, "Send").subscribe({
       next: (res: any) => {
         this.ok = res.message;
@@ -142,9 +149,6 @@ export class InboxComponent implements OnInit {
       complete: () => { }
     });
   }
-
-
-
 
 }
 

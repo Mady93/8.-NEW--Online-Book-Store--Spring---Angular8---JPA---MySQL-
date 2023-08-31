@@ -1,10 +1,8 @@
 package com.javainuse.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.TypedQuery;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,8 +88,6 @@ public class OrderBookController {
 
 	}
 
-
-	
 	@PutMapping(path = "/update/{bookId:\\d+}/{orderId:\\d+}", consumes = "application/json")
 	public ResponseEntity<Object> putOrderBook(@PathVariable("bookId") Long bookId,
 			@PathVariable("orderId") Long orderId, @RequestBody @Valid OrderBook updatedOrderBook)
@@ -111,16 +106,15 @@ public class OrderBookController {
 			Integer q = updatedOrderBook.getQuantity();
 			String message;
 
-			if (q>0) {
+			if (q > 0) {
 				existingOrderBook.setQuantity(updatedOrderBook.getQuantity());
 				orderBookRepository.save(existingOrderBook);
 				message = "The order intersection row with ID: " + OrderBooksId + " was updated successfully";
-			}else{
+			} else {
 				orderBookRepository.delete(existingOrderBook);
 				message = "The book in current order has been cancelled";
 			}
 
-			
 			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 		} else {
 			throw new ResourceNotFoundException(
@@ -129,8 +123,7 @@ public class OrderBookController {
 		}
 	}
 
-
-	// Query native commentate
+		// Query native commentate
 
 	/* @Transactional
 	@DeleteMapping(path = "/{bookId:\\d+}/delete")

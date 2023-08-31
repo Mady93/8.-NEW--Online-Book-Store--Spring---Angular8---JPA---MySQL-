@@ -17,22 +17,24 @@ export class CommunicationComponent implements OnInit {
 
   constructor(private httpClientService: HttpClientService, private auth: AuthService) { }
 
+  // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente e richiama la funzione getEmByUserId() per ottenere le email dell'utente corrente.
   ngOnInit() {
     this.getEmByUserId();
   }
 
-  // Aggiunto regex errori
+  // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
   }
 
-  // Aggiunto regex errori
+  // escapeRegExp(string) e replaceAll(str, find, replace): Queste funzioni servono per gestire eventuali caratteri speciali o di escape nei messaggi di errore.
   replaceAll(str, find, replace) {
     return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
   }
 
+  // getEmByUserId(): Questo metodo ottiene le email dell'utente corrente attraverso il servizio HttpClientService utilizzando l'UID fornito dal servizio AuthService. Gestisce le risposte e gli errori del server, mostrando messaggi di errore se necessario, e assegna i dati delle email alla variabile emailData per la visualizzazione.
   getEmByUserId() {
-    const userId = this.auth.uid; // Ottieni l'uid dall'AuthService
+    const userId = this.auth.uid; 
     this.httpClientService.getEmailsByUserId(userId).subscribe({
       next: (res: Email[]) => {
         this.emailData = res;
@@ -40,9 +42,9 @@ export class CommunicationComponent implements OnInit {
       error: (err: HttpErrorResponse) => {
         this.msg = this.replaceAll(err.message, "#", "<br>");
 
-        /* setTimeout(() => {
+         setTimeout(() => {
            this.msg = '';
-         }, 2000);*/
+         }, 2000);
 
       },
       complete: () => { }

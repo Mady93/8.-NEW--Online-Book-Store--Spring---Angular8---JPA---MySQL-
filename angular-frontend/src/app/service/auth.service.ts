@@ -147,4 +147,26 @@ export class AuthService {
     return this.http.post<any>(url, user, { headers: headers })
   }
 
+
+
+  /*
+      role, uid, exp: Queste variabili vengono utilizzate per memorizzare il ruolo dell'utente, l'ID dell'utente e la scadenza del token JWT.
+
+    private upd = new Subject<void>(): È un oggetto Subject che viene utilizzato per inviare aggiornamenti quando lo stato dell'utente cambia.
+
+    checkState(): Questo metodo verifica lo stato dell'utente leggendo il token JWT da localStorage e analizzandone i dati. In base ai dati del token, vengono aggiornate le variabili role, uid e exp. Viene anche emesso un segnale attraverso il soggetto upd per indicare un aggiornamento dello stato.
+
+    update(): Questo metodo restituisce un'Observable associata al soggetto upd. Consentirà ad altre parti dell'applicazione di ascoltare gli aggiornamenti dello stato.
+
+    buy(): Questo metodo gestisce il processo di acquisto. Legge il carrello dal localStorage, crea un ordine e poi crea gli elementi OrderBook corrispondenti al carrello. Utilizza promesse per garantire che tutte le operazioni siano completate correttamente.
+
+    login(email: string, password: string): Questo metodo invia una richiesta POST al server per effettuare il login. Se la richiesta ha successo, il token viene salvato in localStorage e lo stato dell'utente viene aggiornato.
+
+    logout(): Questo metodo effettua il logout, rimuovendo il token e reimpostando le variabili uid e role.
+
+    isLogged(): boolean: Questo metodo restituisce true se l'utente è autenticato, altrimenti restituisce false.
+
+    register(name: string, email: string, password: string): Questo metodo invia una richiesta POST per registrare un nuovo utente.
+  */
+
 }
