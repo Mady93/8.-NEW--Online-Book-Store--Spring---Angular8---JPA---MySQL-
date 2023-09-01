@@ -78,7 +78,10 @@ const accessTable = [
     { path: /^\/orders\/count\/all(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/inbox\/all(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/update\/\d+\/[a-zA-Z]+(\?.*)?$/, groups: ["Order"] },
-
+    { path: /^\/orders\/update\/edit$/, groups: ["Order"] },
+    { path: /^\/orders\/count\/allCanceled(\?.*)?$/, groups: ["Order"] },
+    { path: /^\/orders\/inbox\/allCanceled(\?.*)?$/, groups: ["Order"] },
+ 
 
     // Routes intersect table
     { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller", "Order"] },

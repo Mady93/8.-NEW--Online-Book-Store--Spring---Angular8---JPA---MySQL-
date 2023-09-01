@@ -136,7 +136,7 @@ export class ShopbookComponent implements OnInit {
       bookwithRetrievedImageField.author = book.author;
       bookwithRetrievedImageField.price = book.price;
       bookwithRetrievedImageField.picByte = book.picByte;
-      bookwithRetrievedImageField.isDeleted = book.isDeleted;
+      bookwithRetrievedImageField.isActive = book.isActive;
       this.books.push(bookwithRetrievedImageField);
     }
 

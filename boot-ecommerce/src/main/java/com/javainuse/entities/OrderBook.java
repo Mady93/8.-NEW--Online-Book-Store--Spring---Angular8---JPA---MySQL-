@@ -17,16 +17,16 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-/*
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
-*/
 
+/*@Data
+@AllArgsConstructor
+@ToString */
 @Entity
 @Table(name = "order_books")
-@NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt FROM OrderBook jt WHERE jt.id.orderId = :orderId")
+@NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt FROM OrderBook jt WHERE jt.id.orderId = :orderId AND jt.isActive IN('true')")
 public class OrderBook {
 
 	// istanza inner class senza argomenti
@@ -51,8 +51,8 @@ public class OrderBook {
 	@Column(name = "added_at", nullable = false)
 	private Date addedAt;
 
-	@Column(name = "isDeleted")
-	private boolean isDeleted;
+	@Column(name = "isActive")
+	private boolean isActive;
 
 	public OrderBooksId getId() {
 		return id;
@@ -102,13 +102,14 @@ public class OrderBook {
 		this.addedAt = addedAt;
 	}
 
-	public void setIsDeleted(Boolean isDeleted) {
-		this.isDeleted = isDeleted;
+	public void setActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	@JsonProperty("isDeleted")
-	boolean getIsDeleted() {
-		return this.isDeleted;
+
+	@JsonProperty("isActive")
+	boolean getIsActive() {
+		return this.isActive;
 	}
 
 	public OrderBook() {

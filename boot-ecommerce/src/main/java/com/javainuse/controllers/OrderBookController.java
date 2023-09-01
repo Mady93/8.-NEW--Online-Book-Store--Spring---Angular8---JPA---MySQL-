@@ -71,6 +71,7 @@ public class OrderBookController {
 		newOrderBook.setBook(book);
 		newOrderBook.setOrder(order);
 		newOrderBook.setPrice(book.getPrice());
+		newOrderBook.setActive(true);
 		orderBookRepository.save(newOrderBook);
 
 		String message = "The order intersection row for the book with ID: " + bookId + " and order with ID " + orderId

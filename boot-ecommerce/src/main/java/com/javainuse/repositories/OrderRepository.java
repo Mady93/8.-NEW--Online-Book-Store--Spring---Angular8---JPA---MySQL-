@@ -15,9 +15,16 @@ import org.springframework.data.domain.Pageable;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
-    Page<Order> findOrdersByUserId(Long userId, Pageable pageable);
+    //Page<Order> findOrdersByUserId(Long userId, Pageable pageable);
 
-    long countOrdersByUserId(Long userId);
+    //long countOrdersByUserId(Long userId);
+
+
+    Page<Order> findByNotDeletedAndByUserId(Long userId, Pageable pageable);
+
+    long countNotDeletedAndByUserId(Long userId);
+
+
 
     List<Order> findOrdersByUser(User user);
 
@@ -25,10 +32,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     List<Order> findByUserId(Long userId);
 
-
-    // aggiunti mo
     Long countTotalOrdersInWorkingState();
 
     Page<Order> getOrdersInWorkingStateWithDetails(Pageable pageable);
+
+    // aggiunti mo
+    Long countTotalOrdersInCancelledState();
+    Page<Order> getOrdersInCancelledStatWithDetails(Pageable pageable);
 
 }

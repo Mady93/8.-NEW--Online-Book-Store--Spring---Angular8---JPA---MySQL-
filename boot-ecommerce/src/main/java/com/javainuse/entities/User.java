@@ -29,10 +29,23 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@NamedQuery(name = "User.existsByEmail", query = "SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email")
+
+/*
+ @NamedQuery(name = "User.existsByEmail", query = "SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email")
 @NamedQuery(name = "User.findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email")
 @NamedQuery(name = "User.findUserByType", query = "SELECT u FROM User u WHERE u.type = :code")
 @NamedQuery(name = "User.countByType", query = "SELECT COUNT(u) FROM User u WHERE u.type IN ('Admin')")
+ */
+
+@NamedQuery(name = "User.existsByEmail", query = "SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.isActive IN('true')")
+@NamedQuery(name = "User.findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email AND u.isActive IN('true')")
+@NamedQuery(name = "User.findUserByType", query = "SELECT u FROM User u WHERE u.type = :code AND u.isActive IN('true')")
+@NamedQuery(name = "User.countByType", query = "SELECT COUNT(u) FROM User u WHERE u.type IN ('Admin') AND u.isActive IN('true')")
+ 
+
+ // aggiunti 
+@NamedQuery(name = "User.findByNotDeleted", query = "SELECT u FROM User u WHERE u.isActive IN('true')")
+@NamedQuery(name = "User.countByNotDeleted", query = "SELECT count(u) FROM User u WHERE u.isActive IN('true')")
 public class User {
 
 	@Id
@@ -64,8 +77,8 @@ public class User {
 	@Column(name = "token")
 	private String token;
 
-	@Column(name = "isDeleted")
-	private boolean isDeleted;
+	@Column(name = "isActive")
+	private boolean isActive;
 	
 	public User(String name, String type, String email, String password) {
 		this.name = name;
@@ -130,9 +143,9 @@ public class User {
 		}
 	}
 
-	@JsonProperty("isDeleted")
-	boolean getIsDeleted() {
-		return this.isDeleted;
+	@JsonProperty("isActive")
+	boolean getIsActive() {
+		return this.isActive;
 	}
 
 }

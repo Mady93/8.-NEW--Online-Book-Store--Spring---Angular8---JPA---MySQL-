@@ -91,7 +91,7 @@ public class BookController {
 
 		if (this.imageBytes == null)
 			throw new IllegalArgumentException("You have to load an image before this call");
-
+		book.setActive(true);
 		book.setPicByte(this.imageBytes);
 		bookRepository.save(book);
 		this.imageBytes = null;
@@ -165,7 +165,7 @@ public class BookController {
 
 			Book book = optional.get();
 
-			book.setDeleted(true);
+			book.setActive(false);
 			bookRepository.save(book);
 
 			String message = "Book and associated data have been deleted successfully";

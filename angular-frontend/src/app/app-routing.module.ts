@@ -21,6 +21,7 @@ const routes: Routes = [
   { path: 'login', component: RegisterLoginComponent },
   { path: 'communication', canActivate: [RoleGuardService], component: CommunicationComponent },
   { path: 'inbox', canActivate: [RoleGuardService], component: InboxComponent },
+  { path: 'inboxD', canActivate: [RoleGuardService], component: InboxComponent },
   { path: '**', component: ErrorComponent }
 ];
 

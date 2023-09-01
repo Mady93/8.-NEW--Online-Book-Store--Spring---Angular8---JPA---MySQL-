@@ -190,7 +190,8 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(json);
 	}
 
-	@GetMapping(path = "/count")
+	/*
+	 @GetMapping(path = "/count")
 	public ResponseEntity<Integer> countUsers() throws ResourceNotFoundException, IllegalArgumentException {
 		Long count = userRepository.count();
 		if (count == 0) {
@@ -200,8 +201,21 @@ public class UserController {
 			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
 		}
 	}
+	 */
 
-	@GetMapping(path = "/get")
+	 @GetMapping(path = "/count")
+	public ResponseEntity<Integer> countUsers() throws ResourceNotFoundException, IllegalArgumentException {
+		Long count = userRepository.countByNotDeleted();
+		if (count == 0) {
+			throw new ResourceNotFoundException(
+					"Unable to perform the count. No users resource was found in the database");
+		} else {
+			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
+		}
+	}
+
+	/*
+	 @GetMapping(path = "/get")
 	public ResponseEntity<List<User>> getUsers(@RequestParam("page") int page, @RequestParam("size") int size)
 			throws ResourceNotFoundException, IllegalArgumentException {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
@@ -213,11 +227,25 @@ public class UserController {
 					"Unable to retrieve the page: " + page + ". No users resource was found in the database");
 		}
 	}
+	 */
+
+	 @GetMapping(path = "/get")
+	public ResponseEntity<List<User>> getUsers(@RequestParam("page") int page, @RequestParam("size") int size)
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+		Page<User> pagedResult = userRepository.findByNotDeleted(pageable);
+		if (pagedResult.hasContent()) {
+			return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
+		} else {
+			throw new ResourceNotFoundException(
+					"Unable to retrieve the page: " + page + ". No users resource was found in the database");
+		}
+	}
 
 	@PostMapping(path = "/add", consumes = "application/json")
 	public ResponseEntity<Object> postUserAdmin(@RequestBody @Valid User user)
 			throws MethodArgumentNotValidException, IllegalArgumentException, DataIntegrityViolationException {
-
+		user.setActive(true);
 		userRepository.save(user);
 		String message = "User created successfully";
 		return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse(HttpStatus.CREATED.value(), message));

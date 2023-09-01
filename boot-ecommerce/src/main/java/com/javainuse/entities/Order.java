@@ -35,13 +35,17 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@NamedQuery(name = "Order.findOrderByUserId", query = "SELECT o FROM Order o WHERE o.user.id = :userId")
-@NamedQuery(name = "Order.countOrderByUserId", query = "SELECT COUNT(o) FROM Order o WHERE o.user.id = :userId")
-@NamedQuery(name = "Order.findOrdersByUser", query = "SELECT o FROM Order o WHERE o.user = :user")
+@NamedQuery(name = "Order.findOrdersByUser", query = "SELECT o FROM Order o WHERE o.user = :user AND o.isActive IN('true')")
 @NamedQuery(name = "Order.countOrders", query = "SELECT COUNT(o) FROM Order o")
+@NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Working' AND o.isActive IN('true')")
+@NamedQuery(name = "Order.countTotalOrdersInWorkingState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Working' AND o.isActive IN('true')")
+@NamedQuery(name = "Order.findByNotDeletedAndByUserId", query = "SELECT o FROM Order o WHERE o.user.id = :userId AND o.isActive IN('true')")
+@NamedQuery(name = "Order.countNotDeleted", query = "SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.isActive IN('true')")
 
-@NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Working'")
-@NamedQuery(name = "Order.countTotalOrdersInWorkingState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Working'")
+// aggiunto mo
+@NamedQuery(name = "Order.countTotalOrdersInCancelledState", query = "SELECT o FROM Order o WHERE o.state = 'Cancelled' AND o.isActive IN ('true')")
+@NamedQuery(name = "Order.getOrdersInCancelledStatWithDetails", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Cancelled' AND o.isActive IN('true')")
+
 public class Order {
 
 	@Id
@@ -54,7 +58,7 @@ public class Order {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
-	@Pattern(regexp = "^(Working|Send)$", message = "State must be one of: Working, Send")
+	@Pattern(regexp = "^(Working|Send|Cancelled)$", message = "State must be one of: Working, Send, Cancelled")
 	@Column(name = "state")
 	private String state;
 
@@ -64,8 +68,28 @@ public class Order {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Date createdAt;
 
-	@Column(name = "isDeleted")
-	private boolean isDeleted;
+	@Column(name = "isActive")
+	private boolean isActive;
+
+	@Column(name = "edit")
+	private boolean edit;
+
+	@Column(name = "edit_by")
+	private String editBy;
+
+	@Column(name = "edit_from")
+	private String editFrom;
+
+	@Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "edit_date")
+    private Date editDate;
+
+	@Column(name = "reason")
+	private String reason;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "cancelled_date")
+	private Date cancelledDate;
 	
 	public Order(User user, String state) {
 		this.user = user;
@@ -73,13 +97,50 @@ public class Order {
 		this.createdAt = new Date();
 	}
 
-	public String getUserEmail() {
-		return this.user.getEmail();
+	// quando l'order apre un ordine e lo modifica viene notificato l'user
+	public Order(User user, String state, boolean edit, String editBy, String editFrom) {
+        this.user = user;
+        this.state = state;
+        this.createdAt = new Date();
+        setEdit(edit, editBy, editFrom);
+    }
+
+	// anullamento dell'ordine da parte dell'user
+	public Order(User user, String state, String reason) {
+		this.user = user;
+		this.state = state;
+		this.reason = reason;
+		this.createdAt = new Date();
+		this.cancelledDate = new Date();
+	}
+	
+
+	public void setEdit(boolean edit, String editBy, String editFrom) {
+        if (edit && !this.edit) {
+            this.edit = true;
+            this.editBy = editBy;
+            this.editFrom = editFrom;
+            this.editDate = new Date();
+
+			// NOTIFICARE L'UTENTE QUANDO L'ORDER APRE L'ORDINE, EDIT DIVENTA TRUE
+			
+        } else if (!edit) {
+            this.edit = false;
+            this.editBy = null;
+            this.editFrom = null;
+            this.editDate = null;
+        }
+    }
+
+	@JsonProperty("isActive")
+	boolean getIsActive() {
+		return this.isActive;
 	}
 
-	@JsonProperty("isDeleted")
-	boolean getIsDeleted() {
-		return this.isDeleted;
+	public boolean getEdit() {
+		return this.edit;
 	}
+
+	
 
 }

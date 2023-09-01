@@ -13,39 +13,7 @@ public class BookService {
 
     @Transactional
     public void deleteAllBooks() {
-        entityManager.createQuery("UPDATE Book SET isDeleted = true").executeUpdate();
-    }
-
-    @Transactional
-    public void deleteBookAndRelatedData(Long bookId) {
-
-        // Elimina le righe dalla tabella di intersezione OrderBook
-        entityManager.createQuery("DELETE FROM OrderBook jt WHERE jt.id.bookId = :bookId")
-                .setParameter("bookId", bookId)
-                .executeUpdate();
-
-        // Elimina il libro stesso
-        entityManager.createQuery("DELETE FROM Book b WHERE b.id = :bookId")
-                .setParameter("bookId", bookId)
-                .executeUpdate();
-
-        // Elimina gli ordini che non contengono libri
-        entityManager.createQuery("DELETE FROM Order o WHERE o.id NOT IN " +
-                "(SELECT ob.id.orderId FROM OrderBook ob)")
-                .executeUpdate();
-    }
-
-    @Transactional
-    public void deleteAll() {
-        // Elimina tutti i record dalla tabella OrderBook
-        entityManager.createQuery("DELETE FROM OrderBook").executeUpdate();
-
-        // Elimina tutti i record dalla tabella Book
-        entityManager.createQuery("DELETE FROM Book").executeUpdate();
-
-        // Eliminate all records from the Order table
-        entityManager.createQuery("DELETE FROM Order").executeUpdate();
-
+        entityManager.createQuery("UPDATE Book SET isActive = false").executeUpdate();
     }
 
 }

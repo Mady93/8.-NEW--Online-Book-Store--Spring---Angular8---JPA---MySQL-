@@ -2,8 +2,10 @@ package com.javainuse.repositories;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.javainuse.entities.Book;
 import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.OrderBook.OrderBooksId;
 
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Repository;
 public interface OrderBookRepository extends JpaRepository<OrderBook, OrderBooksId> {
 
     List<OrderBook> getOrderBooksByOrderId(Long orderId);
+
+   
 
     // Quety native
    /*@Modifying

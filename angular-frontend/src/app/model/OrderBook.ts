@@ -8,4 +8,5 @@ export class OrderBook {
     quantity: number;
     price: number;
     addedAt: Date;
+    isActive: boolean;
 }

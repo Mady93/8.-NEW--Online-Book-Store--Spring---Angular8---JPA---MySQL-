@@ -72,8 +72,8 @@ public class Email {
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private Date sendedAt;
 
-	@Column(name = "isDeleted")
-	private boolean isDeleted;
+	@Column(name = "isActive")
+	private boolean isActive;
 
 	public Email(String from, String to, String subject, String body, Order order) {
 		this.from = from;
@@ -84,9 +84,9 @@ public class Email {
 		this.sendedAt = new Date();
 	}
 
-	@JsonProperty("isDeleted")
-	boolean getIsDeleted() {
-		return this.isDeleted;
+	@JsonProperty("isActive")
+	boolean getIsActive() {
+		return this.isActive;
 	}
 
 }

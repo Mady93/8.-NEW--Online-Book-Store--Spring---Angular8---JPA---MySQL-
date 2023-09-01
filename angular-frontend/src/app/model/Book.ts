@@ -1,6 +1,6 @@
 export class Book {
     id: number;
-    isDeleted: boolean;
+    isActive: boolean;
     name: string;
     author: string;
     price: number;

@@ -4,6 +4,7 @@ import { HttpClientService } from 'src/app/service/http-client.service';
 import { AuthService } from 'src/app/service/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { OrderBook } from 'src/app/model/OrderBook';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-inbox',
@@ -12,7 +13,7 @@ import { OrderBook } from 'src/app/model/OrderBook';
 })
 export class InboxComponent implements OnInit {
 
-  constructor(private service: HttpClientService, private auth: AuthService) { }
+  constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute,private router: Router) { }
 
   page: number = 1;
   size: number = 3;
@@ -23,8 +24,14 @@ export class InboxComponent implements OnInit {
   msg: any;
   ok: any;
 
+  isInbox: boolean = false;
+
+
   // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente e richiama la funzione fetchOrders() per ottenere gli ordini dell'utente corrente.
   ngOnInit() {
+
+    this.isInbox = (this.router.url.indexOf("/inbox") >= 0);
+   
     this.fetchOrders();
   }
 
@@ -89,6 +96,25 @@ export class InboxComponent implements OnInit {
             this.msg = "";
             this.ok = "";
             this.orders = orders;
+
+            let cnt: number = 0;
+
+            setTimeout(() => {
+
+              let details = document.querySelectorAll("details");
+              console.log(orders);
+              for (let order of orders) {
+                if (order.edit) {
+                  this.openDetail(order.id);
+                  details[cnt].open = true;
+                }
+                cnt++;
+              }
+
+            }, 500);
+
+            
+
           },
           error: (err: HttpErrorResponse) => {
             this.msg = this.replaceAll(err.message, "#", "<br>");
@@ -124,7 +150,7 @@ export class InboxComponent implements OnInit {
   // updateOrderState(order: Order): Questo metodo viene chiamato quando l'utente aggiorna lo stato di un ordine a "Send". Utilizza il servizio HttpClientService per aggiornare lo stato dell'ordine. Gestisce le risposte e gli errori del server, mostrando messaggi di errore se necessario, e aggiorna la visualizzazione degli ordini chiamando fetchOrders()
   updateOrderState(order: Order) {
 
-    this.service.updateOrder(order, "Send").subscribe({
+    this.service.updateOrderState(order, "Send").subscribe({
       next: (res: any) => {
         this.ok = res.message;
 
@@ -149,6 +175,30 @@ export class InboxComponent implements OnInit {
       complete: () => { }
     });
   }
+
+
+
+  changeEditStatus(order: Order, evt){
+    
+    //let x: boolean = (evt.target.getAttribute("data-status")=="true");
+
+    let no: Order = new Order();
+    no.id = order.id;
+    no.edit = !order.edit;
+
+    this.service.updateOrderEdit(no).subscribe({
+      next: (order: Order) => {
+        
+      },
+      error: () => {
+
+      }
+    })
+
+
+
+  }
+
 
 }
 

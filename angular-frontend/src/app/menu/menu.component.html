@@ -30,11 +30,40 @@
                 </a>
             </li>
 
-            
+            <!--
             <li>
                 <a class="nav-link" *ngIf="['Order'].includes(authService.role)" routerLink="/inbox"><fa-icon [icon]="iconaInbox"
                     class="white"></fa-icon> Inbox</a>
             </li>
+        -->
+
+
+        <li ngbDropdown class="nav-item dropdown" *ngIf="['Order'].includes(authService.role)">
+
+            <a ngbDropdownToggle class="nav-link" id="navbarDropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                <fa-icon [icon]="iconaInbox" class="white"></fa-icon>Inbox
+            </a>
+
+            <div ngbDropdownMenu aria-labelledby="navbarDropdown" style="background-color: #0dcaf0;">
+
+                <a routerLink="/inbox" class="dropdown-item" *ngIf="['Order'].includes(authService.role)">
+                    <fa-icon [icon]="iconaStateWorking" class="black"></fa-icon> Orders:<span style="color: darkgreen;"> Working</span>
+                </a>
+
+                <a routerLink="/inboxD" class="dropdown-item"
+                *ngIf="['Order'].includes(authService.role)">
+                <fa-icon [icon]="iconaStateDeleted" class="black"></fa-icon> Orders:<span style="color: rgb(137, 0, 0);"> Canceled</span>
+                </a>
+
+            </div>
+
+        </li>
+
+
+
+
+
+
 
             <li *ngIf="['Admin','User','Seller','Order'].includes(authService.role)">
                 <a class="nav-link" (click)="authService.logout()" routerLink="/shop"><fa-icon [icon]="iconaProfiles"

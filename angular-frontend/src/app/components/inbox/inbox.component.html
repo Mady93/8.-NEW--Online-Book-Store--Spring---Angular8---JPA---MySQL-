@@ -7,7 +7,7 @@
 
   <div *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}; let i = index">
 
-  <details *ngIf="order.user.id !=auth.uid" (click)="openDetail(order.id)">
+  <details *ngIf="order.user.id !=auth.uid" (click)="openDetail(order.id); changeEditStatus(order, $event)">
 
     <summary>
 

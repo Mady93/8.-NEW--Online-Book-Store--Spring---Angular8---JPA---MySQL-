@@ -18,7 +18,7 @@ public class OrderBookService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Transactional
+   /* @Transactional
     public void deleteByOrder(Order order) {
         TypedQuery<OrderBook> query = entityManager.createQuery(
                 "SELECT ob FROM OrderBook ob WHERE ob.order = :order", OrderBook.class);
@@ -31,5 +31,5 @@ public class OrderBookService {
             entityManager.remove(orderBook);
         }
     }
-
+ */
 }

@@ -13,10 +13,10 @@
 
       <b>{{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}} - ({{order.state}})</b>
       
-      <input class="deleteBtn" *ngIf="order.state=='Working'" type="button" (click)="deleteOrder(order.id)" value="Delete order"/>
+      <input class="deleteBtn" *ngIf="order.state=='Working'" type="button" (click)="deleteOrder(order.id)" value="Cancel order"/>
 
       <div class="search" *ngIf="order.state=='Working'">
-        <input type="text" placeholder="Cerca libro" (keyup)="findBook($event, order.id)" #inp/>
+        <input type="text" placeholder="Search book" (keyup)="findBook($event, order.id)" #inp/>
         <select *ngIf="selectedOrderId == order.id" (change)="selectNewBook($event)">
           <option value="{{res.id}}" *ngFor="let res of results">{{res.name}}</option>
         </select>
@@ -46,7 +46,7 @@
                   <label class="bookName">{{ele.book.name}}</label>
                   
                 </div>
-                <label *ngIf="ele.book.isDeleted" class="notAvailable">Not available</label>
+                <label *ngIf="ele.book.isActive" class="notAvailable">Not available</label>
               </div>
             </td>
             <td>{{ele.book.author}}</td>

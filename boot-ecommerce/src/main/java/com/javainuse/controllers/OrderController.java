@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.javainuse.entities.Book;
 import com.javainuse.entities.Email;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
@@ -77,6 +81,7 @@ public class OrderController {
 
 		newOrder.setUser(user);
 		newOrder.setState("Working");
+		newOrder.setActive(true);
 		orderRepository.save(newOrder);
 
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -86,7 +91,8 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(jsonString);
 	}
 
-	@GetMapping(path = "/{userId:\\d+}/count")
+/*
+ 	@GetMapping(path = "/{userId:\\d+}/count")
 	public ResponseEntity<Integer> countOrders(@PathVariable("userId") Long userId)
 			throws ResourceNotFoundException, IllegalArgumentException {
 		Long count = orderRepository.countOrdersByUserId(userId);
@@ -98,13 +104,44 @@ public class OrderController {
 			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
 		}
 	}
+ */
 
+ 	@GetMapping(path = "/{userId:\\d+}/count")
+	public ResponseEntity<Integer> countOrders(@PathVariable("userId") Long userId)
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Long count = orderRepository.countNotDeletedAndByUserId(userId);
+		if (count == 0) {
+			throw new ResourceNotFoundException(
+					"Unable to perform the count. No orders resource was found in the database for the user with ID: "
+							+ userId);
+		} else {
+			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
+		}
+	}
+
+	/*
 	@GetMapping(path = "/{userId:\\d+}/get")
 	public ResponseEntity<List<Order>> getOrders(@PathVariable("userId") Long userId, @RequestParam("page") int page,
 			@RequestParam("size") int size)
 			throws ResourceNotFoundException, IllegalArgumentException {
 		Pageable pageable = PageRequest.of(page, size, Sort.by("userId").ascending());
 		Page<Order> pagedResult = orderRepository.findOrdersByUserId(userId, pageable);
+		if (pagedResult.hasContent()) {
+			return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
+		} else {
+			throw new ResourceNotFoundException(
+					"Unable to retrieve the page: " + page
+							+ " because no orders resource was found in the database for the user with ID: " + userId);
+		}
+	}
+	 */
+
+	@GetMapping(path = "/{userId:\\d+}/get")
+	public ResponseEntity<List<Order>> getOrders(@PathVariable("userId") Long userId, @RequestParam("page") int page,
+			@RequestParam("size") int size)
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("userId").ascending());
+		Page<Order> pagedResult = orderRepository.findByNotDeletedAndByUserId(userId, pageable);
 		if (pagedResult.hasContent()) {
 			return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
 		} else {
@@ -136,6 +173,7 @@ public class OrderController {
 		return ResponseEntity.ok().body(order);
 	}
 
+
 	@DeleteMapping(path = "/{orderId:\\d+}/delete")
 	public ResponseEntity<Object> deleteOrder(@PathVariable("orderId") Long orderId)
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -146,7 +184,7 @@ public class OrderController {
 
 		// Prima di eliminare l'ordine, elimina i record correlati nella tabella
 		// "order_books" che fanno riferimento all'ordine
-		orderBookService.deleteByOrder(order);
+		order.setActive(false);
 		orderRepository.delete(order);
 
 		String successMessage = "Order deleted successfully";
@@ -214,5 +252,64 @@ public class OrderController {
 							+ " because no orders resource was found in the database");
 		}
 	}
+
+
+	@PutMapping(path = "/update/edit")
+	public ResponseEntity<Order> udpateOrders(@RequestBody @Valid Order order_)
+			throws ResourceNotFoundException, IllegalArgumentException {
+		
+
+		long oid = order_.getId();
+
+
+		Optional<Order> orderOptional = orderRepository.findById(oid);
+		Order order = orderOptional.orElseThrow(
+				() -> new ResourceNotFoundException("Order with ID: " + oid + " not found in the database"));
+
+
+		order.setEdit(order_.getEdit(), order_.getEditBy(), order_.getEditFrom());
+		orderRepository.save(order);
+
+
+		return ResponseEntity.status(200).body(order);
+		
+
+	}
+
+
+
+
+// String msg = "Currently, the order is being handled by a company consultant, and therefore, it's not possible to make changes!";
+
+
+
+@GetMapping(path = "/count/allCanceled")
+	public ResponseEntity<Integer> countAllOrdersCancelled()
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Long count = orderRepository.countTotalOrdersInCancelledState();
+		if (count == 0) {
+			throw new ResourceNotFoundException(
+					"Unable to perform the count. No orders resource was found in the database!");
+		} else {
+			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
+		}
+	}
+
+
+	@GetMapping(path = "/inbox/allCanceled")
+	public ResponseEntity<List<Order>> getOrdersCancelled(@RequestParam("page") int page,
+			@RequestParam("size") int size)
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+		Page<Order> pagedResult = orderRepository.getOrdersInCancelledStatWithDetails(pageable);
+		if (pagedResult.hasContent()) {
+			return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
+		} else {
+			throw new ResourceNotFoundException(
+					"Unable to retrieve the page: " + page
+							+ " because no orders resource was found in the database");
+		}
+	}
+
 
 }

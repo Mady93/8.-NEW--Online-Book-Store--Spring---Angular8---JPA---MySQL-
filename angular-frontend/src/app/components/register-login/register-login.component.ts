@@ -26,7 +26,7 @@ export class RegisterLoginComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder, private router: Router, private auth: AuthService) { }
 
-  // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente. Si occupa di inizializzare il formulario e le sue validazioni in base al tipo di operazione (registrazione o accesso).
+  // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente. Si occupa di inizializzare il formulario e le sue validazioni in base al tipo di operazione (registrazione o login).
   ngOnInit() {
 
     this.isLogin = (this.router.url.indexOf("/login") >= 0);

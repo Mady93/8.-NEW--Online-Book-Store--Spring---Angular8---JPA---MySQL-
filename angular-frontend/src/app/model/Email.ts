@@ -7,4 +7,5 @@ export class Email {
     body: string;
     order: Order;
     sendedAt: Date;
+    isActive: boolean;
 }

@@ -231,12 +231,23 @@ export class HttpClientService {
     );
   }
 
-  updateOrder(updatedOrder: Order, state: string): Observable<Order> {
+  updateOrderState(updatedOrder: Order, state: string): Observable<Order> {
     const headers = { 'content-type': 'application/json' };
     const body = JSON.stringify(updatedOrder);
     return this.httpClient.put<Order>(`${this.baseURL}/orders/update/${updatedOrder.id}/${state}`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
+  }
+
+
+  updateOrderEdit(updatedOrder: Order): Observable<Order> {
+
+    const headers = { 'content-type': 'application/json' };
+    const body = JSON.stringify(updatedOrder);
+    return this.httpClient.put<Order>(`${this.baseURL}/orders/update/edit`, body, { headers: headers }).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+
   }
 
   countTotalOrders(): Observable<number> {
@@ -246,12 +257,25 @@ export class HttpClientService {
   }
 
   getWorkingOrders(page: number, size: number): Observable<Order[]> {
-
-
     return this.httpClient.get<Order[]>(`${this.baseURL}/orders/inbox/all?page=${page - 1}&size=${size}`).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
+
+  // AGGIUNTO
+  countTotalOrdersStateCanceled(): Observable<number> {
+    return this.httpClient.get<number>(`${this.baseURL}/orders/count/allCanceled`).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+  }
+
+  // AGGIUNTO
+  getTotalOrdersStateCanceled(page: number, size: number): Observable<Order[]> {
+    return this.httpClient.get<Order[]>(`${this.baseURL}/orders/inbox/allCanceled?page=${page - 1}&size=${size}`).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+  }
+
 
 
 

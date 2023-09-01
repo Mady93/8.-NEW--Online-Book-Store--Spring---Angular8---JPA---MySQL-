@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 
-@NamedQuery(name = "Book.findByNotDeleted", query = "SELECT b FROM Book b WHERE b.isDeleted IN('false')")
-@NamedQuery(name = "Book.countNotDeleted", query = "SELECT count(b) FROM Book b WHERE b.isDeleted IN('false')")
+@NamedQuery(name = "Book.findByNotDeleted", query = "SELECT b FROM Book b WHERE b.isActive IN('true')")
+@NamedQuery(name = "Book.countNotDeleted", query = "SELECT count(b) FROM Book b WHERE b.isActive IN('true')")
 @Entity
 @Table(name = "books")
 @Data
@@ -31,8 +31,8 @@ public class Book {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "isDeleted")
-	private boolean isDeleted;
+	@Column(name = "isActive")
+	private boolean isActive;
 
 	@NotNull(message = "Name cannot be null")
 	@Column(name = "name")
@@ -55,16 +55,16 @@ public class Book {
 	private byte[] picByte;
 
 	public Book(String name, String author, double price, byte[] picByte) {
-		this.isDeleted = false;
+		this.isActive = false;
 		this.name = name;
 		this.author = author;
 		this.price = price;
 		this.picByte = picByte;
 	}
 
-	@JsonProperty("isDeleted")
-	boolean getIsDeleted() {
-		return this.isDeleted;
+	@JsonProperty("isActive")
+	boolean getisActive() {
+		return this.isActive;
 	}
 
 }
