@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.ToString;
 
-@NamedQuery(name = "Book.findByNotDeleted", query = "SELECT b FROM Book b WHERE b.isActive IN('true')")
-@NamedQuery(name = "Book.countNotDeleted", query = "SELECT count(b) FROM Book b WHERE b.isActive IN('true')")
+@NamedQuery(name = "Book.findByNotDeleted", query = "SELECT b FROM Book b WHERE b.isActive is true")
+@NamedQuery(name = "Book.countNotDeleted", query = "SELECT count(b) FROM Book b WHERE b.isActive is true")
 @Entity
 @Table(name = "books")
 @Data
@@ -55,7 +55,7 @@ public class Book {
 	private byte[] picByte;
 
 	public Book(String name, String author, double price, byte[] picByte) {
-		this.isActive = false;
+		this.isActive = true;
 		this.name = name;
 		this.author = author;
 		this.price = price;

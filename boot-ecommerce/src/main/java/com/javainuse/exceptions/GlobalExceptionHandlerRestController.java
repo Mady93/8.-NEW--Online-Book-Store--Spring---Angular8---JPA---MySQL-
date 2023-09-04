@@ -184,6 +184,7 @@ public class GlobalExceptionHandlerRestController {
 		return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
 	}
 
+	
 	@ResponseStatus(HttpStatus.CONFLICT)
 	@ExceptionHandler(DataIntegrityViolationException.class)
 	public ErrorResponse<List<String>> handleDuplicate(Exception ex, WebRequest request) {
@@ -198,6 +199,7 @@ public class GlobalExceptionHandlerRestController {
 
 		return new ErrorResponse<List<String>>(status, errors, ex.getMessage(), stackTraceArray, path);
 	}
+	
 
 	// Generica- solo se non si verifica nessuna delle eccezioni precedentemente
 	// gestite

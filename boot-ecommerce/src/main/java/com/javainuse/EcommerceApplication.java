@@ -74,38 +74,38 @@ public class EcommerceApplication implements CommandLineRunner {
 	private void saveDataAllEntity() {
 
 		// Creazione di oggetti Book
-		byte[] bookImage1 = loadBookImage("C:/Users/mady/Desktop/books/1.jpg"); // Carica l'immagine da un percorso
+		byte[] bookImage1 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/1.jpg"); // Carica l'immagine da un percorso
 																				// specifico
 		Book book1 = new Book("La vita intima", "Niccolò Ammaniti", 18.05, bookImage1);
 
-		byte[] bookImage2 = loadBookImage("C:/Users/mady/Desktop/books/2.jpg");
+		byte[] bookImage2 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/2.jpg");
 		Book book2 = new Book("Il cognome delle donne", "Aurora Tamigio", 18.05, bookImage2);
 
-		byte[] bookImage3 = loadBookImage("C:/Users/mady/Desktop/books/3.jpg");
+		byte[] bookImage3 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/3.jpg");
 		Book book3 = new Book("Death note. Vol. 3", "Takeshi Obata", 4.66, bookImage3);
 
-		byte[] bookImage4 = loadBookImage("C:/Users/mady/Desktop/books/4.jpg");
+		byte[] bookImage4 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/4.jpg");
 		Book book4 = new Book("Naruto. Il mito. Vol. 11", "Masashi Kishimoto", 4.66, bookImage4);
 
-		byte[] bookImage5 = loadBookImage("C:/Users/mady/Desktop/books/5.jpg");
+		byte[] bookImage5 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/5.jpg");
 		Book book5 = new Book("Monster deluxe. Vol. 3", "Naoki Urasawa", 13.20, bookImage5);
 
-		byte[] bookImage6 = loadBookImage("C:/Users/mady/Desktop/books/6.jpg");
+		byte[] bookImage6 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/6.jpg");
 		Book book6 = new Book("The Unbroken. Magic of the Lost. Vol. 1", "C. L. Clark", 22.80, bookImage6);
 
-		byte[] bookImage7 = loadBookImage("C:/Users/mady/Desktop/books/7.jpg");
+		byte[] bookImage7 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/7.jpg");
 		Book book7 = new Book("Inuyasha. Wide edition. Vol. 6", "Rumiko Takahashi", 9.45, bookImage7);
 
-		byte[] bookImage8 = loadBookImage("C:/Users/mady/Desktop/books/8.jpg");
+		byte[] bookImage8 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/8.jpg");
 		Book book8 = new Book("1984", "George Orwell", 10.45, bookImage8);
 
-		byte[] bookImage9 = loadBookImage("C:/Users/mady/Desktop/books/9.jpg");
+		byte[] bookImage9 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/9.jpg");
 		Book book9 = new Book("Storie della fantascienza. Vol. 1: 1939-1943", "Isaac Asimov", 33.25, bookImage9);
 
-		byte[] bookImage10 = loadBookImage("C:/Users/mady/Desktop/books/10.jpg");
+		byte[] bookImage10 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/10.jpg");
 		Book book10 = new Book("Prison school. Vol. 2", "Akira Hiramoto", 4.66, bookImage10);
 
-		byte[] bookImage11 = loadBookImage("C:/Users/mady/Desktop/books/11.jpg");
+		byte[] bookImage11 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/11.jpg");
 		Book book11 = new Book("Piccolo manuale di Arduino. Il cuore della robotica fai da te", "Matteo Tettamanzi",
 				12.26, bookImage11);
 
@@ -235,7 +235,7 @@ public class EcommerceApplication implements CommandLineRunner {
 		Order o14 = orderRepository.save(order14);
 		Order o15 = orderRepository.save(order15);
 
-		Email email1 = new Email("bruttus", "ugly", "prrrrrrr", "kebab pizza patatine sushi sashimi fettuccine alfredo", order2);
+		Email email1 = new Email(user7, user1, "aooo", "bella fratem, ce li hai i picciotti della settimana scorsa ?", order2);
 		email1.setActive(true);
 		emailRepository.save(email1);
 

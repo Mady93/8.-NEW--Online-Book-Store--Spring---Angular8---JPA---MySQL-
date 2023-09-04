@@ -50,7 +50,7 @@
                     <fa-icon [icon]="iconaStateWorking" class="black"></fa-icon> Orders:<span style="color: darkgreen;"> Working</span>
                 </a>
 
-                <a routerLink="/inboxD" class="dropdown-item"
+                <a routerLink="/inboxCancelled" class="dropdown-item"
                 *ngIf="['Order'].includes(authService.role)">
                 <fa-icon [icon]="iconaStateDeleted" class="black"></fa-icon> Orders:<span style="color: rgb(137, 0, 0);"> Canceled</span>
                 </a>

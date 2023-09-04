@@ -4,7 +4,6 @@ import { HttpClientService } from 'src/app/service/http-client.service';
 import { AuthService } from 'src/app/service/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { OrderBook } from 'src/app/model/OrderBook';
-import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-inbox',
@@ -12,8 +11,6 @@ import { ActivatedRoute, Router } from '@angular/router';
   styleUrls: ['./inbox.component.scss']
 })
 export class InboxComponent implements OnInit {
-
-  constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute,private router: Router) { }
 
   page: number = 1;
   size: number = 3;
@@ -24,18 +21,15 @@ export class InboxComponent implements OnInit {
   msg: any;
   ok: any;
 
-  isInbox: boolean = false;
+  constructor(private service: HttpClientService, private auth: AuthService) { }
 
 
   // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente e richiama la funzione fetchOrders() per ottenere gli ordini dell'utente corrente.
   ngOnInit() {
-
-    this.isInbox = (this.router.url.indexOf("/inbox") >= 0);
-   
-    this.fetchOrders();
+   this.fetchOrders();
   }
 
-  // openDetail(oid: number): Questo metodo viene chiamato quando l'utente vuole visualizzare i dettagli di un ordine specifico. Richiama fetchOrderById(oid) solo se i dettagli dell'ordine non sono già stati caricati.
+   // openDetail(oid: number): Questo metodo viene chiamato quando l'utente vuole visualizzare i dettagli di un ordine specifico. Richiama fetchOrderById(oid) solo se i dettagli dell'ordine non sono già stati caricati.
   openDetail(oid: number) {
     if (this.ordersDetails[oid] === undefined) this.fetchOrderById(oid);
   }
@@ -97,22 +91,18 @@ export class InboxComponent implements OnInit {
             this.ok = "";
             this.orders = orders;
 
-            let cnt: number = 0;
-
+            
             setTimeout(() => {
-
               let details = document.querySelectorAll("details");
               console.log(orders);
               for (let order of orders) {
-                if (order.edit) {
+                if (order.edit && order.editFrom == (""+this.auth.uid)) {
                   this.openDetail(order.id);
-                  details[cnt].open = true;
+                  //this.orders[order.id]["opened"] = true;
                 }
-                cnt++;
               }
-
             }, 500);
-
+            
             
 
           },
@@ -150,7 +140,9 @@ export class InboxComponent implements OnInit {
   // updateOrderState(order: Order): Questo metodo viene chiamato quando l'utente aggiorna lo stato di un ordine a "Send". Utilizza il servizio HttpClientService per aggiornare lo stato dell'ordine. Gestisce le risposte e gli errori del server, mostrando messaggi di errore se necessario, e aggiorna la visualizzazione degli ordini chiamando fetchOrders()
   updateOrderState(order: Order) {
 
-    this.service.updateOrderState(order, "Send").subscribe({
+    order.state = "Send";
+
+    this.service.updateOrderState(order).subscribe({
       next: (res: any) => {
         this.ok = res.message;
 
@@ -179,24 +171,28 @@ export class InboxComponent implements OnInit {
 
 
   changeEditStatus(order: Order, evt){
-    
-    //let x: boolean = (evt.target.getAttribute("data-status")=="true");
+
+    //debugger;
+
+    if (evt.target.tagName != "SUMMARY") return;
 
     let no: Order = new Order();
     no.id = order.id;
     no.edit = !order.edit;
 
     this.service.updateOrderEdit(no).subscribe({
-      next: (order: Order) => {
-        
+      next: (updOrder: Order) => {
+        this.openDetail(updOrder.id);
+        order.edit = updOrder.edit;
+        order.editFrom = updOrder.editFrom;
       },
-      error: () => {
-
+      error: (err: HttpErrorResponse) => {
+        //this.orders[order.id]["opened"] = false;
+        alert("At the moment the order is taken over by a company consultant and therefore it is not possible to make changes");
       }
-    })
+    });
 
-
-
+    
   }
 
 

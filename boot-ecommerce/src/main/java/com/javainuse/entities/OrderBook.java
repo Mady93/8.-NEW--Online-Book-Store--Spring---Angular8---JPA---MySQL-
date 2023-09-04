@@ -26,7 +26,7 @@ import lombok.ToString;
 @ToString */
 @Entity
 @Table(name = "order_books")
-@NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt FROM OrderBook jt WHERE jt.id.orderId = :orderId AND jt.isActive IN('true')")
+@NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt FROM OrderBook jt WHERE jt.id.orderId = :orderId AND jt.isActive is true")
 public class OrderBook {
 
 	// istanza inner class senza argomenti

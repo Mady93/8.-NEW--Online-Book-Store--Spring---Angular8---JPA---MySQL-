@@ -35,16 +35,21 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@NamedQuery(name = "Order.findOrdersByUser", query = "SELECT o FROM Order o WHERE o.user = :user AND o.isActive IN('true')")
+@NamedQuery(name = "Order.findOrdersByUser", query = "SELECT o FROM Order o WHERE o.user = :user AND o.isActive is true")
 @NamedQuery(name = "Order.countOrders", query = "SELECT COUNT(o) FROM Order o")
-@NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Working' AND o.isActive IN('true')")
-@NamedQuery(name = "Order.countTotalOrdersInWorkingState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Working' AND o.isActive IN('true')")
-@NamedQuery(name = "Order.findByNotDeletedAndByUserId", query = "SELECT o FROM Order o WHERE o.user.id = :userId AND o.isActive IN('true')")
-@NamedQuery(name = "Order.countNotDeleted", query = "SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.isActive IN('true')")
+@NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Working' AND o.isActive is true")
+@NamedQuery(name = "Order.countTotalOrdersInWorkingState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Working' AND o.isActive is true")
+@NamedQuery(name = "Order.findByNotDeletedAndByUserId", query = "SELECT o FROM Order o WHERE o.user.id = :userId AND o.isActive is true")
+//@NamedQuery(name = "Order.countNotDeleted", query = "SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.isActive is true")
+@NamedQuery(name = "Order.countNotDeletedAndByUserId", query = "SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.isActive is true")
+
+
+
+
 
 // aggiunto mo
-@NamedQuery(name = "Order.countTotalOrdersInCancelledState", query = "SELECT o FROM Order o WHERE o.state = 'Cancelled' AND o.isActive IN ('true')")
-@NamedQuery(name = "Order.getOrdersInCancelledStatWithDetails", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Cancelled' AND o.isActive IN('true')")
+@NamedQuery(name = "Order.countTotalOrdersInCancelledState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
+@NamedQuery(name = "Order.getOrdersInCancelledStatWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
 
 public class Order {
 

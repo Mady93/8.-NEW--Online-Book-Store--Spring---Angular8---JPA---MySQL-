@@ -7,8 +7,12 @@
 
   <div *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}; let i = index">
 
-  <details *ngIf="order.user.id !=auth.uid" (click)="openDetail(order.id); changeEditStatus(order, $event)">
+<!--   {{order.edit && order.editFrom == auth.uid}}
+  {{order.editFrom}} -->
+  <details [open]="order.edit && order.editFrom == auth.uid" *ngIf="order.user.id != auth.uid" (click)="changeEditStatus(order, $event); false">
 
+    
+    <!-- [open]="orders[order.id]?.opened" -->
     <summary>
 
       <b>{{order.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}} - (State: <span style="color: brown;">{{order.state}}</span>)</b>
@@ -53,6 +57,7 @@
 
     </div>
   </details>
+
 
 </div>
 

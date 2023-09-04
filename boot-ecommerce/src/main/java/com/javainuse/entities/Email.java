@@ -10,7 +10,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -37,21 +39,31 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(name = "emails")
-@NamedQuery(name = "Email.getEmailByUserId", query = "SELECT DISTINCT m FROM Email m, Order o WHERE m.order.user.id = :userId")
+@NamedQuery(name = "Email.getEmailByUserId", query = "SELECT DISTINCT m FROM Email m WHERE m.to.id = :userId")
 public class Email {
+
 
 	@Id
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotNull(message = "From cannot be null")
-	@Column(name = "sender")
-	private String from;
 
-	@NotNull(message = "To cannot be null")
-	@Column(name = "recipient")
-	private String to;
+	//@NotNull(message = "From cannot be null")
+	//@Column(name = "sender")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "from_", referencedColumnName = "id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private User from;
+
+
+	//@NotNull(message = "To cannot be null")
+	//@Column(name = "recipient")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "to_", referencedColumnName = "id", nullable = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private User to;
+
 
 	@Column(name = "subject")
 	private String subject;
@@ -61,10 +73,12 @@ public class Email {
 	@Column(name = "body")
 	private String body;
 
-	@OneToOne(fetch = FetchType.EAGER, optional = false)
+
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	@JoinColumn(name = "orderId", referencedColumnName = "id", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Order order;
+
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Generated(GenerationTime.INSERT)
@@ -75,18 +89,15 @@ public class Email {
 	@Column(name = "isActive")
 	private boolean isActive;
 
-	public Email(String from, String to, String subject, String body, Order order) {
+	public Email(User from, User to, String subject, String body, Order order) {
 		this.from = from;
 		this.to = to;
 		this.subject = subject;
 		this.body = body;
-		this.order = order;
 		this.sendedAt = new Date();
+		this.order = order;
+		this.isActive = true;
 	}
 
-	@JsonProperty("isActive")
-	boolean getIsActive() {
-		return this.isActive;
-	}
 
 }

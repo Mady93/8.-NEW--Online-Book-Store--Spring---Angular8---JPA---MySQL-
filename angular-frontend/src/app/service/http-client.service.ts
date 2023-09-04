@@ -225,26 +225,47 @@ export class HttpClientService {
   }
 
 
-  deleteOrder(id: number): Observable<void> {
-    return this.httpClient.delete<void>(`${this.baseURL}/orders/${id}/delete`).pipe(
+  deleteOrder(id: number, reason: string): Observable<void> {
+
+    const headers = { 'content-type': 'application/json' };
+    let encReason: string = encodeURIComponent(reason);
+
+    return this.httpClient.delete<void>(`${this.baseURL}/orders/${id}/delete?reason=${encReason}`, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
 
-  updateOrderState(updatedOrder: Order, state: string): Observable<Order> {
+  updateOrderState(updatedOrder: Order): Observable<Order> {
+    /*
     const headers = { 'content-type': 'application/json' };
     const body = JSON.stringify(updatedOrder);
     return this.httpClient.put<Order>(`${this.baseURL}/orders/update/${updatedOrder.id}/${state}`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
+    */
+
+    const headers = { 'content-type': 'application/json' };
+    const body = JSON.stringify(updatedOrder);
+    return this.httpClient.put<Order>(`${this.baseURL}/orders/update?action=state`, body, { headers: headers }).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+
   }
 
 
   updateOrderEdit(updatedOrder: Order): Observable<Order> {
 
+    /*
     const headers = { 'content-type': 'application/json' };
     const body = JSON.stringify(updatedOrder);
     return this.httpClient.put<Order>(`${this.baseURL}/orders/update/edit`, body, { headers: headers }).pipe(
+      catchError((err: HttpErrorResponse) => this.handleError(err))
+    );
+    */
+
+    const headers = { 'content-type': 'application/json' };
+    const body = JSON.stringify(updatedOrder);
+    return this.httpClient.put<Order>(`${this.baseURL}/orders/update?action=edit`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
 
@@ -321,6 +342,8 @@ export class HttpClientService {
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );
   }
+
+  
 
 
 }

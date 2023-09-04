@@ -35,8 +35,9 @@ import { RegisterLoginComponent } from './components/register-login/register-log
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AuthInterceptorService } from './service/auth-interceptor.service';
 import { ErrorComponent } from './components/error/error.component';
-import { InboxComponent } from './components/inbox/inbox.component';
+import { InboxComponent } from './components/inboxes/inbox/inbox.component';
 import { CommunicationComponent } from './components/communication/communication.component';
+import { InboxCancelledComponent } from './components/inboxes/inbox-cancelled/inbox-cancelled.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +54,8 @@ import { CommunicationComponent } from './components/communication/communication
     RegisterLoginComponent,
     ErrorComponent,
     InboxComponent,
-    CommunicationComponent
+    CommunicationComponent,
+    InboxCancelledComponent
   ],
   imports: [
     BrowserModule,

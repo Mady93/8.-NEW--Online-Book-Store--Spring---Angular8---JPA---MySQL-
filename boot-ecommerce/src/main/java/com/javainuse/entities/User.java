@@ -37,15 +37,16 @@ import lombok.ToString;
 @NamedQuery(name = "User.countByType", query = "SELECT COUNT(u) FROM User u WHERE u.type IN ('Admin')")
  */
 
-@NamedQuery(name = "User.existsByEmail", query = "SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.isActive IN('true')")
-@NamedQuery(name = "User.findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email AND u.isActive IN('true')")
-@NamedQuery(name = "User.findUserByType", query = "SELECT u FROM User u WHERE u.type = :code AND u.isActive IN('true')")
-@NamedQuery(name = "User.countByType", query = "SELECT COUNT(u) FROM User u WHERE u.type IN ('Admin') AND u.isActive IN('true')")
+@NamedQuery(name = "User.existsByEmail", query = "SELECT COUNT(u) > 0 FROM User u WHERE u.email = :email AND u.isActive is true")
+@NamedQuery(name = "User.findUserByEmail", query = "SELECT u FROM User u WHERE u.email = :email AND u.isActive is true")
+@NamedQuery(name = "User.findUserByType", query = "SELECT u FROM User u WHERE u.type = :code AND u.isActive is true")
+@NamedQuery(name = "User.countByType", query = "SELECT COUNT(u) FROM User u WHERE u.type IN ('Admin') AND u.isActive is true")
  
 
  // aggiunti 
-@NamedQuery(name = "User.findByNotDeleted", query = "SELECT u FROM User u WHERE u.isActive IN('true')")
-@NamedQuery(name = "User.countByNotDeleted", query = "SELECT count(u) FROM User u WHERE u.isActive IN('true')")
+@NamedQuery(name = "User.findByNotDeleted", query = "SELECT u FROM User u WHERE u.isActive is true")
+@NamedQuery(name = "User.countByNotDeleted", query = "SELECT count(u) FROM User u WHERE u.isActive is true")
+@NamedQuery(name = "User.getUsersByRole", query = "SELECT u FROM User u WHERE u.type = :role AND u.isActive is true")
 public class User {
 
 	@Id

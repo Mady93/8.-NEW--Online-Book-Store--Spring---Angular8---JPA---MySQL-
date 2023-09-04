@@ -77,8 +77,9 @@ const accessTable = [
     { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/count\/all(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/inbox\/all(\?.*)?$/, groups: ["Order"] },
-    { path: /^\/orders\/update\/\d+\/[a-zA-Z]+(\?.*)?$/, groups: ["Order"] },
-    { path: /^\/orders\/update\/edit$/, groups: ["Order"] },
+    //{ path: /^\/orders\/update\/\d+\/[a-zA-Z]+(\?.*)?$/, groups: ["Order"] },
+    //{ path: /^\/orders\/update\/edit$/, groups: ["Order"] },
+    { path: /^\/orders\/update.*$/, groups: ["Admin", "User", "Seller", "Order"] },
     { path: /^\/orders\/count\/allCanceled(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/inbox\/allCanceled(\?.*)?$/, groups: ["Order"] },
  
@@ -201,7 +202,7 @@ function checkAndRenewToken(uid, exp, role) {
 
                 } else {
 
-                    resolve({ state: 2 });
+                    resolve({ state: 3 });
 
                 }
             });
@@ -327,21 +328,11 @@ function checkToken(req, res, next) {
 
         /* se ho un uid, estratto dal token e' sicuramente valido lo passo al backend per ulteriori controlli*/
         if (uid) {
-
-             /*
-            let parsedUrl = url.parse(path);
-            let queryParams = querystring.parse(parsedUrl.query);
-            queryParams.vuid = uid;
-            queryParams.vrole = role;
-
-            req.url = parsedUrl.pathname+"?"+querystring.stringify(queryParams);
-            */
-
-            //req.query.myQueryParam = 'valore_del_query_parametro';
-            req.query.vuid = uid;
-            req.query.vrole = role;
+            const url = new URL(req.protocol+"://"+req.host+path);
+            url.searchParams.append('vuid', uid);
+            url.searchParams.append('vrole', role);
+            req.originalUrl = url.pathname + url.search;
         }
-
 
 
 

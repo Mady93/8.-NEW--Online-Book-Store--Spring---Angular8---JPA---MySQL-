@@ -83,6 +83,21 @@ export class OrderComponent implements OnInit {
             this.msg = "";
             this.ok = "";
             this.orders = orders;
+
+
+            let cnt: number = 0;
+            setTimeout(() => {
+              let details = document.querySelectorAll("details");
+              console.log(orders);
+              for (let order of orders) {
+                if (order.edit && order.editFrom == (""+this.auth.uid)) {
+                  this.openDetail(order.id);
+                }
+                cnt++;
+              }
+            }, 500);
+
+
           },
           error: (err: HttpErrorResponse) => {
 
@@ -156,7 +171,16 @@ export class OrderComponent implements OnInit {
 
   // deleteOrder(oid: number): Questo metodo permette di eliminare un ordine. Utilizza il servizio HttpClientService per effettuare la cancellazione e aggiorna la visualizzazione degli ordini.
   deleteOrder(oid: number) {
-    this.service.deleteOrder(oid).subscribe({
+
+
+
+    let x = confirm("sei sicuro di cancellare l'ordine ?");
+    if (!x) return;
+    let reason = prompt("perche' cancelli l'ordine?");
+
+
+
+    this.service.deleteOrder(oid, reason).subscribe({
       next: (res: any) => {
         this.msg = "";
         this.ok = res.message;
@@ -208,7 +232,6 @@ export class OrderComponent implements OnInit {
   }
 
 
-  // updateQuantity(ob: OrderBook): Questo metodo aggiorna la quantità di un oggetto in un ordine. Utilizza il servizio HttpClientService per aggiornare la quantità e aggiorna la visualizzazione degli ordiniDetails.
   updateQuantity(ob: OrderBook) {
 
     delete ob.book.picByte;
@@ -275,6 +298,36 @@ export class OrderComponent implements OnInit {
       return book.id === +bid;
     });
   }
+
+
+
+
+  changeEditStatus(order: Order, evt){
+
+    //debugger;
+
+    if (evt.target.tagName != "SUMMARY") return;
+
+    let no: Order = new Order();
+    no.id = order.id;
+    no.edit = !order.edit;
+
+    this.service.updateOrderEdit(no).subscribe({
+      next: (updOrder: Order) => {
+        this.openDetail(updOrder.id);
+        order.edit = updOrder.edit;
+        order.editFrom = updOrder.editFrom;
+      },
+      error: (err: HttpErrorResponse) => {
+        //this.orders[order.id]["opened"] = false;
+        alert("At the moment the order is taken over by a company consultant and therefore it is not possible to make changes");
+      }
+    });
+
+    
+  }
+
+
 
 
 

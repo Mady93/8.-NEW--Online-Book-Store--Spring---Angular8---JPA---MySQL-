@@ -115,7 +115,7 @@ public class UserController {
 
 			return diff;
 
-		} catch (JwtException | IllegalArgumentException e) {
+		} catch (/*JwtException | IllegalArgumentException e*/Exception e) {
 			// Il token è scaduto o non è valido
 			return 0;
 		}

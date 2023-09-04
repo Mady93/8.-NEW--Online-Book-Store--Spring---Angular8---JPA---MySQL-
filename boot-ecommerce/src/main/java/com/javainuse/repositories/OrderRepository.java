@@ -39,5 +39,4 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // aggiunti mo
     Long countTotalOrdersInCancelledState();
     Page<Order> getOrdersInCancelledStatWithDetails(Pageable pageable);
-
 }

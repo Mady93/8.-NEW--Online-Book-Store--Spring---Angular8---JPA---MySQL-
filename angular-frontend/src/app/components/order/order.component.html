@@ -7,8 +7,8 @@
 
 <div *ngIf="allOrders > 0" class="custom">
 
-  <details *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}; let i = index"
-    (click)="openDetail(order.id)"> 
+  <details [open]="order.edit && order.editFrom == auth.uid" *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}; let i = index"
+    (click)="changeEditStatus(order, $event); false"> 
     <summary>
 
       <b>{{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}} - ({{order.state}})</b>
@@ -46,7 +46,7 @@
                   <label class="bookName">{{ele.book.name}}</label>
                   
                 </div>
-                <label *ngIf="ele.book.isActive" class="notAvailable">Not available</label>
+                <label *ngIf="!ele.book.isActive" class="notAvailable">Not available</label>
               </div>
             </td>
             <td>{{ele.book.author}}</td>
@@ -69,6 +69,8 @@
 
 
   </details>
+
+
 </div>
 
 <div class="custom-margin d-flex justify-content-center" *ngIf="allOrders > 0">

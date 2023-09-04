@@ -1,5 +1,6 @@
 package com.javainuse.controllers;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,17 +17,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Book;
+import com.javainuse.entities.Email;
 import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.OrderBook.OrderBooksId;
+import com.javainuse.entities.User;
 import com.javainuse.entities.Order;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.BookRepository;
 import com.javainuse.repositories.OrderBookRepository;
 import com.javainuse.repositories.OrderRepository;
+import com.javainuse.repositories.UserRepository;
 import com.javainuse.services.OrderBookService;
 
 @RestController
@@ -38,14 +43,16 @@ public class OrderBookController {
 	private final OrderBookService orderBookService;
 	private final BookRepository bookRepository;
 	private final OrderRepository orderRepository;
+	private final UserRepository userRepository;
 
 	@Autowired
 	public OrderBookController(OrderBookRepository orderBookRepository, OrderBookService orderBookService,
-			BookRepository bookRepository, OrderRepository orderRepository) {
+			BookRepository bookRepository, OrderRepository orderRepository, UserRepository userRepository) {
 		this.orderBookRepository = orderBookRepository;
 		this.orderBookService = orderBookService;
 		this.bookRepository = bookRepository;
 		this.orderRepository = orderRepository;
+		this.userRepository = userRepository;
 	}
 
 	@PostMapping(path = "/add", consumes = "application/json")
@@ -91,8 +98,17 @@ public class OrderBookController {
 
 	@PutMapping(path = "/update/{bookId:\\d+}/{orderId:\\d+}", consumes = "application/json")
 	public ResponseEntity<Object> putOrderBook(@PathVariable("bookId") Long bookId,
-			@PathVariable("orderId") Long orderId, @RequestBody @Valid OrderBook updatedOrderBook)
+											   @PathVariable("orderId") Long orderId,
+											   @RequestParam("vuid") Long vuid,
+											   @RequestBody @Valid OrderBook updatedOrderBook)
 			throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
+
+
+
+		Optional<User> userOptional = userRepository.findById(vuid);
+		User user = userOptional.orElseThrow(
+				() -> new ResourceNotFoundException("User with ID: " + vuid + " not found in the database"));
+
 
 		OrderBooksId OrderBooksId = new OrderBooksId(orderId, bookId);
 		Optional<OrderBook> optionalOrderBook = orderBookRepository.findById(OrderBooksId);
@@ -111,10 +127,39 @@ public class OrderBookController {
 				existingOrderBook.setQuantity(updatedOrderBook.getQuantity());
 				orderBookRepository.save(existingOrderBook);
 				message = "The order intersection row with ID: " + OrderBooksId + " was updated successfully";
+
+
+				Email email = new Email();
+				email.setFrom(user);
+				email.setSubject("Book quantity updated");
+				email.setBody("Order: "+orderId+" quantity of book: "+existingOrderBook.getBook().getName()+" now is: "+existingOrderBook.getQuantity());
+				email.setOrder(existingOrderBook.getOrder());
+				email.setActive(true);
+				email.setSendedAt(new Date());
+
 			} else {
 				orderBookRepository.delete(existingOrderBook);
+				//existingOrderBook.getOrder().setActive(false);
+				//existingOrderBook.getOrder().setState("Cancelled");
+				//orderBookRepository.save(existingOrderBook);
+				//orderBookRepository.save(existingOrderBook);
+
 				message = "The book in current order has been cancelled";
+
+				Email email = new Email();
+				email.setFrom(user);
+				email.setSubject("Order cancelled");
+				email.setBody("The order: "+orderId+" has been cancelled");
+				email.setOrder(existingOrderBook.getOrder());
+				email.setActive(true);
+				email.setSendedAt(new Date());
+
+
 			}
+
+
+			
+
 
 			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 		} else {

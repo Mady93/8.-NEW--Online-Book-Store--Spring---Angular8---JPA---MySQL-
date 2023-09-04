@@ -18,7 +18,7 @@ public class OrderService {
 
     // update automatico per gli ordini cancelled -- isActive = false (hidden)
     public void updateInactiveOrders(Date sevenDaysAgo) {
-        String jpql = "UPDATE Order o SET o.isActive = false WHERE o.cancelledDate > :sevenDaysAgo AND o.isActive = true AND o.state IN('Cancelled')";
+        String jpql = "UPDATE Order o SET o.isActive = false WHERE o.cancelledDate > :sevenDaysAgo AND o.isActive = true AND o.state = 'Cancelled'";
         entityManager.createQuery(jpql)
                      .setParameter("sevenDaysAgo", sevenDaysAgo)
                      .executeUpdate();
