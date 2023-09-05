@@ -83,7 +83,7 @@ import { InboxCancelledComponent } from './components/inboxes/inbox-cancelled/in
       useClass: AuthInterceptorService,
       multi: true
     }
-  ],
+    ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

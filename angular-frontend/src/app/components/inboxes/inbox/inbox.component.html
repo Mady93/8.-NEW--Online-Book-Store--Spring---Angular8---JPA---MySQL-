@@ -1,4 +1,4 @@
-
+<div class="customImg" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Gnome-fs-directory-accept.svg/800px-Gnome-fs-directory-accept.svg.png');">
 <div class="align">
   <h1 class="size">Accept Orders</h1>
 </div>
@@ -15,7 +15,7 @@
     <!-- [open]="orders[order.id]?.opened" -->
     <summary>
 
-      <b>{{order.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}} - (State: <span style="color: brown;">{{order.state}}</span>)</b>
+      <b>#{{order.id}} {{order.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}} - (State: <span style="color: brown;">{{order.state}}</span>)</b>
 
       <input class="deleteBtn" type="button" (click)="updateOrderState(order)" value="Update order state" />
 
@@ -71,4 +71,4 @@
   <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
   <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
 </div>
-
+</div>

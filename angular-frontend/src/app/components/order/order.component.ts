@@ -5,7 +5,7 @@ import { AuthService } from 'src/app/service/auth.service';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Book } from 'src/app/model/Book';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-order',
@@ -27,7 +27,7 @@ export class OrderComponent implements OnInit {
   msg: any;
   ok: any;
 
-  constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute) { }
+  constructor(private service: HttpClientService, private auth: AuthService, private route: ActivatedRoute, private router: Router) { }
 
   // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente. Ottiene l'ID dell'ordine dalla query parametrica dell'URL e decide se recuperare tutti gli ordini dell'utente o solo l'ordine con l'ID specificato.
   ngOnInit() {
@@ -174,9 +174,9 @@ export class OrderComponent implements OnInit {
 
 
 
-    let x = confirm("sei sicuro di cancellare l'ordine ?");
+    let x = confirm("Are you sure you want to cancel the order?");
     if (!x) return;
-    let reason = prompt("perche' cancelli l'ordine?");
+    let reason = prompt("Why are you canceling the order?");
 
 
 
@@ -184,13 +184,17 @@ export class OrderComponent implements OnInit {
       next: (res: any) => {
         this.msg = "";
         this.ok = res.message;
-
+        
         setTimeout(() => {
           this.ok = '';
           //fix aggiornamento indice pagina
           if (this.allOrders == 1) this.page = 1;
           else if ((this.allOrders - ((this.page - 1) * this.size)) == 1) this.page--;
           this.fetchOrdersByUid(this.auth.uid);
+
+          // aggiunto per un refresh forzato della pagina
+          window.location.reload();
+          
         }, 2000);
 
       },
@@ -234,10 +238,17 @@ export class OrderComponent implements OnInit {
 
   updateQuantity(ob: OrderBook) {
 
-    delete ob.book.picByte;
-    var that = this;
 
-    this.service.updateOrderBook(ob).subscribe({
+    let nob: OrderBook = new OrderBook();
+    nob.book.id = ob.book.id;
+    nob.order.id = ob.order.id;
+    nob.quantity = ob.quantity;
+
+
+
+
+    this.service.updateOrderBook(nob).subscribe({
+     
       next: (res: any) => {
 
         this.msg = "";

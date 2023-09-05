@@ -1,6 +1,7 @@
 package com.javainuse.entities;
 
 import java.util.Date;
+import java.util.concurrent.CompletableFuture;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,8 +26,6 @@ import org.hibernate.annotations.Generated;
 import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -98,6 +97,8 @@ public class Email {
 		this.order = order;
 		this.isActive = true;
 	}
+
+
 
 
 }

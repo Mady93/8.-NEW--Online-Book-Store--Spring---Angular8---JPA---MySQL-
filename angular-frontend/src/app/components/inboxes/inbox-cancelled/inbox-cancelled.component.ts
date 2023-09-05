@@ -3,6 +3,7 @@ import { Order } from 'src/app/model/Order';
 import { HttpClientService } from 'src/app/service/http-client.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthService } from 'src/app/service/auth.service';
+import { OrderBook } from 'src/app/model/OrderBook';
 
 @Component({
   selector: 'app-inbox-cancelled',
@@ -26,14 +27,13 @@ export class InboxCancelledComponent implements OnInit {
     this.fetchOrders();
   }
 
-  // openDetail(oid: number): Questo metodo viene chiamato quando l'utente vuole visualizzare i dettagli di un ordine specifico. Richiama fetchOrderById(oid) solo se i dettagli dell'ordine non sono già stati caricati.
   openDetail(oid: number) {
     if (this.ordersDetails[oid] === undefined) this.fetchOrderById(oid);
   }
 
   fetchOrderById(oid: number) {
     this.service.getOrderBooksByOrderId(oid).subscribe({
-      next: (jt: any[]) => {
+      next: (jt: OrderBook[]) => {
         this.msg = "";
         this.ok = "";
         this.ordersDetails[oid] = { orders: [], total: 0 };
@@ -43,6 +43,7 @@ export class InboxCancelledComponent implements OnInit {
 
         this.ordersDetails[oid].orders = jt;
         this.ordersDetails[oid].total = total;
+
       },
       error: (err: HttpErrorResponse) => {
         this.msg = this.replaceAll(err.message, "#", "<br>");
@@ -69,17 +70,24 @@ export class InboxCancelledComponent implements OnInit {
         this.ok = "";
         this.msg = "";
         this.allOrders = num;
-  
+
         this.service.getTotalOrdersStateCanceled(this.page, this.size).subscribe({
           next: (orders: Order[]) => {
             this.msg = "";
             this.ok = "";
-            // Inizializza lo stato aperto o chiuso dei dettagli per ciascun ordine.
-            this.orders = orders.map(order => ({ ...order, detailsOpen: true }));
+            this.orders = orders;
+
+            setTimeout(() => {
+              console.log(orders);
+              for (let order of orders) {
+                  this.openDetail(order.id);
+              }
+              
+            }, 500);
           },
           error: (err: HttpErrorResponse) => {
             this.msg = this.replaceAll(err.message, "#", "<br>");
-  
+
             setTimeout(() => {
               this.msg = '';
             }, 2000);
@@ -89,7 +97,7 @@ export class InboxCancelledComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         this.msg = this.replaceAll(err.message, "#", "<br>");
-  
+
         setTimeout(() => {
           this.msg = '';
         }, 2000);
@@ -97,11 +105,19 @@ export class InboxCancelledComponent implements OnInit {
       complete: () => { }
     });
   }
-  
 
   renderPage(event: number) {
-    this.page = event;
+    this.page = (event);
     this.ordersDetails = [];
     this.fetchOrders();
   }
+
 }
+
+
+
+
+
+
+
+

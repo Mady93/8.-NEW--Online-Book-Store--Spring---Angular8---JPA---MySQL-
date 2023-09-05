@@ -1,42 +1,96 @@
+<div class="customImg" style="background-image: url('https://cdn-icons-png.flaticon.com/512/5451/5451594.png');">
+
+<div class="align">
+  <h1 class="size">Deleted Orders</h1>
+</div>
+
 <div *ngIf="allOrders > 0" class="custom">
+
   <div *ngFor="let order of orders | paginate: {itemsPerPage: size, currentPage: page, totalItems: allOrders}; let i = index">
-    <details *ngIf="order.user.id != auth.uid">
-      <summary>
-        <b>{{ order.createdAt | date: 'dd/MM/yyyy HH:mm:ss' }} - (State: <span style="color: brown;">{{ order.state }}</span>)</b>
-      </summary>
-      <div class="table-responsive" *ngIf="order.state == 'Working'">
-        <table class="table table-bordered table-striped">
-          <thead class="thead-dark">
-            <tr>
-              <th>Title</th>
-              <th>Author</th>
-              <th>Quantity</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let ele of ordersDetails[order.id]?.orders">
-              <td>
-                <div style="position: relative;">
-                  <div style="position: relative; display: inline-block;">
-                    <img src="data:image/jpeg;base64,{{ ele.book.picByte }}" />
-                    <label class="bookName">{{ ele.book.name }}</label>
-                  </div>
+
+  <details>
+
+    <summary>
+
+      <b>
+        {{order.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}} - ( State: 
+        <span style="color: brown;">
+          {{order.state}}
+        </span>)
+    </b>
+
+    </summary>
+
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="thead-dark">
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Quantity</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let ele of ordersDetails[order.id]?.orders">
+            <td>
+              <div style="position: relative;">
+                <div style="position: relative; display: inline-block;">
+                  <img src="data:image/jpeg;base64,{{ele.book.picByte}}" />
+                  <label class="bookName">{{ele.book.name}}</label>
+                  
                 </div>
-              </td>
-              <td>{{ ele.book.author }}</td>
-              <td>{{ ele.quantity }}</td>
-              <td>{{ ele.book.price | currency:'USD' }}</td>
-            </tr>
-            <tr>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td>Total: {{ ordersDetails[order.id]?.total | currency:'USD' }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </details>
+              </div>
+            </td>
+            <td>{{ele.book.author}}</td>
+            <td>{{ele.quantity}}</td>
+            <td>{{ele.book.price | currency:'USD'}}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>Total: {{ ordersDetails[order.id]?.total | currency:'USD' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+    </div>
+
+  <div style="text-align: center;">
+    <b>
+      Reason: 
+      <span style="color: brown;">
+        {{order.reason}} 
+    </span>
+  </b>
   </div>
+
+
+  <div style="text-align: center;">
+    <b>
+      by user: 
+      <span style="color: brown;">
+        {{order.user.email}}
+
+    </span>
+  </b>
+  </div>
+
+  </details>
+
+
+</div>
+
+</div>
+
+<div class="custom-margin d-flex justify-content-center" *ngIf="allOrders > 0">
+  <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
+</div>
+
+<div class="custom-margin">
+  <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+  <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
+</div>
+
 </div>

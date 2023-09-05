@@ -17,7 +17,9 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     //Page<Order> findOrdersByUserId(Long userId, Pageable pageable);
 
-    //long countOrdersByUserId(Long userId);
+    // da vedere se servono queste 2
+    long countOrdersByUserId(Long userId);
+    List<Order> findOrdersByUser(User user);
 
 
     Page<Order> findByNotDeletedAndByUserId(Long userId, Pageable pageable);
@@ -26,7 +28,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
 
 
-    List<Order> findOrdersByUser(User user);
+    
 
     List<Book> getOrderBooksById(Long orderId);
 

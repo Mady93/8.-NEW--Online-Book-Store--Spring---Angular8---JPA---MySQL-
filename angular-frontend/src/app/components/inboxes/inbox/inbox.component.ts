@@ -4,6 +4,7 @@ import { HttpClientService } from 'src/app/service/http-client.service';
 import { AuthService } from 'src/app/service/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { OrderBook } from 'src/app/model/OrderBook';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-inbox',
@@ -20,8 +21,7 @@ export class InboxComponent implements OnInit {
 
   msg: any;
   ok: any;
-
-  constructor(private service: HttpClientService, private auth: AuthService) { }
+  constructor(private service: HttpClientService, private auth: AuthService, private router: Router) { }
 
 
   // ngOnInit(): Questo metodo viene chiamato durante l'inizializzazione del componente e richiama la funzione fetchOrders() per ottenere gli ordini dell'utente corrente.
@@ -137,23 +137,27 @@ export class InboxComponent implements OnInit {
   }
 
 
+
+
   // updateOrderState(order: Order): Questo metodo viene chiamato quando l'utente aggiorna lo stato di un ordine a "Send". Utilizza il servizio HttpClientService per aggiornare lo stato dell'ordine. Gestisce le risposte e gli errori del server, mostrando messaggi di errore se necessario, e aggiorna la visualizzazione degli ordini chiamando fetchOrders()
   updateOrderState(order: Order) {
 
     order.state = "Send";
 
     this.service.updateOrderState(order).subscribe({
+
       next: (res: any) => {
+        //debugger;
         this.ok = res.message;
+        console.log(res);
 
         setTimeout(() => {
           this.ok = '';
-
+          this.fetchOrders();
           //fix aggiornamento indice pagina
           if (this.allOrders == 1) this.page = 1;
           else if ((this.allOrders - ((this.page - 1) * this.size)) == 1) this.page--;
-
-          this.fetchOrders();
+      
         }, 2000);
 
       },
@@ -167,6 +171,11 @@ export class InboxComponent implements OnInit {
       complete: () => { }
     });
   }
+
+
+
+
+
 
 
 
@@ -188,7 +197,7 @@ export class InboxComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         //this.orders[order.id]["opened"] = false;
-        alert("At the moment the order is taken over by a company consultant and therefore it is not possible to make changes");
+        alert("At the moment the order is taken over by the user and therefore it is not possible to make changes");
       }
     });
 

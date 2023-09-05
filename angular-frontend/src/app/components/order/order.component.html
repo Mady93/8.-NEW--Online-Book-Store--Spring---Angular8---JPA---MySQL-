@@ -1,5 +1,6 @@
 
 
+<div class="customImg" style="background-image: url('https://myorderboxhq.com/wp-content/uploads/2021/04/MOB-logo.png');">
 
 <div class="align">
   <h1 class="size">My Orders</h1>
@@ -11,7 +12,7 @@
     (click)="changeEditStatus(order, $event); false"> 
     <summary>
 
-      <b>{{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}} - ({{order.state}})</b>
+      <b>#{{order.id}} {{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}} - ({{order.state}})</b>
       
       <input class="deleteBtn" *ngIf="order.state=='Working'" type="button" (click)="deleteOrder(order.id)" value="Cancel order"/>
 
@@ -82,4 +83,4 @@
   <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
 </div>
 
-
+</div>

@@ -7,6 +7,7 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -35,22 +36,21 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+// da vedere se servono ancora queste 2
 @NamedQuery(name = "Order.findOrdersByUser", query = "SELECT o FROM Order o WHERE o.user = :user AND o.isActive is true")
 @NamedQuery(name = "Order.countOrders", query = "SELECT COUNT(o) FROM Order o")
+
+// inbox
 @NamedQuery(name = "Order.getOrdersInWorkingStateWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Working' AND o.isActive is true")
 @NamedQuery(name = "Order.countTotalOrdersInWorkingState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Working' AND o.isActive is true")
-@NamedQuery(name = "Order.findByNotDeletedAndByUserId", query = "SELECT o FROM Order o WHERE o.user.id = :userId AND o.isActive is true")
-//@NamedQuery(name = "Order.countNotDeleted", query = "SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.isActive is true")
-@NamedQuery(name = "Order.countNotDeletedAndByUserId", query = "SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.isActive is true")
 
+// my orders
+@NamedQuery(name = "Order.findByNotDeletedAndByUserId", query = "SELECT o FROM Order o WHERE o.user.id = :userId AND o.isActive is true AND o.state !='Cancelled'")
+@NamedQuery(name = "Order.countNotDeletedAndByUserId", query = "SELECT count(o) FROM Order o WHERE o.user.id = :userId AND o.isActive is true AND o.state !='Cancelled'")
 
-
-
-
-// aggiunto mo
+// inboxCancelled
 @NamedQuery(name = "Order.countTotalOrdersInCancelledState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
 @NamedQuery(name = "Order.getOrdersInCancelledStatWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
-
 public class Order {
 
 	@Id

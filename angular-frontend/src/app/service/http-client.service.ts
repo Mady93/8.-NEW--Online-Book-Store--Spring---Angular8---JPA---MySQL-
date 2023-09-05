@@ -244,8 +244,10 @@ export class HttpClientService {
     );
     */
 
+    //debugger;
     const headers = { 'content-type': 'application/json' };
     const body = JSON.stringify(updatedOrder);
+    console.log(updatedOrder);
     return this.httpClient.put<Order>(`${this.baseURL}/orders/update?action=state`, body, { headers: headers }).pipe(
       catchError((err: HttpErrorResponse) => this.handleError(err))
     );

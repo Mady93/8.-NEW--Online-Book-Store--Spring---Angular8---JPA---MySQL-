@@ -21,6 +21,7 @@ import com.javainuse.repositories.EmailRepository;
 import com.javainuse.repositories.OrderBookRepository;
 import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
+import com.javainuse.services.EmailService;
 
 //Book
 import java.io.IOException;
@@ -47,6 +48,10 @@ public class EcommerceApplication implements CommandLineRunner {
 	@Autowired
 	private OrderBookRepository orderBookRepository;
 
+	/* rimuovere */
+	//@Autowired
+	//EmailService emailService;
+
 	public static void main(String[] args) {
 		SpringApplication.run(EcommerceApplication.class, args);
 	}
@@ -72,6 +77,12 @@ public class EcommerceApplication implements CommandLineRunner {
 
 	// Save objects Book and User objects that include Orders
 	private void saveDataAllEntity() {
+
+
+
+
+
+
 
 		// Creazione di oggetti Book
 		byte[] bookImage1 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/1.jpg"); // Carica l'immagine da un percorso

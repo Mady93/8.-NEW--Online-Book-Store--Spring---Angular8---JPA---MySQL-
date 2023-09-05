@@ -29,6 +29,7 @@ import com.javainuse.entities.User;
 import com.javainuse.entities.Order;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.BookRepository;
+import com.javainuse.repositories.EmailRepository;
 import com.javainuse.repositories.OrderBookRepository;
 import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
@@ -40,19 +41,18 @@ import com.javainuse.services.OrderBookService;
 public class OrderBookController {
 
 	private final OrderBookRepository orderBookRepository;
-	private final OrderBookService orderBookService;
 	private final BookRepository bookRepository;
 	private final OrderRepository orderRepository;
 	private final UserRepository userRepository;
+	private final EmailRepository emailRepository;
 
 	@Autowired
-	public OrderBookController(OrderBookRepository orderBookRepository, OrderBookService orderBookService,
-			BookRepository bookRepository, OrderRepository orderRepository, UserRepository userRepository) {
+	public OrderBookController(OrderBookRepository orderBookRepository, BookRepository bookRepository, OrderRepository orderRepository, UserRepository userRepository, EmailRepository emailRepository) {
 		this.orderBookRepository = orderBookRepository;
-		this.orderBookService = orderBookService;
 		this.bookRepository = bookRepository;
 		this.orderRepository = orderRepository;
 		this.userRepository = userRepository;
+		this.emailRepository = emailRepository;
 	}
 
 	@PostMapping(path = "/add", consumes = "application/json")
@@ -122,17 +122,18 @@ public class OrderBookController {
 
 			Integer q = updatedOrderBook.getQuantity();
 			String message;
+			Email email = new Email();
 
 			if (q > 0) {
 				existingOrderBook.setQuantity(updatedOrderBook.getQuantity());
 				orderBookRepository.save(existingOrderBook);
-				message = "The order intersection row with ID: " + OrderBooksId + " was updated successfully";
+				message = "In the order: #"+orderId+" the quantity of book: \""+existingOrderBook.getBook().getName()+"\" now is: "+existingOrderBook.getQuantity();
 
 
-				Email email = new Email();
+				
 				email.setFrom(user);
 				email.setSubject("Book quantity updated");
-				email.setBody("Order: "+orderId+" quantity of book: "+existingOrderBook.getBook().getName()+" now is: "+existingOrderBook.getQuantity());
+				email.setBody(message);
 				email.setOrder(existingOrderBook.getOrder());
 				email.setActive(true);
 				email.setSendedAt(new Date());
@@ -144,22 +145,34 @@ public class OrderBookController {
 				//orderBookRepository.save(existingOrderBook);
 				//orderBookRepository.save(existingOrderBook);
 
-				message = "The book in current order has been cancelled";
+				message = "In the order: #"+existingOrderBook.getOrder().getId()+" the book: \""+existingOrderBook.getBook().getName()+"\" has been cancelled";
 
-				Email email = new Email();
 				email.setFrom(user);
-				email.setSubject("Order cancelled");
-				email.setBody("The order: "+orderId+" has been cancelled");
+				email.setSubject("Book cancelled");
+				email.setBody(message);
 				email.setOrder(existingOrderBook.getOrder());
 				email.setActive(true);
 				email.setSendedAt(new Date());
 
-
 			}
 
 
-			
+			for (User usr : userRepository.getUsersByRole("Order")) {
+				if (user.getId() != usr.getId()) {
 
+				//ricreo l'istanza per evitare di sovrascrivere le mail
+				Email nem = new Email();
+				nem.setActive(email.isActive());
+				nem.setSubject(email.getSubject());
+				nem.setBody(email.getBody());
+				nem.setOrder(email.getOrder());
+				nem.setSendedAt(email.getSendedAt());
+				nem.setFrom(email.getFrom());
+				nem.setTo(usr);
+
+				emailRepository.save(nem);
+			}
+		}
 
 			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
 		} else {

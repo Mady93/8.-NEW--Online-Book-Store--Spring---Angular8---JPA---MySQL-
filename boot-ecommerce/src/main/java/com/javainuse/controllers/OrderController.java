@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 import javax.validation.Valid;
 
@@ -18,6 +19,8 @@ import org.springframework.data.domain.Sort;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -176,13 +179,24 @@ public class OrderController {
 	}
 
 
-	@DeleteMapping(path = "/{orderId:\\d+}/delete")
-	public ResponseEntity<Object> deleteOrder(@RequestParam("reason") String reason, @PathVariable("orderId") Long orderId)
+	
+	 @DeleteMapping(path = "/{orderId:\\d+}/delete")
+	public ResponseEntity<Object> deleteOrder(@RequestParam("reason") String reason,
+											  @PathVariable("orderId") Long orderId,
+											  @RequestParam("vuid") Long vuid)
 			throws ResourceNotFoundException, IllegalArgumentException {
 
 		Optional<Order> orderOptional = orderRepository.findById(orderId);
 		Order order = orderOptional.orElseThrow(
 				() -> new ResourceNotFoundException("Order with ID: " + orderId + " not found in the database"));
+
+
+		
+		Optional<User> userOptional = userRepository.findById(vuid);
+		User user = userOptional.orElseThrow(
+				() -> new ResourceNotFoundException("User with ID: " + vuid + " not found in the database"));
+
+
 
 		// Prima di eliminare l'ordine, elimina i record correlati nella tabella
 		// "order_books" che fanno riferimento all'ordine
@@ -197,12 +211,64 @@ public class OrderController {
 		response.put("order", order);
 		response.put("message", successMessage);
 
-		return ResponseEntity.ok().body(response);
+
+		
+		Email email = new Email();
+		email.setActive(true);
+		email.setSubject("Order: #"+orderId);
+		email.setBody("Order: #"+orderId+" has been cancelled");
+		email.setOrder(order);
+		email.setFrom(user);
+		email.setSendedAt(new Date());
+
+			for (User usr : userRepository.getUsersByRole("Order")) {
+
+				if (user.getId() != usr.getId()) {
+				/*
+				 //ricreo l'istanza per evitare di sovrascrivere le mail
+				Email nem = new Email();
+				nem.setActive(email.isActive());
+				nem.setSubject(email.getSubject());
+				nem.setBody(email.getBody());
+				nem.setOrder(email.getOrder());
+				nem.setSendedAt(email.getSendedAt());
+				nem.setFrom(email.getFrom());
+				nem.setTo(usr);
+				//nem.setTo(order.getUser());
+				emailRepository.save(nem);
+				 */
+				
+				 Email nem = new Email();
+				nem.setActive(email.isActive());
+				nem.setSubject(email.getSubject());
+				nem.setBody(email.getBody());
+				nem.setOrder(email.getOrder());
+				nem.setSendedAt(email.getSendedAt());
+				nem.setFrom(email.getFrom());
+				nem.setTo(usr);
+				//nem.setTo(order.getUser());
+				emailRepository.save(nem);
+
+
+
+				CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+				String obj_ = "Order #" + order.getId();
+				String msg_ = "Dear Order, the order"+order.getId()+" has been cancelled!";
+				//emailService.sendEmail(user.getEmail(), obj_, msg_);
+				emailService.sendEmail(usr.getEmail(), obj_, msg_);
+			});
+		}
 	}
 
+		return ResponseEntity.ok().body(response);
+	}
+	 
 
 
-	
+
+
+
+
 	@PutMapping(path = "/update", consumes = "application/json")
 	public ResponseEntity<Object> updateOrder(@RequestBody /*@Valid*/ Order orderInfo,
 											  @RequestParam("vuid") long vuid,
@@ -215,7 +281,8 @@ public class OrderController {
 
 		Optional<Order> orderOptional = orderRepository.findById(orderInfo.getId());
 		Order order = orderOptional.orElseThrow(() -> new ResourceNotFoundException("Order with ID: " + orderInfo.getId() + " not found in the database"));
-
+		System.out.println("Received OrderInfo ID: " + orderInfo.getId());
+		System.out.println("Have Order ID: " + order.getId());
 
 		String successMessage = "Nothing done";
 		String obj = "";
@@ -229,10 +296,28 @@ public class OrderController {
 			obj = "Order #" + order.getId();
 			msg = "Dear customer, your order has been changed to: " + orderInfo.getState();
 
+			//invio la mail vera in modo asincrono
+			
+			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+				String obj_ = "Order #" + order.getId();
+				//String msg_ = "Dear customer, your order has been changed to: " + orderInfo.getState();
+				String msg_ = "Dear user, your order #"+order.getId()+" state has changed in: "+order.getState();
+				emailService.sendEmail(order.getUser().getEmail(), obj_, msg_);
+			});
+			
 
-			//invio la mail vera
-			String userEmail = order.getUser().getEmail();
-			emailService.sendEmail(userEmail, obj, msg);
+			/*Email email = new Email();
+
+			email.setActive(true);
+			email.setFrom(user);
+			email.setTo(order.getUser());
+			email.setOrder(order);
+			email.setSubject("Order status");
+			email.setBody("Dear user, your order #"+order.getId()+" state has changed in: "+order.getState());
+			
+			emailRepository.save(email);*/
+			
+			
 
 
 		}else if (action.equals("edit")){
@@ -255,8 +340,19 @@ public class OrderController {
 			successMessage = "Order: " + order.getId() + " has been updated successfully to edit: " + orderInfo.getEdit();
 
 			obj = "Order #" + order.getId();
-			msg = "Dear customer, your order is currently edited by "+user.getName()+" (Role: "+user.getType()+")";
 
+		
+		 if(user.getType().equals("Order")) {
+			if (order.getEdit()) msg = "Dear customer, your order is currently edited by "+user.getName()+" (Role: "+user.getType()+")";
+				else msg = "Dear customer, your order is now free";
+		} else {
+			if (order.getEdit()) msg = "Dear order, the order is currently edited by "+user.getName()+" (Role: "+user.getType()+")";
+				else msg = "Dear order, the order is now free";
+		}
+		 
+
+			/*if (order.getEdit()) msg = "Dear customer, your order is currently edited by "+user.getName()+" (Role: "+user.getType()+")";
+				else msg = "Dear customer, your order is now free";*/
 
 		}else{
 			return ResponseEntity.status(403).body("");
@@ -284,29 +380,39 @@ public class OrderController {
 			email.setTo(order.getUser());
 			emailRepository.save(email);
 		} else {
-			for (User usr : userRepository.getUsersByRole("Order"))
-			{
-				email.setTo(usr);
-				emailRepository.save(email);
+		
+			for (User usr : userRepository.getUsersByRole("Order")) {
+
+				if (user.getId() != usr.getId()) {
+				//ricreo l'istanza per evitare di sovrascrivere le mail
+				Email nem = new Email();
+				nem.setActive(email.isActive());
+				nem.setSubject(email.getSubject());
+				nem.setBody(email.getBody());
+				nem.setOrder(email.getOrder());
+				nem.setSendedAt(email.getSendedAt());
+				nem.setFrom(email.getFrom());
+				nem.setTo(usr);
+
+				emailRepository.save(nem);
 			}
 		}
 
+		}
 
-
-		/*
-		Map<String, Object> response = new HashMap<>();
+		/*Map<String, Object> response = new HashMap<>();
 		response.put("order", order);
-		response.put("message", successMessage);
-		*/
-		return ResponseEntity.status(200).body(order);						
+		response.put("message", successMessage);*/
 		
+		return ResponseEntity.status(200).body(order);						
+		//return ResponseEntity.status(200).body(response);	
 	}
 	
 
 	
 
 
-
+	@Deprecated
 	@PutMapping(path = "/update/{orderId:\\d+}/{state}", consumes = "application/json")
 	public ResponseEntity<Object> updateState(@PathVariable("orderId") Long orderId,
 			@PathVariable("state") String state, @RequestParam("vuid") long vuid)
@@ -349,16 +455,26 @@ public class OrderController {
 			emailRepository.save(email);
 		} else {
 			//invio la mail a tutti gli utenti order
-			for (User usr : userRepository.getUsersByRole("Order"))
-			{
-				email.setTo(usr);
-				emailRepository.save(email);
+			for (User usr : userRepository.getUsersByRole("Order")) {
+
+				if (user.getId() != usr.getId()) {
+
+				//ricreo l'istanza per evitare di sovrascrivere le mail
+				Email nem = new Email();
+				nem.setActive(email.isActive());
+				nem.setSubject(email.getSubject());
+				nem.setBody(email.getBody());
+				nem.setOrder(email.getOrder());
+				nem.setSendedAt(email.getSendedAt());
+				nem.setFrom(email.getFrom());
+				nem.setTo(usr);
+
+				emailRepository.save(nem);
 			}
+
 		}
 
-
-
-
+	}
 
 		String successMessage = "Order: " + order.getId() + " has been updated successfully to state: " + state;
 		Map<String, Object> response = new HashMap<>();
@@ -400,7 +516,7 @@ public class OrderController {
 	}
 
 
-	
+	@Deprecated
 	@PutMapping(path = "/update/edit")
 	public ResponseEntity<Order> udpateOrders(@RequestBody @Valid Order order_, @RequestParam("vuid") long vuid)
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -434,29 +550,36 @@ public class OrderController {
 
 		//invio una notifica interna
 		Email email = new Email();
+		email.setActive(true);
 		email.setFrom(user);
 		email.setSubject(obj);
 		email.setBody(msg);
 		email.setOrder(order);
+		email.setSendedAt(new Date());
 		
 		if (user.getType() == "Order")
 		{
 			email.setTo(order.getUser());
 			emailRepository.save(email);
 		} else {
-			for (User usr : userRepository.getUsersByRole("Order"))
-			{
-				email.setTo(usr);
-				emailRepository.save(email);
+			
+			for (User usr : userRepository.getUsersByRole("Order")) {
+
+				if (user.getId() != usr.getId()) {
+				//ricreo l'istanza per evitare di sovrascrivere le mail
+				Email nem = new Email();
+				nem.setActive(email.isActive());
+				nem.setSubject(email.getSubject());
+				nem.setBody(email.getBody());
+				nem.setOrder(email.getOrder());
+				nem.setSendedAt(email.getSendedAt());
+				nem.setFrom(email.getFrom());
+				nem.setTo(usr);
+
+				emailRepository.save(nem);
 			}
 		}
-
-
-
-
-		
-
-
+	}
 
 		return ResponseEntity.status(200).body(order);
 
@@ -464,10 +587,9 @@ public class OrderController {
 
 
 
-// String msg = "Currently, the order is being handled by a company consultant, and therefore, it's not possible to make changes!";
 
 
-
+// inboxCancelled
 @GetMapping(path = "/count/allCanceled")
 	public ResponseEntity<Integer> countAllOrdersCancelled()
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -480,7 +602,7 @@ public class OrderController {
 		}
 	}
 
-
+// inboxCancelled
 	@GetMapping(path = "/inbox/allCanceled")
 	public ResponseEntity<List<Order>> getOrdersCancelled(@RequestParam("page") int page,
 			@RequestParam("size") int size)
