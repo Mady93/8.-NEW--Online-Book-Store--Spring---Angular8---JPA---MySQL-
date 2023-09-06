@@ -55,7 +55,8 @@
             <td *ngIf="order.state!='Working'">{{ele.quantity}}</td>
             <td *ngIf="order.state=='Working'"><input type="number" (change)="updateQuantity(ele)" [(ngModel)]="ele.quantity"/></td>
 
-            <td>{{ele.book.price | currency:'USD'}}</td>
+            <!-- <td>{{ele.book.price | currency:'USD'}}</td> -->
+            <td>{{ele.price | currency:'USD'}}</td>
           </tr>
           <tr>
             <td></td>

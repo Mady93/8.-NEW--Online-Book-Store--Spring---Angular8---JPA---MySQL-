@@ -18,4 +18,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     List<Book> findByNameContaining(String name);
 
+    // get discount books
+    long countNotDeletedAndDiscountTrue();
+    Page<Book> findByNotDeletedAndDiscountTrue(Pageable pageable);
 }

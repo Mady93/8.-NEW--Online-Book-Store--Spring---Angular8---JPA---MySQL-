@@ -17,9 +17,9 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.ToString;
+//import lombok.AllArgsConstructor;
+//import lombok.Data;
+//import lombok.ToString;
 
 /*@Data
 @AllArgsConstructor

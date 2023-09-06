@@ -1,3 +1,5 @@
+import { Discount } from "./Discount";
+
 export class Book {
     id: number;
     isActive: boolean;
@@ -6,4 +8,5 @@ export class Book {
     price: number;
     picByte: string;
     isAdded: boolean;
+    discount: Discount;
 }

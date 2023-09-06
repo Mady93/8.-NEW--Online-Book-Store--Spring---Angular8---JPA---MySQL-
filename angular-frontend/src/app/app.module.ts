@@ -38,6 +38,7 @@ import { ErrorComponent } from './components/error/error.component';
 import { InboxComponent } from './components/inboxes/inbox/inbox.component';
 import { CommunicationComponent } from './components/communication/communication.component';
 import { InboxCancelledComponent } from './components/inboxes/inbox-cancelled/inbox-cancelled.component';
+import { DiscountBooksComponent } from './components/discount-books/discount-books.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import { InboxCancelledComponent } from './components/inboxes/inbox-cancelled/in
     ErrorComponent,
     InboxComponent,
     CommunicationComponent,
-    InboxCancelledComponent
+    InboxCancelledComponent,
+    DiscountBooksComponent
   ],
   imports: [
     BrowserModule,

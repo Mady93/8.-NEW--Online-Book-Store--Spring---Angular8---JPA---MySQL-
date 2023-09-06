@@ -1,20 +1,17 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClientService } from '../service/http-client.service';
-import { Book } from '../model/Book';
+import { HttpClientService } from 'src/app/service/http-client.service';
+import { Book } from 'src/app/model/Book';
 import { HttpErrorResponse } from '@angular/common/http';
-import { User } from '../model/User ';
+import { User } from 'src/app/model/User ';
 import { faCartPlus, faCartShopping, faDollarSign, faQuestion, faUserEdit } from '@fortawesome/free-solid-svg-icons';
-import { AuthService } from '../service/auth.service';
-
+import { AuthService } from 'src/app/service/auth.service';
 @Component({
-  selector: 'app-shopbook',
-  templateUrl: './shopbook.component.html',
-  styleUrls: ['./shopbook.component.scss']
+  selector: 'app-discount-books',
+  templateUrl: './discount-books.component.html',
+  styleUrls: ['./discount-books.component.scss']
 })
-
-export class ShopbookComponent implements OnInit {
-
+export class DiscountBooksComponent implements OnInit {
   iconaAdd = faCartPlus;
   iconaCart = faCartShopping;
   iconaBuy = faDollarSign;
@@ -32,7 +29,6 @@ export class ShopbookComponent implements OnInit {
   size: number = 8;
 
   msg: any;
-
 
   constructor(private router: Router, private httpClientService: HttpClientService, public authService: AuthService) { }
 
@@ -75,13 +71,13 @@ export class ShopbookComponent implements OnInit {
 
   //Modificato in quanto si necessita di un refresh per ricevere il next dei valori successivi della paginazione
   refreshData() {
-    this.httpClientService.countBooks().subscribe({
+    this.httpClientService.countDiscountBooks().subscribe({
       next: (num: number) => {
         console.log("Length array = " + num);
         this.allBooks = num;
         this.msg = "";
 
-        this.httpClientService.getBooks(this.page, this.size).subscribe({
+        this.httpClientService.getDiscountBooks(this.page, this.size).subscribe({
           next: (response) => {
             console.log(response);
             this.msg = "";
@@ -231,7 +227,5 @@ export class ShopbookComponent implements OnInit {
       }
     }
   }
-
-
 
 }

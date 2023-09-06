@@ -1,14 +1,13 @@
 package com.javainuse.services;
 
-import org.springframework.stereotype.Service;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.stereotype.Service;
+
 @Service
-public class OrderBookService {
+public class DiscountService {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
 }

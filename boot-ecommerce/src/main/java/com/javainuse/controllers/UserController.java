@@ -50,7 +50,6 @@ import org.springframework.data.domain.Pageable;
 // JWT
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 
 @RestController

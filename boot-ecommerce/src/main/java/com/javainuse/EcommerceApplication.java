@@ -11,17 +11,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import com.javainuse.entities.Book;
+import com.javainuse.entities.Discount;
 import com.javainuse.entities.Email;
 import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.OrderBook.OrderBooksId;
 import com.javainuse.entities.Order;
 import com.javainuse.entities.User;
 import com.javainuse.repositories.BookRepository;
+import com.javainuse.repositories.DiscountRepository;
 import com.javainuse.repositories.EmailRepository;
 import com.javainuse.repositories.OrderBookRepository;
 import com.javainuse.repositories.OrderRepository;
 import com.javainuse.repositories.UserRepository;
-import com.javainuse.services.EmailService;
 
 //Book
 import java.io.IOException;
@@ -47,6 +48,9 @@ public class EcommerceApplication implements CommandLineRunner {
 
 	@Autowired
 	private OrderBookRepository orderBookRepository;
+	
+	@Autowired
+	private DiscountRepository discountRepository;
 
 	/* rimuovere */
 	//@Autowired
@@ -80,48 +84,71 @@ public class EcommerceApplication implements CommandLineRunner {
 
 
 
+		// Crea uno sconto con un prezzo scontato
+		Discount discount1 = new Discount(5); 
+		Discount discount2 = new Discount(10); 
+		Discount discount3 = new Discount(15); 
+		Discount discount4 = new Discount(20); 
 
+		// Salva lo sconto nel repository
+		Discount d1 = discountRepository.save(discount1);
+		Discount d2 = discountRepository.save(discount2);
+		Discount d3 = discountRepository.save(discount3);
+		Discount d4 = discountRepository.save(discount4);
 
 
 
 		// Creazione di oggetti Book
-		byte[] bookImage1 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/1.jpg"); // Carica l'immagine da un percorso
-																				// specifico
+		byte[] bookImage1 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/1.jpg"); // Carica l'immagine da un percorso specifico
 		Book book1 = new Book("La vita intima", "Niccolò Ammaniti", 18.05, bookImage1);
+		book1.setDiscount(d1); // Imposta lo sconto per il libro
+
 
 		byte[] bookImage2 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/2.jpg");
 		Book book2 = new Book("Il cognome delle donne", "Aurora Tamigio", 18.05, bookImage2);
 
+
 		byte[] bookImage3 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/3.jpg");
 		Book book3 = new Book("Death note. Vol. 3", "Takeshi Obata", 4.66, bookImage3);
+		book3.setDiscount(d2); // Imposta lo sconto per il libro
+
 
 		byte[] bookImage4 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/4.jpg");
 		Book book4 = new Book("Naruto. Il mito. Vol. 11", "Masashi Kishimoto", 4.66, bookImage4);
 
+
 		byte[] bookImage5 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/5.jpg");
 		Book book5 = new Book("Monster deluxe. Vol. 3", "Naoki Urasawa", 13.20, bookImage5);
+
 
 		byte[] bookImage6 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/6.jpg");
 		Book book6 = new Book("The Unbroken. Magic of the Lost. Vol. 1", "C. L. Clark", 22.80, bookImage6);
 
+
 		byte[] bookImage7 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/7.jpg");
 		Book book7 = new Book("Inuyasha. Wide edition. Vol. 6", "Rumiko Takahashi", 9.45, bookImage7);
 
+
 		byte[] bookImage8 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/8.jpg");
 		Book book8 = new Book("1984", "George Orwell", 10.45, bookImage8);
+		book8.setDiscount(d3); // Imposta lo sconto per il libro
+
 
 		byte[] bookImage9 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/9.jpg");
 		Book book9 = new Book("Storie della fantascienza. Vol. 1: 1939-1943", "Isaac Asimov", 33.25, bookImage9);
 
+
 		byte[] bookImage10 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/10.jpg");
 		Book book10 = new Book("Prison school. Vol. 2", "Akira Hiramoto", 4.66, bookImage10);
 
+
 		byte[] bookImage11 = loadBookImage("C:/Users/gianluca.grasso/Desktop/books/11.jpg");
-		Book book11 = new Book("Piccolo manuale di Arduino. Il cuore della robotica fai da te", "Matteo Tettamanzi",
-				12.26, bookImage11);
+		Book book11 = new Book("Piccolo manuale di Arduino. Il cuore della robotica fai da te", "Matteo Tettamanzi", 12.26, bookImage11);
+		book11.setDiscount(d4); // Imposta lo sconto per il libro
+
+
 
 		// Salva i libri nel repository
-
 		Book b1 = bookRepository.save(book1);
 		Book b2 = bookRepository.save(book2);
 		Book b3 = bookRepository.save(book3);
@@ -137,7 +164,7 @@ public class EcommerceApplication implements CommandLineRunner {
 		User user1 = new User("Pippo Baudo", "Admin", "pippo12_2023@libero.it", "11111111");
 		user1.setActive(true);
 
-		User user2 = new User("Erminio Ottone", "User", "eccomerceorder@libero.it", "11111110");
+		User user2 = new User("Erminio Ottone", "Marketing", "eccomerceorder@libero.it", "11111110");
 		user2.setActive(true);
 
 		User user3 = new User("Silvia Lolli", "Seller", "silvia_23_29@libero.it", "11111100");
@@ -394,6 +421,8 @@ public class EcommerceApplication implements CommandLineRunner {
 
 		Iterable<OrderBook> orderBookLst = orderBookRepository.findAll();
 
+		Iterable<Discount> discountLst = discountRepository.findAll();
+
 		System.out.println("");
 		System.out.println("=================== Book List: ==================");
 		// bookLst.forEach(System.out::println);
@@ -409,6 +438,10 @@ public class EcommerceApplication implements CommandLineRunner {
 		System.out.println("");
 		System.out.println("=================== orderBook List: ==================");
 		orderBookLst.forEach(System.out::println);
+
+		System.out.println("");
+		System.out.println("=================== discount List: ==================");
+		discountLst.forEach(System.out::println);
 	}
 
 }

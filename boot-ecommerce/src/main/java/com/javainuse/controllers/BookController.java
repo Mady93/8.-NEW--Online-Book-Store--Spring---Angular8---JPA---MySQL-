@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Book;
+import com.javainuse.entities.Discount;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.BookRepository;
 import com.javainuse.services.BookService;
@@ -202,5 +203,56 @@ public class BookController {
 		List<Book> res = bookRepository.findByNameContaining(name);
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
+
+
+	 // get discount books
+	 @GetMapping(path = "/count/discount")
+	public ResponseEntity<Integer> countDiscountBooks() throws ResourceNotFoundException, IllegalArgumentException {
+		Long count = bookRepository.countNotDeletedAndDiscountTrue();
+		if (count == 0) {
+			throw new ResourceNotFoundException(
+					"Unable to perform the count. No books resource with discount was found in the database");
+		} else {
+			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
+		}
+	}
+
+	@GetMapping(path = "/get/discount")
+	public ResponseEntity<List<Book>> getDiscountBooks(@RequestParam("page") int page, @RequestParam("size") int size)
+			throws ResourceNotFoundException, IllegalArgumentException {
+		Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+		Page<Book> pagedResult = bookRepository.findByNotDeletedAndDiscountTrue(pageable);
+		if (pagedResult.hasContent()) {
+			return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
+		} else {
+			throw new ResourceNotFoundException(
+					"Unable to retrieve the page: " + page + ". No books resource with discount was found in the database");
+		}
+	}
+	
+	
+	@PostMapping("/applyDiscount/{bookId:\\d+}")
+	public ResponseEntity<ApiResponse> applyDiscountToBook(@PathVariable("bookId") Long bookId, @RequestBody Discount discount) throws MethodArgumentNotValidException, IllegalArgumentException {
+	   
+	        // Recupera il libro dal repository dei libri
+	        Optional<Book> optionalBook = bookRepository.findById(bookId);
+
+	        if (optionalBook.isPresent()) {
+	        	
+	            Book book = optionalBook.get();
+	            
+	            // Applica lo sconto al libro
+	            book.setDiscount(discount);
+	            
+	            // Salva il libro aggiornato nel repository dei libri
+	            bookRepository.save(book);
+
+	            String message = "Discount applied successfully to the book.";
+	            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+	        } else {
+	            throw new ResourceNotFoundException("Book not found with ID: " + bookId);
+	        }
+	}
+
 
 }

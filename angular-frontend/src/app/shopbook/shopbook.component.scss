@@ -45,3 +45,40 @@
 .btnnn {
   width: 115px!important;
 }
+
+
+
+
+
+
+
+
+.special-heading {
+  text-align: center;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #f2f2f2;
+  border-radius: 10px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+.special-heading h2 {
+  font-size: 24px;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.special-heading a.btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 10px;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.special-heading a.btn:hover {
+  background-color: #0056b3;
+}

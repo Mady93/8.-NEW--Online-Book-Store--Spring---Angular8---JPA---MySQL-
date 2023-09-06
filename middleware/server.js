@@ -62,43 +62,55 @@ const accessTable = [
 
     //Routes User
     { path: /^\/users\/get/, groups: ["Admin"] },
-    { path: /^\/users\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/users\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
     { path: /^\/users\/\d+\/delete$/, groups: ["Admin"] },
     { path: /^\/users\/deleteAll$/, groups: ["Admin"] },
     { path: /^\/users\/setRole$/, groups: ["Admin"] },
     { path: /^\/users\/deleteAll$/, groups: ["Admin"] },
 
     // Routes Order
-    { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/orders\/\d+\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/orders\/\d+\/delete$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/orders\/get(\?.*)?$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+    { path: /^\/orders\/\d+\/\d+\/one$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+    { path: /^\/orders\/\d+\/delete$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+    { path: /^\/orders\/\d+\/books$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+    { path: /^\/orders\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+    { path: /^\/orders\/users\/\d+\/count$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
     { path: /^\/orders\/count\/all(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/inbox\/all(\?.*)?$/, groups: ["Order"] },
     //{ path: /^\/orders\/update\/\d+\/[a-zA-Z]+(\?.*)?$/, groups: ["Order"] },
     //{ path: /^\/orders\/update\/edit$/, groups: ["Order"] },
-    { path: /^\/orders\/update.*$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/orders\/update.*$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
     { path: /^\/orders\/count\/allCanceled(\?.*)?$/, groups: ["Order"] },
     { path: /^\/orders\/inbox\/allCanceled(\?.*)?$/, groups: ["Order"] },
  
 
     // Routes intersect table
-    { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/order_book\/\d+\/get$/, groups: ["Admin", "User", "Seller", "Order"] },
-    { path: /^\/order_book\/update\/\d+\/\d+$/, groups: ["Admin", "User", "Seller", "Order"] },
+    { path: /^\/order_book\/add$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+    { path: /^\/order_book\/\d+\/get$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+    { path: /^\/order_book\/update\/\d+\/\d+$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
 
     // Routes Book
     { path: /^\/books\/upload$/, groups: ["Admin"] },
     { path: /^\/books\/add$/, groups: ["Admin"] },
-    { path: /^\/books\/\d+\/one$/, groups: ["Admin", "Seller"] },
+    { path: /^\/books\/\d+\/one$/, groups: ["Admin", "Seller", "Marketing"] },
     { path: /^\/books\/update\/\d+$/, groups: ["Admin", "Seller"] },
     { path: /^\/books\/\d+\/delete$/, groups: ["Admin"] },
     { path: /^\/books\/deleteAll$/, groups: ["Admin"] },
+    // applicare lo sconto
+    { path: /^\/books\/applyDiscount\/\d+$/, groups: ["Marketing"] },
 
     // Routes Email
-    { path: /^\/emails\/\d+\/list$/, groups: ["Admin", "User", "Seller", "Order"] }
+    { path: /^\/emails\/\d+\/list$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },
+
+
+    // Routes discounts
+    { path: /^\/discounts\/count$/, groups: ["Marketing"] },
+    { path: /^\/discounts\/get(\?.*)?$/, groups: ["Marketing"] },
+    { path: /^\/discounts\/\d+\/one$/, groups: ["Marketing"] },
+    { path: /^\/discounts\/add$/, groups: ["Marketing"] },
+    { path: /^\/discounts\/update\/\d+$/, groups: ["Marketing"] },
+    { path: /^\/discounts\/\d+\/delete$/, groups: ["Marketing"] },
+    { path: /^\/discounts\/deleteAll$/, groups: ["Marketing"] },
 
 ];
 

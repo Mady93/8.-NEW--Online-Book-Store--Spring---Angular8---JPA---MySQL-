@@ -7,7 +7,6 @@ import org.hibernate.annotations.GenerationTime;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -51,6 +50,9 @@ import lombok.ToString;
 // inboxCancelled
 @NamedQuery(name = "Order.countTotalOrdersInCancelledState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
 @NamedQuery(name = "Order.getOrdersInCancelledStatWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
+
+
+//@NamedQuery(name = "Order.updateInactiveForOldCancelledOrders", query = "UPDATE Order o SET o.isActive = false WHERE o.state = 'Cancelled' AND o.isActive = true AND (CURRENT_TIMESTAMP - o.cancelledDate) >= 7")
 public class Order {
 
 	@Id

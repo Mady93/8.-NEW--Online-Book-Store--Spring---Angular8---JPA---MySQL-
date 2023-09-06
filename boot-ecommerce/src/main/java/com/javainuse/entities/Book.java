@@ -6,6 +6,9 @@ import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 //import com.javainuse.validators.ByteArrayNotEmpty;
@@ -18,6 +21,9 @@ import lombok.ToString;
 
 @NamedQuery(name = "Book.findByNotDeleted", query = "SELECT b FROM Book b WHERE b.isActive is true")
 @NamedQuery(name = "Book.countNotDeleted", query = "SELECT count(b) FROM Book b WHERE b.isActive is true")
+// get discount Books
+@NamedQuery(name = "Book.countNotDeletedAndDiscountTrue", query = "SELECT count(b) FROM Book b WHERE b.isActive is true AND b.discount IS NOT NULL")
+@NamedQuery(name = "Book.findByNotDeletedAndDiscountTrue", query = "SELECT b FROM Book b WHERE b.isActive is true AND b.discount IS NOT NULL")
 @Entity
 @Table(name = "books")
 @Data
@@ -54,6 +60,11 @@ public class Book {
 	@Column(name = "picByte", length = 100000)
 	private byte[] picByte;
 
+	@OneToOne(fetch = FetchType.EAGER, optional = true)
+	@JoinColumn(name = "discountId", referencedColumnName = "id", nullable = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
+	private Discount discount = null;
+
 	public Book(String name, String author, double price, byte[] picByte) {
 		this.isActive = true;
 		this.name = name;
@@ -66,5 +77,6 @@ public class Book {
 	boolean getisActive() {
 		return this.isActive;
 	}
+
 
 }
