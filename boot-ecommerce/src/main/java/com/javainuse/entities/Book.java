@@ -60,7 +60,7 @@ public class Book {
 	@Column(name = "picByte", length = 100000)
 	private byte[] picByte;
 
-	@OneToOne(fetch = FetchType.EAGER, optional = true)
+	@ManyToOne(fetch = FetchType.EAGER, optional = true)
 	@JoinColumn(name = "discountId", referencedColumnName = "id", nullable = true)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Discount discount = null;

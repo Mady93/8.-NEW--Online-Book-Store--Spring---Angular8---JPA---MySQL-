@@ -47,6 +47,9 @@ public class OrderBook {
 	@Column(name = "price", nullable = false)
 	private double price;
 
+	@Column(name = "percentage", nullable = true)
+	private Integer percentage;
+
 	@CreationTimestamp
 	@Column(name = "added_at", nullable = false)
 	private Date addedAt;
@@ -76,6 +79,9 @@ public class OrderBook {
 
 	public void setBook(Book book) {
 		this.book = book;
+
+		Discount dis = book.getDiscount();
+		if (dis != null) this.setPercentage(dis.getPercentage());
 	}
 
 	public Integer getQuantity() {
@@ -92,6 +98,14 @@ public class OrderBook {
 
 	public void setPrice(double price) {
 		this.price = price;
+	}
+
+	public int getPercentage() {
+		return percentage;
+	}
+
+	public void setPercentage(int percentage) {
+		this.percentage = percentage;
 	}
 
 	public Date getAddedAt() {
@@ -119,6 +133,10 @@ public class OrderBook {
 		this.id = id;
 		this.quantity = quantity;
 		this.price = price;
+
+		this.percentage = null;
+		//Discount dis = this.book.getDiscount();
+		//if (dis != null) this.percentage = dis.getPercentage();
 	}
 
 	// inner class

@@ -14,9 +14,10 @@ export class RoleGuardService implements CanActivate {
     "/admin/users": ["Admin"],
     "/admin/books": ["Admin"],
     "/seller/books": ["Seller"],
-    "/order": ["Admin", "User", "Seller", "Order"],
-    "/communication": ["Admin", "User", "Seller", "Order"],
+    "/order": ["Admin", "User", "Seller", "Order", "Marketing"],
+    "/communication": ["Admin", "User", "Seller", "Order", "Marketing"],
     "/inbox": ["Order"],
+    "/marketing/discount":["Marketing"]
   }
 
   canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {

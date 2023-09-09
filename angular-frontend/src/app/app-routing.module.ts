@@ -10,7 +10,9 @@ import { RoleGuardService } from './service/role-guard.service';
 import { InboxComponent } from './components/inboxes/inbox/inbox.component';
 import { CommunicationComponent } from './components/communication/communication.component';
 import { InboxCancelledComponent } from './components/inboxes/inbox-cancelled/inbox-cancelled.component';
-import { DiscountBooksComponent } from './components/discount-books/discount-books.component';
+import { DiscountBooksComponent } from './components/discount/discount-books/discount-books.component';
+import { DiscountComponent } from './components/discount/marketing/discount/discount.component';
+import { DiscountAssociationComponent } from './components/discount/discount-association/discount-association.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'shop', pathMatch: 'full' },
@@ -25,6 +27,8 @@ const routes: Routes = [
   { path: 'inbox', canActivate: [RoleGuardService], component: InboxComponent },
   { path: 'inboxCancelled', canActivate: [RoleGuardService], component: InboxCancelledComponent },
   { path: 'discountBooks', canActivate: [RoleGuardService], component: DiscountBooksComponent },
+  { path: 'marketing/discount', canActivate: [RoleGuardService], component: DiscountComponent },
+  { path: 'marketing/discountRelative', canActivate: [RoleGuardService], component: DiscountAssociationComponent },
   { path: '**', component: ErrorComponent }
 ];
 

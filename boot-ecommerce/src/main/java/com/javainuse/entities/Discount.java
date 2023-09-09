@@ -31,8 +31,11 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@NamedQuery(name = "Discount.findByNotDeleted", query = "SELECT d FROM Discount d WHERE d.isActive is true")
-@NamedQuery(name = "Discount.countByNotDeleted", query = "SELECT count(d) FROM Discount d WHERE d.isActive is true")
+//@NamedQuery(name = "Discount.findByNotDeleted", query = "SELECT d FROM Discount d WHERE d.isActive is true")
+//@NamedQuery(name = "Discount.countByNotDeleted", query = "SELECT count(d) FROM Discount d WHERE d.isActive is true")
+@NamedQuery(name = "Discount.findByNotDeleted", query = "SELECT d FROM Discount d WHERE d.isActive = true")
+@NamedQuery(name = "Discount.countByNotDeleted", query = "SELECT count(d) FROM Discount d WHERE d.isActive = true")
+
 public class Discount {
 
 	@Id
@@ -89,6 +92,16 @@ public class Discount {
 		Date currentDate = new Date();
 		return currentDate.after(endPercentage);
 	}
+
+// verificare la validità dello sconto
+	public boolean isValid() {
+		if (percentage >= 5 && percentage <= 50 && startPercentage.before(endPercentage)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 
 }
 

@@ -255,4 +255,62 @@ public class BookController {
 	}
 
 
+	@PutMapping("/updateDiscount/{bookId:\\d+}")
+	public ResponseEntity<ApiResponse> updateDiscountForBook(
+			@PathVariable("bookId") Long bookId,
+			@RequestBody @Valid Discount discount) throws MethodArgumentNotValidException, IllegalArgumentException {
+		Optional<Book> optionalBook = bookRepository.findById(bookId);
+
+		if (optionalBook.isPresent()) {
+			Book book = optionalBook.get();
+
+			if (discount.isValid()) {
+				// Verifica che lo sconto non sia scaduto
+				if (!discount.isDiscountExpired()) {
+					// Aggiorna l'informazione dello sconto del libro
+					book.setDiscount(discount);
+
+					// Salva il libro aggiornato nel repository dei libri
+					bookRepository.save(book);
+
+					String message = "Discount updated successfully for the book.";
+					return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+				} else {
+					String errorMessage = "Discount has already expired.";
+					return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+							.body(new ApiResponse(HttpStatus.BAD_REQUEST.value(), errorMessage));
+				}
+			} else {
+				String errorMessage = "Invalid discount data.";
+				return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+						.body(new ApiResponse(HttpStatus.BAD_REQUEST.value(), errorMessage));
+			}
+		} else {
+			throw new ResourceNotFoundException("Book not found with ID: " + bookId);
+		}
+	}
+
+
+	@DeleteMapping("/removeDiscount/{bookId:\\d+}")
+	public ResponseEntity<ApiResponse> removeDiscountFromBook(@PathVariable("bookId") Long bookId) {
+		Optional<Book> optionalBook = bookRepository.findById(bookId);
+
+		if (optionalBook.isPresent()) {
+			Book book = optionalBook.get();
+
+			// Rimuovi completamente lo sconto impostando il campo discount su null
+			book.setDiscount(null);
+
+			// Salva il libro aggiornato nel repository dei libri
+			bookRepository.save(book);
+
+			String message = "Discount removed successfully from the book.";
+			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
+		} else {
+			throw new ResourceNotFoundException("Book not found with ID: " + bookId);
+		}
+	}
+
+
+
 }

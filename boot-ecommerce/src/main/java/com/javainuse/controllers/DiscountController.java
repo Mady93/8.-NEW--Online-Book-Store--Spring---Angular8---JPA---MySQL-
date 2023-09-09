@@ -1,5 +1,7 @@
 package com.javainuse.controllers;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -24,6 +26,7 @@ import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Discount;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.DiscountRepository;
+import com.javainuse.services.DiscountService;
 
 //paginazione
 import org.springframework.data.domain.Page;
@@ -37,10 +40,12 @@ import org.springframework.data.domain.Sort;
 public class DiscountController {
 
 	private final DiscountRepository discountRepository;
+	private final DiscountService discountService;
 
 	@Autowired
-	public DiscountController(DiscountRepository discountRepository) {
+	public DiscountController(DiscountRepository discountRepository, DiscountService discountService) {
 		this.discountRepository = discountRepository;
+		this.discountService = discountService;
 	}
 	
 	
@@ -103,6 +108,16 @@ public class DiscountController {
 
 		d.setActive(true);
 		
+		Date startPercentage = new Date();
+		d.setStartPercentage(startPercentage);
+	
+		// Imposta endPercentage sulla data corrente + 3 giorni
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(startPercentage);
+		calendar.add(Calendar.DAY_OF_MONTH, 3);
+		Date endPercentage = calendar.getTime();
+		d.setEndPercentage(endPercentage);
+
 		discountRepository.save(d);
 		
 		String message = "Discount created successfully";
@@ -155,8 +170,8 @@ public class DiscountController {
 
 			Discount d = op.get();
 
-			d.setActive(false);
-			
+			//d.setActive(false);
+			discountService.updateDiscountStatus(discountId,false);
 			discountRepository.save(d);
 
 			String message = "Discount have been deleted successfully";
@@ -182,10 +197,8 @@ public class DiscountController {
 	    if (!list.isEmpty()) {
 	    	
 	    // Imposta isActive a false per tutti gli sconti --> cancellazione
-	    	
-	        list.forEach(discount -> discount.setActive(false));
-	        
-	        discountRepository.saveAll(list); 
+
+			discountService.updateAllDiscountsStatus(false);
 
 	        String message = "Discounts have been deleted successfully";
 	        

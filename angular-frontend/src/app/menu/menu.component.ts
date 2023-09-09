@@ -1,5 +1,5 @@
 import { Component, HostListener, OnInit } from '@angular/core';
-import { faAdd, faAdjust, faBook, faDeleteLeft, faHand, faHandBackFist, faHandDots, faHandHolding, faHandHoldingHand, faHome, faInbox, faList, faMailBulk, faRemove, faUnlockKeyhole, faUser, faUserAlt, faUserGroup, faVoicemail } from '@fortawesome/free-solid-svg-icons';
+import { faAdd, faAdjust, faBalanceScaleRight, faBook, faDatabase, faDeleteLeft, faDiagnoses, faDirections, faDollar, faDriversLicense, faHand, faHandBackFist, faHandDots, faHandFist, faHandHolding, faHandHoldingHand, faHandHoldingWater, faHandMiddleFinger, faHome, faInbox, faList, faMagicWandSparkles, faMailBulk, faMarker, faPercentage, faRemove, faStarOfLife, faUnlockKeyhole, faUser, faUserAlt, faUserGroup, faVoicemail, faWandMagic } from '@fortawesome/free-solid-svg-icons';
 import { AuthService } from '../service/auth.service';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
@@ -26,6 +26,9 @@ export class MenuComponent implements OnInit {
   iconaInbox = faInbox;
   iconaStateWorking = faHandHoldingHand;
   iconaStateDeleted = faRemove;
+  iconaDiscount = faPercentage;
+  iconaMarketing = faBalanceScaleRight;
+  iconaAssociate = faHandHoldingWater;
 
   // isLogin e showViewOrders vengono impostate per controllare la visibilità delle voci del menu in base alla situazione (accesso o registrazione e posizione dell'URL).
   isLogin: boolean = true;

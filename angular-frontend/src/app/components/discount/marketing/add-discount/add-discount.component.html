@@ -1,0 +1,37 @@
+<div>
+
+    <div style="text-align: center;">
+      <h1>Add Sale</h1>
+    </div>
+  
+    <form #recievedSale="ngForm">
+      <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+  
+      <mat-form-field>
+        <mat-label>Percentage</mat-label>
+        <select [(ngModel)]="sale.percentage" matNativeControl  name="percentage">
+          <option value="5">5%</option>
+          <option value="10">10%</option>
+          <option value="15">15%</option>
+          <option value="20">20%</option>
+          <option value="25">25%</option>
+          <option value="30">30%</option>
+          <option value="35">35%</option>
+          <option value="40">40%</option>
+          <option value="45">45%</option>
+          <option value="50">50%</option>
+        </select>
+      </mat-form-field>
+  
+      <div style="text-align: center;">
+        <button type="button" class="btn btn-success" (click)="addSale()">Save</button>
+      </div>
+  
+    </form>
+  
+    <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+    <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
+  
+  </div>

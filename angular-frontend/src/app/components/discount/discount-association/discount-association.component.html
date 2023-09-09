@@ -1,0 +1,55 @@
+
+
+
+<div class="discount-container">
+
+    <div class="ng-autocomplete">
+    
+        <ng-autocomplete #searchBox
+        [data]="books"
+        [searchKeyword]="'name'"
+        (selected)='selectEvent($event)'
+        [itemTemplate]="itemTemplate"
+        [notFoundTemplate]="notFoundTemplate"
+        placeHolder="book's name"
+        (inputCleared)="searchCleared()"
+        (inputChanged)='search($event)'>                           
+        </ng-autocomplete>
+    
+        <ng-template #itemTemplate let-item>
+            <a [innerHTML]="item.name"></a>
+        </ng-template>
+    
+        <ng-template #notFoundTemplate let-notFound>
+            <div [innerHTML]="notFound"></div>
+        </ng-template>
+    
+    </div>
+    
+    
+    <div>
+    
+        <ng-select [(ngModel)]="selectedOpt" placeholder="Percentage">
+            <ng-option *ngFor="let opt of discontOptions" [value]="opt.id">
+                <b>{{opt.percentage}}%  </b>
+                <span style="color: red">from</span> {{opt.startPercentage | date: 'dd/MM HH:mm:ss'}}
+                <span style="color: red">  to</span> {{opt.endPercentage | date: 'dd/MM HH:mm:ss'}}
+            </ng-option>
+         </ng-select>
+
+<!--         <ng-select [items]="discounts" 
+           bindLabel="percentage" 
+           bindValue="id" 
+           [(ngModel)]="selectedOpt">
+        </ng-select> -->
+         
+    </div>
+
+    <input type="button" [disabled]="selectedBook==null || selectedOpt==null" (click)="setDiscount(searchBox)" [value]="action"/>
+    <input type="button" [hidden]="selectedBook?.discount == null" (click)="delDiscount(searchBox)" value="Delete"/>
+</div>
+
+
+
+
+

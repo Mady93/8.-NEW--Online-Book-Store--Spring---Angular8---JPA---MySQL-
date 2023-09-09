@@ -1,0 +1,41 @@
+<div class="saleDetails">
+
+    <button type="button" class="close" aria-label="Close" (click)="closeFunction()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  
+    <div style="text-align: center;">
+      <h2>Sale details</h2>
+    </div>
+  
+    <table>
+      <tr>
+        <td>Sale Id</td>
+        <td>{{sale.id}}</td>
+      </tr>
+      <tr>
+        <td>Start sale</td>
+        <td>{{sale.startPercentage | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+      </tr>
+      <tr>
+        <td>End sale</td>
+        <td>{{sale.endPercentage | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+      </tr>
+      <tr>
+        <td>Percentage</td>
+        <td>{{sale.percentage}}%</td>
+      </tr>
+  
+    </table>
+    <br>
+  
+    <div style="text-align: center;">
+      <a class="btn btn-small btn-danger" (click)="deleteSale()">Delete</a>
+    </div>
+  
+  </div>
+  
+  <div style="text-align: center;">
+    <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+    <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
+  </div>

@@ -5,8 +5,8 @@
 
         <ul class="navbar-nav">
 
-            <li><a class="nav-link" routerLink="/shop"><fa-icon [icon]="iconaHome" class="white"></fa-icon>
-                    Shop</a>
+            <li><a class="nav-link" routerLink="/shop">
+                <fa-icon [icon]="iconaHome" class="white"></fa-icon> Shop</a>
             </li>
 
             <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin', 'Seller'].includes(authService.role)">
@@ -65,15 +65,44 @@
 
 
 
-            <li *ngIf="['Admin','User','Seller','Order'].includes(authService.role)">
+            <li *ngIf="['Admin','User','Seller','Order','Marketing'].includes(authService.role)">
                 <a class="nav-link" (click)="authService.logout()" routerLink="/shop"><fa-icon [icon]="iconaProfiles"
                     class="white"></fa-icon> Logout</a>
             </li>
 
+
+
+
+
+
+            <li ngbDropdown class="nav-item dropdown" *ngIf="['Marketing'].includes(authService.role)">
+                <a ngbDropdownToggle class="nav-link" id="navbarDropdown" role="button" aria-haspopup="true"
+                    aria-expanded="false"><fa-icon [icon]="iconaMarketing" class="white"></fa-icon>
+                    {{authService.role}}
+                </a>
+                <div ngbDropdownMenu aria-labelledby="navbarDropdown" style="background-color: #0dcaf0;">
+
+                    <a routerLink="/marketing/discount" class="dropdown-item" *ngIf="authService.role == 'Marketing'"><fa-icon
+                            [icon]="iconaDiscount" class="black"></fa-icon> Sales</a>
+                    
+                    <a routerLink="/marketing/discountRelative" class="dropdown-item" *ngIf="authService.role == 'Marketing'"><fa-icon
+                             [icon]=" iconaAssociate" class="black"></fa-icon> Associate</a>
+                            
+                    
+                </div>
+            </li>
+
+
+
+
+
+
+
+
         </ul>
 
         <ul class="navbar-nav profile">
-            <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin','User','Seller','Order'].includes(authService.role)">
+            <li ngbDropdown class="nav-item dropdown" *ngIf="['Admin','User','Seller','Order','Marketing'].includes(authService.role)">
                 <a ngbDropdownToggle class="nav-link" id="ordersDropdown" role="button" aria-haspopup="true"
                     aria-expanded="false">
 

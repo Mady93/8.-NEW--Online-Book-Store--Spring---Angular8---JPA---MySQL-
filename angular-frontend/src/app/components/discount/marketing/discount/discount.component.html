@@ -1,0 +1,59 @@
+<h1>Sale Marketing</h1>
+
+<div style="margin-top: 60px; margin-left: 5%;">
+  <a class="btn btn-primary mb-3" (click)="addSale()">Add New Sale</a>
+  <a *ngIf="allSales>0" style ="margin-left: 5%;" class="btn btn-danger mb-3" (click)="deleteAll()">Delete All Sales</a>
+</div>
+
+<div class="container row" style="max-width: 100%;">
+  <div class="col-md-6">
+    <table class="table" *ngIf="allSales > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Start Sale</th>
+          <th>End Sale</th>
+          <th>Percentage</th>
+          <th></th>
+        </tr>
+      </thead>
+      
+      <tbody>
+        <tr *ngFor="let sale of sales | paginate: { itemsPerPage: size, currentPage: page, totalItems: allSales}">
+          <td>{{sale.id}}</td>
+          <td>{{ sale.startPercentage | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+          <td>{{sale.endPercentage | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+           <td>{{sale.percentage }}%</td>
+          <td><button type="button" class="btn btn-primary" (click)="viewSale(sale.id)">Show Details</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center" style="margin-top: 20px;" *ngIf="allSales>0">
+      <pagination-controls (pageChange)="renderPage($event)"></pagination-controls>
+    </div>
+
+    <p *ngIf='msg' [innerHTML]="msg" class="paragraph"></p>
+    <p *ngIf='ok' [innerHTML]="ok" class="success"></p>
+
+  </div>
+
+ 
+  
+
+
+
+  <div class="col-md-6">
+
+    <div style=" margin-top: -45px;">
+      <app-add-discount *ngIf="action === 'add' && allSales > 0" [sale]="selectedSale"
+        (saleAddedEvent)="refreshData()"></app-add-discount>
+    </div>
+   
+    <div style=" margin-top: 40px;">
+      <app-view-discount *ngIf="selectedSale!=null && action === 'view' && allSales > 0" [sale]="selectedSale"
+        (saleDeletedEvent)="refreshData()"></app-view-discount>
+    </div>
+   
+  </div>
+</div>

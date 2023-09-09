@@ -39,7 +39,7 @@
 }
 
 .btnn {
-  width: 11vh;
+  /*width: 11vh;*/
 }
 
 .btnnn {
@@ -53,7 +53,7 @@
 
 
 
-.special-heading {
+/*.special-heading {
   text-align: center;
   margin-top: 50px;
   padding: 20px;
@@ -82,3 +82,72 @@
 .special-heading a.btn:hover {
   background-color: #0056b3;
 }
+*/
+@keyframes border-flash {
+  0% {
+    border-color: transparent;
+  }
+  50% {
+    border-color: red;
+  }
+  100% {
+    border-color: transparent;
+  }
+}
+
+.special-heading {
+  text-align: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  animation: border-flash 2s infinite; 
+  position: relative; 
+  border: 2px solid transparent; 
+  width: 30%;
+  height: 25%;
+  margin-left: 87%;
+
+  display: flex;
+  justify-content: center; /* Centra orizzontalmente */
+  align-items: center; /* Centra verticalmente */
+
+  margin: auto;
+  margin-top: 30px;
+
+}
+
+
+
+
+.special-heading h2 {
+  font-size: 15px;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+}
+
+.special-heading a.btn {
+  background-image: linear-gradient(to right, rgb(0, 72, 255), rgb(0, 247, 255));
+  color: #fff;
+  padding: 5px 15px; /* Modifica i valori qui per regolare le dimensioni */
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background-color 0.3s ease-in-out;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+  color: #333;
+  
+
+}
+
+.special-heading a.btn:hover {
+  background-color: #0056b3;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+  margin-top: 10px!important;
+}
+
+

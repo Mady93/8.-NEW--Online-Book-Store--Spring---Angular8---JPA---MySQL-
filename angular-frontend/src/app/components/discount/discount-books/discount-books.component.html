@@ -43,7 +43,7 @@
 
                                     <hr>
 
-                                    <div style="text-align: center;" *ngIf="authService.role == '' || ['Admin','User','Seller','Order'].includes(authService.role)">
+                                    <div style="text-align: center;" *ngIf="authService.role == '' || ['Admin','User','Seller','Order','Marketing'].includes(authService.role)">
 
                                         <!--{{authService.uid}}-->
                                         <a  *ngIf="cartBooks.length > 0" class="btn btn-small btn-secondary btnn" role="button" (click)="buyCart()">Buy</a>
@@ -76,9 +76,10 @@
     
     
             <div class="card card-block custom-margin">
-                <div style="text-align: center;">
+                <div style="text-align: center; position: relative;">
                     <img class="custom-image-style custom-margin" img src="data:image/jpeg;base64,{{book.picByte}}"
                         height="463" width="300">
+                    <label *ngIf="book.discount != null" class="off">{{book.discount.percentage}}% Off</label>
                 </div>
                 <div class="book-desc-container row">
                     <div>
@@ -87,7 +88,7 @@
                     </div>
                     <div class="offset-md-4 col-md-4">
                         <button class="btn btn-primary btn-sm btnnn"
-                            *ngIf="authService.role == '' || ['Admin','User','Seller','Order'].includes(authService.role)"
+                            *ngIf="authService.role == '' || ['Admin','User','Seller','Order','Marketing'].includes(authService.role)"
                             (click)="addToCart(book.id)" [disabled]="book.isAdded===true"><fa-icon [icon]="iconaAdd"
                                 style="color: rgb(255, 255, 255); font-size: large;"></fa-icon> Add To Cart</button>
                     </div>

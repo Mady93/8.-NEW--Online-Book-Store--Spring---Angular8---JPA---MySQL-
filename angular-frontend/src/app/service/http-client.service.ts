@@ -216,6 +216,25 @@ export class HttpClientService {
   }
 
 
+  // update discount - book id
+updateDiscountByBookId(discount: Discount, bookId: number): Observable<Book> {
+  const headers = { "Content-Type": "application/json" };
+  const body = JSON.stringify(discount);
+  return this.httpClient
+    .put<Book>(`${this.baseURL}/books/updateDiscount/${bookId}`, body, {
+      headers: headers,
+    })
+    .pipe(catchError((err: HttpErrorResponse) => this.handleError(err)));
+}
+
+
+
+deleteDiscountByBookId(bookId: number): Observable<void> {
+  return this.httpClient
+    .delete<void>(`${this.baseURL}/books/removeDiscount/${bookId}`)
+    .pipe(catchError((err: HttpErrorResponse) => this.handleError(err)));
+}
+
 
 
 

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.javainuse.details.ApiResponse;
 import com.javainuse.entities.Book;
+import com.javainuse.entities.Discount;
 import com.javainuse.entities.Email;
 import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.OrderBook.OrderBooksId;
@@ -76,7 +77,14 @@ public class OrderBookController {
 		newOrderBook.setId(OrderBooksId);
 		newOrderBook.setBook(book);
 		newOrderBook.setOrder(order);
-		newOrderBook.setPrice(book.getPrice());
+
+		double price = book.getPrice();
+		if (book.getDiscount() != null){
+			price /= 1+(book.getDiscount().getPercentage()/100.0);
+		}
+		newOrderBook.setPrice(price);
+
+
 		newOrderBook.setActive(true);
 		orderBookRepository.save(newOrderBook);
 
@@ -124,6 +132,12 @@ public class OrderBookController {
 			Email email = new Email();
 
 			if (q > 0) {
+
+
+				Discount dis = existingOrderBook.getBook().getDiscount();
+				if (dis == null || dis.isDiscountExpired()) existingOrderBook.setPrice(existingOrderBook.getBook().getPrice());
+
+
 				existingOrderBook.setQuantity(updatedOrderBook.getQuantity());
 				orderBookRepository.save(existingOrderBook);
 				message = "In the order: #"+orderId+" the quantity of book: \""+existingOrderBook.getBook().getName()+"\" now is: "+existingOrderBook.getQuantity();
@@ -139,10 +153,6 @@ public class OrderBookController {
 
 			} else {
 				orderBookRepository.delete(existingOrderBook);
-				//existingOrderBook.getOrder().setActive(false);
-				//existingOrderBook.getOrder().setState("Cancelled");
-				//orderBookRepository.save(existingOrderBook);
-				//orderBookRepository.save(existingOrderBook);
 
 				message = "In the order: #"+existingOrderBook.getOrder().getId()+" the book: \""+existingOrderBook.getBook().getName()+"\" has been cancelled";
 

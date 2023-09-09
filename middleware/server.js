@@ -98,6 +98,9 @@ const accessTable = [
     { path: /^\/books\/deleteAll$/, groups: ["Admin"] },
     // applicare lo sconto
     { path: /^\/books\/applyDiscount\/\d+$/, groups: ["Marketing"] },
+    { path: /^\/books\/updateDiscount\/\d+$/, groups: ["Marketing"] },
+    { path: /^\/books\/removeDiscount\/\d+$/, groups: ["Marketing"] },
+
 
     // Routes Email
     { path: /^\/emails\/\d+\/list$/, groups: ["Admin", "User", "Seller", "Order", "Marketing"] },

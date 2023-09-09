@@ -134,6 +134,7 @@ export class DiscountBooksComponent implements OnInit {
       bookwithRetrievedImageField.price = book.price;
       bookwithRetrievedImageField.picByte = book.picByte;
       bookwithRetrievedImageField.isActive = book.isActive;
+      bookwithRetrievedImageField.discount = book.discount;
       this.books.push(bookwithRetrievedImageField);
     }
 

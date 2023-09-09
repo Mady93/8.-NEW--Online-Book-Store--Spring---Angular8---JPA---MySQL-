@@ -1,6 +1,6 @@
 export class Discount {
-    id?: number;
-    startDiscount: Date;
-    endDiscount: Date;
-    discountPrice: number;
+    id: number;
+    startPercentage: Date;
+    endPercentage: Date;
+    percentage: number;
 }
