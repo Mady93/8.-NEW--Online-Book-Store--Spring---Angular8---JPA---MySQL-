@@ -38,11 +38,11 @@ import { ErrorComponent } from './components/error/error.component';
 import { InboxComponent } from './components/inboxes/inbox/inbox.component';
 import { CommunicationComponent } from './components/communication/communication.component';
 import { InboxCancelledComponent } from './components/inboxes/inbox-cancelled/inbox-cancelled.component';
-import { DiscountBooksComponent } from './components/discount/discount-books/discount-books.component';
+import { DiscountBooksComponent } from './components/discount/marketing-association/discount-books/discount-books.component';
 import { AddDiscountComponent } from './components/discount/marketing/add-discount/add-discount.component';
 import { ViewDiscountComponent } from './components/discount/marketing/view-discount/view-discount.component';
 import { DiscountComponent } from './components/discount/marketing/discount/discount.component';
-import { DiscountAssociationComponent } from './components/discount/discount-association/discount-association.component';
+import { DiscountAssociationComponent } from './components/discount//marketing-association/discount-association/discount-association.component';
 import { AutocompleteLibModule } from 'angular-ng-autocomplete';
 import { NgSelectModule } from '@ng-select/ng-select';
 

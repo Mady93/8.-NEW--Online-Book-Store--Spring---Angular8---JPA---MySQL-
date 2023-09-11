@@ -1,6 +1,7 @@
-
-
-
+<div class="img">
+    <div class="align">
+        <h1 class="size">Linking Discounts to Books</h1>
+    </div>
 <div class="discount-container">
 
     <div class="ng-autocomplete">
@@ -11,7 +12,7 @@
         (selected)='selectEvent($event)'
         [itemTemplate]="itemTemplate"
         [notFoundTemplate]="notFoundTemplate"
-        placeHolder="book's name"
+        placeHolder="Book's name"
         (inputCleared)="searchCleared()"
         (inputChanged)='search($event)'>                           
         </ng-autocomplete>
@@ -21,9 +22,9 @@
         </ng-template>
     
         <ng-template #notFoundTemplate let-notFound>
-            <div [innerHTML]="notFound"></div>
+            <div *ngIf="noBooksFound" [innerHTML]="notFound" style="color: red;"></div>
         </ng-template>
-    
+
     </div>
     
     
@@ -36,19 +37,19 @@
                 <span style="color: red">  to</span> {{opt.endPercentage | date: 'dd/MM HH:mm:ss'}}
             </ng-option>
          </ng-select>
-
-<!--         <ng-select [items]="discounts" 
-           bindLabel="percentage" 
-           bindValue="id" 
-           [(ngModel)]="selectedOpt">
-        </ng-select> -->
          
     </div>
 
-    <input type="button" [disabled]="selectedBook==null || selectedOpt==null" (click)="setDiscount(searchBox)" [value]="action"/>
+    <div class="input-buttons">
+
+    <input type="button" class="update-button" [disabled]="selectedBook==null || selectedOpt==null" (click)="setDiscount(searchBox)" [value]="action"/>
     <input type="button" [hidden]="selectedBook?.discount == null" (click)="delDiscount(searchBox)" value="Delete"/>
+
 </div>
 
+</div>
+
+</div>
 
 
 

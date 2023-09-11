@@ -1,0 +1,110 @@
+.discount-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Allinea in alto */
+    padding: 20px;
+    background: rgba(0, 123, 255, 0.1); /* Sfondo azzurro chiaro sfocato */
+    width: 50%;
+    height: 50%;
+    margin: 0 auto; /* Per centrare orizzontalmente */
+    position: absolute; /* Per centrare verticalmente */
+    top: 50%; /* Sposta verso il basso del 50% rispetto al contenitore padre */
+    left: 50%; /* Sposta verso destra del 50% rispetto al contenitore padre */
+    transform: translate(-50%, -50%); /* Riposiziona al centro */
+}
+
+  
+  /* Stile per il riquadro di ricerca */
+  .ng-autocomplete {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Stile per il campo di input di ricerca */
+  .ng-autocomplete input {
+    padding: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    outline: none;
+  }
+  
+  /* Stile per il menu a discesa delle opzioni */
+  .ng-autocomplete .ng-option {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .ng-autocomplete .ng-option:hover {
+    background-color: #e0e0e0;
+  }
+  
+  /* Stile per la lista delle opzioni */
+  .ng-autocomplete .ng-option.ng-option-marked {
+    background-color: #007bff;
+    color: #fff;
+  }
+  
+  /* Stile per il placeholder */
+  .ng-autocomplete .ng-placeholder {
+    color: #999;
+  }
+  
+  /* Stile per il selettore di percentuale */
+  .ng-select {
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative; /* Per posizionare l'indicatore di selezione */
+  }
+  
+  /* Stile per l'indicatore di selezione (la "x") */
+  .ng-select .ng-value {
+    padding-right: 20px; /* Aggiungi spazio tra l'indicatore e il testo */
+  }
+  
+  /* Stile per i pulsanti */
+  input[type="button"] {
+    padding: 6px 20px; /* Pulsanti meno alti */
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  input[type="button"]:hover {
+    background-color: #0056b3;
+  }
+  
+
+
+  /* Stile per il pulsante "Update" */
+.input-buttons input[type="button"].update-button {
+    flex: 1;
+    margin-right: 10px; /* Aggiungi spazio tra il pulsante "Update" e "Delete" */
+  }
+
+  
+  .img {
+    background-image: url('https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/92cbcb104410965.5f624f9c90cf2.gif');
+    background-color: rgba(255, 255, 255, 0.9);
+    background-size: contain; /* Modifica rispetto a "cover" */
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+}
+
+
+  .align {
+    margin-top: 10px !important;
+    margin-left: 10px;
+  }
+
+
