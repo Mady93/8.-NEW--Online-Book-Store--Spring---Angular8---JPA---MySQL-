@@ -51,7 +51,6 @@ import lombok.ToString;
 @NamedQuery(name = "Order.countTotalOrdersInCancelledState", query = "SELECT COUNT(o) FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
 @NamedQuery(name = "Order.getOrdersInCancelledStatWithDetails", query = "SELECT o FROM Order o WHERE o.state = 'Cancelled' AND o.isActive is true")
 
-
 //@NamedQuery(name = "Order.updateInactiveForOldCancelledOrders", query = "UPDATE Order o SET o.isActive = false WHERE o.state = 'Cancelled' AND o.isActive = true AND (CURRENT_TIMESTAMP - o.cancelledDate) >= 7")
 public class Order {
 

@@ -166,7 +166,8 @@ public class BookController {
 
 			Book book = optional.get();
 
-			book.setActive(false);
+			//book.setActive(false);
+			bookService.updateBookStatus(bookId,false);
 			bookRepository.save(book);
 
 			String message = "Book and associated data have been deleted successfully";

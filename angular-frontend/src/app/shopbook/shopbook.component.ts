@@ -1,20 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClientService } from '../service/http-client.service';
-import { Book } from '../model/Book';
-import { HttpErrorResponse } from '@angular/common/http';
-import { User } from '../model/User ';
-import { faCartPlus, faCartShopping, faDollarSign, faQuestion, faUserEdit } from '@fortawesome/free-solid-svg-icons';
-import { AuthService } from '../service/auth.service';
+import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
+import { HttpClientService } from "../service/http-client.service";
+import { Book } from "../model/Book";
+import { HttpErrorResponse } from "@angular/common/http";
+import { User } from "../model/User ";
+import {
+  faCartPlus,
+  faCartShopping,
+  faDollarSign,
+  faQuestion,
+  faUserEdit,
+} from "@fortawesome/free-solid-svg-icons";
+import { AuthService } from "../service/auth.service";
 
 @Component({
-  selector: 'app-shopbook',
-  templateUrl: './shopbook.component.html',
-  styleUrls: ['./shopbook.component.scss']
+  selector: "app-shopbook",
+  templateUrl: "./shopbook.component.html",
+  styleUrls: ["./shopbook.component.scss"],
 })
-
 export class ShopbookComponent implements OnInit {
-
   iconaAdd = faCartPlus;
   iconaCart = faCartShopping;
   iconaBuy = faDollarSign;
@@ -33,23 +37,27 @@ export class ShopbookComponent implements OnInit {
 
   msg: any;
 
+  existDiscount: boolean = false;
 
-  constructor(private router: Router, private httpClientService: HttpClientService, public authService: AuthService) { }
+  constructor(
+    private router: Router,
+    private httpClientService: HttpClientService,
+    public authService: AuthService
+  ) { }
 
   // Aggiunto regex errori
   escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
+    return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"); // $& means the whole matched string
   }
 
   // Aggiunto regex errori
   replaceAll(str, find, replace) {
-    return str.replace(new RegExp(this.escapeRegExp(find), 'g'), replace);
+    return str.replace(new RegExp(this.escapeRegExp(find), "g"), replace);
   }
-
 
   ngOnInit(): void {
     // Recupera i dati del carrello dal localStorage
-    var data = localStorage.getItem('cart');
+    var data = localStorage.getItem("cart");
     //debugger;
     if (data !== null) {
       this.cartBooks = JSON.parse(data);
@@ -57,21 +65,19 @@ export class ShopbookComponent implements OnInit {
       this.cartBooks = [];
     }
 
-
     if (localStorage["boughtCart"] === "true") {
       localStorage["boughtCart"] = false;
-      this.authService.buy().then(res => {
-        this.emptyCart();
-        location.href = "/order";
-      }, err => {
-
-      });
+      this.authService.buy().then(
+        (res) => {
+          this.emptyCart();
+          location.href = "/order";
+        },
+        (err) => { }
+      );
     }
 
     this.refreshData();
-
   }
-
 
   //Modificato in quanto si necessita di un refresh per ricevere il next dei valori successivi della paginazione
   refreshData() {
@@ -92,13 +98,12 @@ export class ShopbookComponent implements OnInit {
             this.msg = this.replaceAll(err.message, "#", "<br>");
 
             setTimeout(() => {
-              this.msg = '';
+              this.msg = "";
             }, 1000);
-
           },
           complete: () => {
             console.log("Completed countBooks()");
-          }
+          },
         });
       },
       error: (err: HttpErrorResponse) => {
@@ -108,27 +113,23 @@ export class ShopbookComponent implements OnInit {
       },
       complete: () => {
         console.log("Complete getBooks()");
-      }
+      },
     });
-
   }
-
 
   // evento per la paginazione
   renderPage(event: number) {
-    this.page = (event);
+    this.page = event;
     this.refreshData();
   }
 
-
   // we will be taking the books response returned from the database
-  // and we will be adding the retrieved   
+  // and we will be adding the retrieved
   handleSuccessfulResponse(response) {
     this.books = new Array<Book>();
     //get books returned by the api call
     this.booksRecieved = response;
     for (const book of this.booksRecieved) {
-
       const bookwithRetrievedImageField = new Book();
       bookwithRetrievedImageField.id = book.id;
       bookwithRetrievedImageField.name = book.name;
@@ -140,73 +141,69 @@ export class ShopbookComponent implements OnInit {
       bookwithRetrievedImageField.isActive = book.isActive;
       bookwithRetrievedImageField.discount = book.discount;
 
+      if (!this.existDiscount && book.discount != null)
+        this.existDiscount = true;
+
       this.books.push(bookwithRetrievedImageField);
     }
 
-
     //ciclo che inibisce il pulsante addCart per gli ogetti gia' nel carrello
     for (let ele of this.cartBooks) {
-      let book = this.books.find(book => {
+      let book = this.books.find((book) => {
         return book.id === +ele.id;
       });
 
       if (book) book.isAdded = true;
     }
-
   }
-
 
   //Aggiunto quantity nel localStorage
   updateQuantity() {
-    localStorage.setItem('cart', JSON.stringify(this.cartBooks));
+    localStorage.setItem("cart", JSON.stringify(this.cartBooks));
   }
 
-
   addToCart(bookId) {
-
-    let book = this.books.find(book => {
+    let book = this.books.find((book) => {
       return book.id === +bookId;
     });
 
     let cartData = [];
-    let data = localStorage.getItem('cart');
+    let data = localStorage.getItem("cart");
 
     if (data !== null) {
       cartData = JSON.parse(data);
     }
 
-    delete book.picByte;
     book["q"] = 1;
+    // cancellare l'immagine dell'clone perche il localStorege ha solo 5Mb , per poi usare dopo il vero book
+    let clone = JSON.parse(JSON.stringify(book));
+    delete clone.picByte;
 
-    cartData.push(book);
+    cartData.push(clone);
     this.cartBooks = cartData;
-    localStorage.setItem('cart', JSON.stringify(cartData));
+    localStorage.setItem("cart", JSON.stringify(cartData));
     //make the isAdded field of the book added to cart as true
     book.isAdded = true;
-
   }
-
 
   goToCart() {
-    this.router.navigate(['/order']);
+    this.router.navigate(["/order"]);
   }
 
-
   buyCart() {
-
     if (!this.authService.isLogged()) {
       localStorage["boughtCart"] = true;
       location.href = "/login";
       return;
     }
 
-    this.authService.buy().then(res => {
-      this.emptyCart();
-      location.href = "/order";
-    }, err => {
-
-    });
-
+    this.authService.buy().then(
+      (res) => {
+        this.emptyCart();
+        location.href = "/order";
+      },
+      (err) => { }
+    );
   }
 
   emptyCart() {
@@ -217,23 +214,20 @@ export class ShopbookComponent implements OnInit {
 
   removeFromCart(bookId: number) {
     // Trova l'indice del libro da rimuovere nel carrello
-    const index = this.cartBooks.findIndex(item => item.id === bookId);
+    const index = this.cartBooks.findIndex((item) => item.id === bookId);
 
     if (index !== -1) {
       // Rimuovi il libro dal carrello
       this.cartBooks.splice(index, 1);
 
       // Aggiorna il carrello nello storage locale
-      localStorage.setItem('cart', JSON.stringify(this.cartBooks));
+      localStorage.setItem("cart", JSON.stringify(this.cartBooks));
 
       // Trova il libro corrispondente nell'array dei libri e imposta isAdded su false
-      const book = this.books.find(item => item.id === bookId);
+      const book = this.books.find((item) => item.id === bookId);
       if (book) {
         book.isAdded = false;
       }
     }
   }
-
-
-
 }

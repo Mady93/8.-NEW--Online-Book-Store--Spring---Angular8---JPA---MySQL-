@@ -27,6 +27,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "order_books")
 @NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt FROM OrderBook jt WHERE jt.id.orderId = :orderId AND jt.isActive is true")
+// @NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt
+// FROM OrderBook jt JOIN FETCH jt.book b WHERE jt.id.orderId = :orderId AND
+// jt.isActive = true")
 public class OrderBook {
 
 	// istanza inner class senza argomenti
@@ -81,7 +84,8 @@ public class OrderBook {
 		this.book = book;
 
 		Discount dis = book.getDiscount();
-		if (dis != null) this.setPercentage(dis.getPercentage());
+		if (dis != null)
+			this.setPercentage(dis.getPercentage());
 	}
 
 	public Integer getQuantity() {
@@ -100,11 +104,11 @@ public class OrderBook {
 		this.price = price;
 	}
 
-	public int getPercentage() {
+	public Integer getPercentage() {
 		return percentage;
 	}
 
-	public void setPercentage(int percentage) {
+	public void setPercentage(Integer percentage) {
 		this.percentage = percentage;
 	}
 
@@ -120,7 +124,6 @@ public class OrderBook {
 		this.isActive = isActive;
 	}
 
-
 	@JsonProperty("isActive")
 	boolean getIsActive() {
 		return this.isActive;
@@ -133,10 +136,8 @@ public class OrderBook {
 		this.id = id;
 		this.quantity = quantity;
 		this.price = price;
-
 		this.percentage = null;
-		//Discount dis = this.book.getDiscount();
-		//if (dis != null) this.percentage = dis.getPercentage();
+		this.isActive = true;
 	}
 
 	// inner class

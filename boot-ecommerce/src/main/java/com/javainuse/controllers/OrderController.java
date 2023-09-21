@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,21 +94,6 @@ public class OrderController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(jsonString);
 	}
 
-/*
- 	@GetMapping(path = "/{userId:\\d+}/count")
-	public ResponseEntity<Integer> countOrders(@PathVariable("userId") Long userId)
-			throws ResourceNotFoundException, IllegalArgumentException {
-		Long count = orderRepository.countOrdersByUserId(userId);
-		if (count == 0) {
-			throw new ResourceNotFoundException(
-					"Unable to perform the count. No orders resource was found in the database for the user with ID: "
-							+ userId);
-		} else {
-			return new ResponseEntity<>(count.intValue(), HttpStatus.OK);
-		}
-	}
- */
-
  	@GetMapping(path = "/{userId:\\d+}/count")
 	public ResponseEntity<Integer> countOrders(@PathVariable("userId") Long userId)
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -121,22 +107,6 @@ public class OrderController {
 		}
 	}
 
-	/*
-	@GetMapping(path = "/{userId:\\d+}/get")
-	public ResponseEntity<List<Order>> getOrders(@PathVariable("userId") Long userId, @RequestParam("page") int page,
-			@RequestParam("size") int size)
-			throws ResourceNotFoundException, IllegalArgumentException {
-		Pageable pageable = PageRequest.of(page, size, Sort.by("userId").ascending());
-		Page<Order> pagedResult = orderRepository.findOrdersByUserId(userId, pageable);
-		if (pagedResult.hasContent()) {
-			return new ResponseEntity<>(pagedResult.getContent(), HttpStatus.OK);
-		} else {
-			throw new ResourceNotFoundException(
-					"Unable to retrieve the page: " + page
-							+ " because no orders resource was found in the database for the user with ID: " + userId);
-		}
-	}
-	 */
 
 	@GetMapping(path = "/{userId:\\d+}/get")
 	public ResponseEntity<List<Order>> getOrders(@PathVariable("userId") Long userId, @RequestParam("page") int page,
@@ -176,7 +146,7 @@ public class OrderController {
 	}
 
 
-	
+
 	 @DeleteMapping(path = "/{orderId:\\d+}/delete")
 	public ResponseEntity<Object> deleteOrder(@RequestParam("reason") String reason,
 											  @PathVariable("orderId") Long orderId,
@@ -221,7 +191,7 @@ public class OrderController {
 			for (User usr : userRepository.getUsersByRole("Order")) {
 
 				if (user.getId() != usr.getId()) {
-				/*
+				
 				 //ricreo l'istanza per evitare di sovrascrivere le mail
 				Email nem = new Email();
 				nem.setActive(email.isActive());
@@ -231,19 +201,6 @@ public class OrderController {
 				nem.setSendedAt(email.getSendedAt());
 				nem.setFrom(email.getFrom());
 				nem.setTo(usr);
-				//nem.setTo(order.getUser());
-				emailRepository.save(nem);
-				 */
-				
-				 Email nem = new Email();
-				nem.setActive(email.isActive());
-				nem.setSubject(email.getSubject());
-				nem.setBody(email.getBody());
-				nem.setOrder(email.getOrder());
-				nem.setSendedAt(email.getSendedAt());
-				nem.setFrom(email.getFrom());
-				nem.setTo(usr);
-				//nem.setTo(order.getUser());
 				emailRepository.save(nem);
 
 
@@ -251,7 +208,6 @@ public class OrderController {
 				CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				String obj_ = "Order #" + order.getId();
 				String msg_ = "Dear Order, the order"+order.getId()+" has been cancelled!";
-				//emailService.sendEmail(user.getEmail(), obj_, msg_);
 				emailService.sendEmail(usr.getEmail(), obj_, msg_);
 			});
 		}
@@ -265,9 +221,9 @@ public class OrderController {
 
 
 
-
+	@Transactional
 	@PutMapping(path = "/update", consumes = "application/json")
-	public ResponseEntity<Object> updateOrder(@RequestBody /*@Valid*/ Order orderInfo,
+	public ResponseEntity<Object> updateOrder(@RequestBody Order orderInfo,
 											  @RequestParam("vuid") long vuid,
 											  @RequestParam("action") String action)
 											throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
@@ -281,7 +237,7 @@ public class OrderController {
 		System.out.println("Received OrderInfo ID: " + orderInfo.getId());
 		System.out.println("Have Order ID: " + order.getId());
 
-		String successMessage = "Nothing done";
+		String successMessage = "";
 		String obj = "";
 		String msg = "";
 
@@ -294,45 +250,25 @@ public class OrderController {
 			msg = "Dear customer, your order has been changed to: " + orderInfo.getState();
 
 			//invio la mail vera in modo asincrono
-			
 			CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
 				String obj_ = "Order #" + order.getId();
-				//String msg_ = "Dear customer, your order has been changed to: " + orderInfo.getState();
 				String msg_ = "Dear user, your order #"+order.getId()+" state has changed in: "+order.getState();
 				emailService.sendEmail(order.getUser().getEmail(), obj_, msg_);
 			});
-			
-
-			/*Email email = new Email();
-
-			email.setActive(true);
-			email.setFrom(user);
-			email.setTo(order.getUser());
-			email.setOrder(order);
-			email.setSubject("Order status");
-			email.setBody("Dear user, your order #"+order.getId()+" state has changed in: "+order.getState());
-			
-			emailRepository.save(email);*/
-			
-			
-
 
 		}else if (action.equals("edit")){
 
-			if (order.getEdit() && !order.getEditBy().equals(user.getName()))
-			{
+			if (order.getEdit() && !order.getEditBy().equals(user.getName())) {
 
 				Date now = new Date();
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(order.getEditDate());
 				calendar.add(Calendar.MINUTE, 20);
-				if (!now.after(calendar.getTime()))
-				{
+				if (!now.after(calendar.getTime())) {
 					return ResponseEntity.status(423).body("The order is currently edited by another user");
 				}
-				
 			}
-
+			
 			order.setEdit(orderInfo.getEdit(), user.getName(), ""+user.getId());
 			successMessage = "Order: " + order.getId() + " has been updated successfully to edit: " + orderInfo.getEdit();
 
@@ -346,18 +282,11 @@ public class OrderController {
 			if (order.getEdit()) msg = "Dear order, the order is currently edited by "+user.getName()+" (Role: "+user.getType()+")";
 				else msg = "Dear order, the order is now free";
 		}
-		 
 
-			/*if (order.getEdit()) msg = "Dear customer, your order is currently edited by "+user.getName()+" (Role: "+user.getType()+")";
-				else msg = "Dear customer, your order is now free";*/
-
-		}else{
+		} else{
 			return ResponseEntity.status(403).body("");
 		}
 		orderRepository.save(order);
-
-
-
 
 		//invio una notifica interna
 		Email email = new Email();
@@ -368,12 +297,7 @@ public class OrderController {
 		email.setActive(true);
 		email.setSendedAt(new Date());
 		
-
-
-		
-		
-		if (user.getType().equals("Order"))
-		{
+		if (user.getType().equals("Order")) {
 			email.setTo(order.getUser());
 			emailRepository.save(email);
 		} else {
@@ -399,92 +323,14 @@ public class OrderController {
 
 		/*Map<String, Object> response = new HashMap<>();
 		response.put("order", order);
-		response.put("message", successMessage);*/
+		response.put("message", successMessage);
+		return ResponseEntity.status(200).body(response);*/
 		
 		return ResponseEntity.status(200).body(order);						
-		//return ResponseEntity.status(200).body(response);	
 	}
 	
 
-	
-
-
-	@Deprecated
-	@PutMapping(path = "/update/{orderId:\\d+}/{state}", consumes = "application/json")
-	public ResponseEntity<Object> updateState(@PathVariable("orderId") Long orderId,
-			@PathVariable("state") String state, @RequestParam("vuid") long vuid)
-			throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
-
-
-		Optional<User> userOptional = userRepository.findById(vuid);
-		User user = userOptional.orElseThrow(
-				() -> new ResourceNotFoundException("User with ID: " + vuid + " not found in the database"));
-
-		Optional<Order> op = orderRepository.findById(orderId);
-		Order order = op.orElseThrow(
-				() -> new ResourceNotFoundException("Order with ID: " + orderId + " not found in the database"));
-
-		order.setState(state);
-		orderRepository.save(order);
-
-
-
-
-		String obj = "Order #" + order.getId();
-		String msg = "Dear customer, your order has been changed to: " + state;
-
-
-		//invio la mail vera
-		String userEmail = order.getUser().getEmail();
-		emailService.sendEmail(userEmail, obj, msg);
-
-
-		//invio una notifica interna
-		Email email = new Email();
-		email.setFrom(user);
-		email.setSubject(obj);
-		email.setBody(msg);
-		email.setOrder(order);
-
-		if (user.getType() == "Order")
-		{
-			email.setTo(order.getUser());
-			emailRepository.save(email);
-		} else {
-			//invio la mail a tutti gli utenti order
-			for (User usr : userRepository.getUsersByRole("Order")) {
-
-				if (user.getId() != usr.getId()) {
-
-				//ricreo l'istanza per evitare di sovrascrivere le mail
-				Email nem = new Email();
-				nem.setActive(email.isActive());
-				nem.setSubject(email.getSubject());
-				nem.setBody(email.getBody());
-				nem.setOrder(email.getOrder());
-				nem.setSendedAt(email.getSendedAt());
-				nem.setFrom(email.getFrom());
-				nem.setTo(usr);
-
-				emailRepository.save(nem);
-			}
-
-		}
-
-	}
-
-		String successMessage = "Order: " + order.getId() + " has been updated successfully to state: " + state;
-		Map<String, Object> response = new HashMap<>();
-		response.put("order", order);
-		response.put("message", successMessage);
-		return ResponseEntity.status(200).body(response);
-	}
-	
-
-
-
-
-
+	// inbox working
 	@GetMapping(path = "/count/all")
 	public ResponseEntity<Integer> countAllOrders()
 			throws ResourceNotFoundException, IllegalArgumentException {
@@ -497,6 +343,7 @@ public class OrderController {
 		}
 	}
 
+	// inbox working
 	@GetMapping(path = "/inbox/all")
 	public ResponseEntity<List<Order>> getOrders(@RequestParam("page") int page,
 			@RequestParam("size") int size)
@@ -538,9 +385,6 @@ public class OrderController {
 		orderRepository.save(order);
 
 
-
-
-
 		String obj = "Order #" + order.getId();
 		String msg = "Dear customer, your order is currently edited by "+user.getName()+" (Role: "+user.getType()+")";
 
@@ -554,10 +398,10 @@ public class OrderController {
 		email.setOrder(order);
 		email.setSendedAt(new Date());
 		
-		if (user.getType() == "Order")
-		{
+		if (user.getType() == "Order") {
 			email.setTo(order.getUser());
 			emailRepository.save(email);
+
 		} else {
 			
 			for (User usr : userRepository.getUsersByRole("Order")) {

@@ -264,7 +264,7 @@ public class UserController {
 
 		String role = data.get("role").asText();
 
-		if ("admin".equalsIgnoreCase(role)) {
+		if ("Admin".equalsIgnoreCase(role)) {
 			// Conta il numero di utenti con ruolo "admin"
 			long adminCount = userRepository.countByType("Admin");
 
@@ -272,7 +272,7 @@ public class UserController {
 				throw new MaxAdminLimitExceededException("Maximum administrators limit reached!");
 			}
 
-		} else if ("User".equalsIgnoreCase(role) || "Seller".equalsIgnoreCase(role)) {
+		} else if ("User".equalsIgnoreCase(role) || "Seller".equalsIgnoreCase(role) || "Order".equalsIgnoreCase(role) || "Marketing".equalsIgnoreCase(role)) {
 			// Verifica se l'utente è l'ultimo admin e sta cercando di cambiare il ruolo a
 			// "User" o "Seller"
 			long adminCount = userRepository.countByType("Admin");

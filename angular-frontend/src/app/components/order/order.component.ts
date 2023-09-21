@@ -33,7 +33,6 @@ export class OrderComponent implements OnInit {
   ngOnInit() {
 
     const id = this.route.snapshot.queryParamMap.get('id');
-
     if (id == undefined) this.fetchOrdersByUid(this.auth.uid);
     else this.fetchOrderById(parseInt(id));
   }
@@ -64,7 +63,17 @@ export class OrderComponent implements OnInit {
         this.orders = [];
         this.orders.push(order);
         this.allOrders = 1;
-      }
+      },
+      error: (err: HttpErrorResponse) => {
+
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+
+      },
+      complete: () => { }
     });
   }
 
@@ -230,14 +239,23 @@ export class OrderComponent implements OnInit {
     this.service.addOrderBook(ob).subscribe({
       next: () => {
         this.fetchOrderBookByOrderid(oid);
-      }
+      },
+      error: (err: HttpErrorResponse) => {
+
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+
+      },
+      complete: () => { }
     })
 
   }
 
 
   updateQuantity(ob: OrderBook) {
-
 
     let nob: OrderBook = new OrderBook();
     nob.book.id = ob.book.id;
@@ -295,9 +313,16 @@ export class OrderComponent implements OnInit {
         if (this.results.length > 0) this.selectedResult = this.results[0];
 
       },
-      error: () => {
+      error: (err: HttpErrorResponse) => {
 
-      }
+        this.msg = this.replaceAll(err.message, "#", "<br>");
+
+        setTimeout(() => {
+          this.msg = '';
+        }, 2000);
+
+      },
+      complete: () => { }
     });
   }
 
@@ -315,10 +340,9 @@ export class OrderComponent implements OnInit {
 
   changeEditStatus(order: Order, evt){
 
-    //debugger;
-
+    
     if (evt.target.tagName != "SUMMARY") return;
-
+   
     let no: Order = new Order();
     no.id = order.id;
     no.edit = !order.edit;
@@ -330,7 +354,7 @@ export class OrderComponent implements OnInit {
         order.editFrom = updOrder.editFrom;
       },
       error: (err: HttpErrorResponse) => {
-        //this.orders[order.id]["opened"] = false;
+        
         alert("At the moment the order is taken over by a company consultant and therefore it is not possible to make changes");
       }
     });

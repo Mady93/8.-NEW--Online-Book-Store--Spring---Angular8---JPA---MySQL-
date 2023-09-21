@@ -91,20 +91,17 @@ export class InboxComponent implements OnInit {
             this.ok = "";
             this.orders = orders;
 
-            
             setTimeout(() => {
               let details = document.querySelectorAll("details");
               console.log(orders);
               for (let order of orders) {
                 if (order.edit && order.editFrom == (""+this.auth.uid)) {
                   this.openDetail(order.id);
-                  //this.orders[order.id]["opened"] = true;
+                  
                 }
               }
             }, 500);
             
-            
-
           },
           error: (err: HttpErrorResponse) => {
             this.msg = this.replaceAll(err.message, "#", "<br>");
@@ -158,6 +155,7 @@ export class InboxComponent implements OnInit {
           if (this.allOrders == 1) this.page = 1;
           else if ((this.allOrders - ((this.page - 1) * this.size)) == 1) this.page--;
       
+          window.location.reload();
         }, 2000);
 
       },
@@ -181,8 +179,6 @@ export class InboxComponent implements OnInit {
 
   changeEditStatus(order: Order, evt){
 
-    //debugger;
-
     if (evt.target.tagName != "SUMMARY") return;
 
     let no: Order = new Order();
@@ -191,14 +187,23 @@ export class InboxComponent implements OnInit {
 
     this.service.updateOrderEdit(no).subscribe({
       next: (updOrder: Order) => {
-        this.openDetail(updOrder.id);
+        
         order.edit = updOrder.edit;
         order.editFrom = updOrder.editFrom;
+
+        this.openDetail(updOrder.id);
+        this.fetchOrders();
+      
+
       },
       error: (err: HttpErrorResponse) => {
-        //this.orders[order.id]["opened"] = false;
+        
         alert("At the moment the order is taken over by the user and therefore it is not possible to make changes");
+      },
+      complete: () => {
+        //order.edit = false;
       }
+  
     });
 
     

@@ -1,0 +1,16 @@
+
+
+
+GET http://127.0.0.1:8080/order_book/1/get
+Host: localhost:3000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/117.0
+Accept: application/json, text/plain, */*
+Accept-Language: it
+Accept-Encoding: gzip, deflate, br
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiT3JkZXIiLCJpYXQiOjE2OTUzMDgwNDYsImV4cCI6Mjg5NTMwODA0Niwic3ViIjoiNyJ9.7_MV8mCTQ6CsZY1r6xzJIvdZaC0Y46BOQGnrxpbkLgjtnvuhrxy65K1UuHUB_g3zblGraq-py4Z2dFHzZenh2mq-yuGAqzGcaLIMzNAylfz8Pdn4FvF25Ko4lacVTEbIStCcR536yfpqmQ_oiprBWOJXzcLdjGW1JxiStMdhnJqLTAQJaRY2CpjjX24iaL3sbrTaOTWRFQ0ZXgA8zgU9RReET2kIhHQpElT3Bb9uG8sYmquRUG6Hvq1JcRNyTL3WRxmz0LIlI68dAEDY_gOz0n1NJhHK5_t2_2GjxDei_uwnIDem8n9F47bk-zaWOZXd2L1eXnPKZxliZYJnnS8yzw
+Origin: http://localhost:4200
+Connection: keep-alive
+Referer: http://localhost:4200/
+Sec-Fetch-Dest: empty
+Sec-Fetch-Mode: cors
+Sec-Fetch-Site: same-site

@@ -79,9 +79,9 @@ public class OrderBookController {
 		newOrderBook.setOrder(order);
 
 		double price = book.getPrice();
-		if (book.getDiscount() != null){
+		if (book.getDiscount() != null)
 			price /= 1+(book.getDiscount().getPercentage()/100.0);
-		}
+		
 		newOrderBook.setPrice(price);
 
 
@@ -190,27 +190,5 @@ public class OrderBookController {
 							+ OrderBooksId + " was not found in the database");
 		}
 	}
-
-		// Query native commentate
-
-	/* @Transactional
-	@DeleteMapping(path = "/{bookId:\\d+}/delete")
-	public ResponseEntity<Object> deleteOrderBook(@PathVariable("bookId") Long bookId)
-			throws ResourceNotFoundException, IllegalArgumentException {
-
-			orderBookRepository.deleteOrderBooksById_BookId(bookId);
-
-			String message = "All orders intersection rows with bookId: "+bookId+" have been deleted successfully";
-			return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-	}
-
-	@Transactional
-	@DeleteMapping(path = "/deleteAll")
-	public ResponseEntity<ApiResponse> deleteOrderBooks() {
-		orderBookRepository.deleteAllRecords();
-
-    	String message = "All orders intersection rows have been deleted successfully";
-    	return ResponseEntity.status(HttpStatus.OK).body(new ApiResponse(HttpStatus.OK.value(), message));
-	}*/
 
 }
