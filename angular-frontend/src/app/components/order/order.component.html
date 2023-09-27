@@ -12,7 +12,7 @@
     (click)="changeEditStatus(order, $event); false"> 
     <summary>
 
-      <b>#{{order.id}} {{order.createdAt | date:  'dd/MM/yyyy HH:mm:ss'}} - ({{order.state}})</b>
+      <b><span style="color: rgb(102, 0, 255);">#{{order.id}}</span> {{order.createdAt | date:  'dd/MM/yyyy'}} <span style="color: brown;">{{order.createdAt | date:  'HH:mm:ss':'GMT'}}</span> - (State: <span style="color: brown;">{{order.state}}</span>)</b>
       
       <input class="deleteBtn" *ngIf="order.state=='Working'" type="button" (click)="deleteOrder(order.id)" value="Cancel order"/>
 

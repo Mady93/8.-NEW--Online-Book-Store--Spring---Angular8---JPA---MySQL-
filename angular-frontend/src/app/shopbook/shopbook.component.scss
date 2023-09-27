@@ -38,9 +38,6 @@
   color: blue;
 }
 
-.btnn {
-  /*width: 11vh;*/
-}
 
 .btnnn {
   width: 115px!important;
@@ -149,5 +146,44 @@
 h2 {
   margin-top: 10px!important;
 }
+
+
+
+
+
+
+
+
+
+
+/*nuovo css*/
+/*
+.gridContainer
+{
+  display: grid;
+  grid-template: "a0 a1 a2 a3 a4"
+                 "a5 a6 a7 a8 a9"
+                 "pa pa pa pa pa";
+
+  grid-template-columns: repeat(5, minmax(120px, 1fr));
+  grid-template-rows: 1fr 1fr 20px;
+  gap: 5px;
+  max-width: 100%;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .gridContainer
+  {
+    display: grid;
+    grid-template: "a0 a1 a2 a3"
+                   "a4 a5 a6 a7"
+                   "a8 a9 .  . "
+                   "pa pa pa pa";
+
+    grid-template-columns: repeat(4, minmax(80px, 1fr));
+  }
+}
+*/
 
 

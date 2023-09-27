@@ -33,8 +33,8 @@
         <ng-select [(ngModel)]="selectedOpt" placeholder="Percentage">
             <ng-option *ngFor="let opt of discontOptions" [value]="opt.id">
                 <b>{{opt.percentage}}%  </b>
-                <span style="color: red">from</span> {{opt.startPercentage | date: 'dd/MM HH:mm:ss'}}
-                <span style="color: red">  to</span> {{opt.endPercentage | date: 'dd/MM HH:mm:ss'}}
+                <span style="color: red">from</span> {{opt.startPercentage | date: 'dd/MM HH:mm:ss':'GMT'}}
+                <span style="color: red">  to</span> {{opt.endPercentage | date: 'dd/MM HH:mm:ss':'GMT'}}
             </ng-option>
          </ng-select>
          

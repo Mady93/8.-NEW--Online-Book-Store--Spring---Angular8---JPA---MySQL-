@@ -33,7 +33,7 @@ export class ShopbookComponent implements OnInit {
   // Aggiunto paginazione
   allBooks: number;
   page: number = 1;
-  size: number = 8;
+  size: number = 12;
 
   msg: any;
 

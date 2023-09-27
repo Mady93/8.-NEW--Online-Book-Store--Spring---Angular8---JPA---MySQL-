@@ -21,8 +21,8 @@
       <tbody>
         <tr *ngFor="let sale of sales | paginate: { itemsPerPage: size, currentPage: page, totalItems: allSales}">
           <td>{{sale.id}}</td>
-          <td>{{ sale.startPercentage | date:'dd/MM/yyyy HH:mm:ss' }}</td>
-          <td>{{sale.endPercentage | date:'dd/MM/yyyy HH:mm:ss'}}</td>
+          <td>{{ sale.startPercentage | date:'dd/MM/yyyy HH:mm:ss':'GMT' }}</td>
+          <td>{{sale.endPercentage | date:'dd/MM/yyyy HH:mm:ss':'GMT'}}</td>
            <td>{{sale.percentage }}%</td>
           <td><button type="button" class="btn btn-primary" (click)="viewSale(sale.id)">Show Details</button></td>
         </tr>

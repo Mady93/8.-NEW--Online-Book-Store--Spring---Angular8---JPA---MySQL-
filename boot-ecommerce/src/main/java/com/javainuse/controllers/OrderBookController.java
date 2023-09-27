@@ -28,6 +28,7 @@ import com.javainuse.entities.OrderBook;
 import com.javainuse.entities.OrderBook.OrderBooksId;
 import com.javainuse.entities.User;
 import com.javainuse.entities.Order;
+import com.javainuse.exceptions.MinCancelledBookLimitException;
 import com.javainuse.exceptions.ResourceNotFoundException;
 import com.javainuse.repositories.BookRepository;
 import com.javainuse.repositories.EmailRepository;
@@ -108,7 +109,7 @@ public class OrderBookController {
 											   @PathVariable("orderId") Long orderId,
 											   @RequestParam("vuid") Long vuid,
 											   @RequestBody @Valid OrderBook updatedOrderBook)
-			throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException {
+			throws ResourceNotFoundException, MethodArgumentNotValidException, IllegalArgumentException, MinCancelledBookLimitException {
 
 
 
@@ -152,7 +153,30 @@ public class OrderBookController {
 				email.setSendedAt(new Date());
 
 			} else {
-				orderBookRepository.delete(existingOrderBook);
+
+				List<OrderBook> ls = orderBookRepository.getOrderBooksByOrderId(orderId);
+				int len = ls.size();
+
+				if (len == 1) {
+					/*Order order = existingOrderBook.getOrder();
+
+					//order.s
+					//orderRepository.save(order);
+					order.setState("Cancelled");
+					order.setReason("no piace");
+					order.setCancelledDate(new Date());
+					orderRepository.save(order);*/
+					throw new MinCancelledBookLimitException("You can't delete the book, you have to cancel the order!");
+
+				}
+				else
+				{
+					orderBookRepository.delete(existingOrderBook);
+				}
+
+				
+
+				
 
 				message = "In the order: #"+existingOrderBook.getOrder().getId()+" the book: \""+existingOrderBook.getBook().getName()+"\" has been cancelled";
 

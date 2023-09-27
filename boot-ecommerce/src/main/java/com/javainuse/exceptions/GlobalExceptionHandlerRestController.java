@@ -271,4 +271,19 @@ public class GlobalExceptionHandlerRestController {
 		return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
 	}
 
+
+// Viene sollevata quando l'utente tenta di cancellare l'ultimo libro dall'ordine
+	@ExceptionHandler(MinCancelledBookLimitException.class)
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	public ErrorResponse<String> handleMinCancelledBookErrorResponse(Exception ex, WebRequest request) {
+		String path = getPath(request);
+		String[] stackTraceArray = getStackTraceAsArray(ex);
+		String message = ex.getMessage();
+		int status = HttpStatus.NOT_ACCEPTABLE.value();
+		String errors = HttpStatus.NOT_ACCEPTABLE.getReasonPhrase();
+
+		return new ErrorResponse<String>(status, errors, message, stackTraceArray, path);
+	}
+
+
 }

@@ -27,9 +27,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @Entity
 @Table(name = "order_books")
 @NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt FROM OrderBook jt WHERE jt.id.orderId = :orderId AND jt.isActive is true")
-// @NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT jt
-// FROM OrderBook jt JOIN FETCH jt.book b WHERE jt.id.orderId = :orderId AND
-// jt.isActive = true")
+// @NamedQuery(name = "OrderBook.getOrderBooksByOrderId", query = "SELECT COUNT(jt) FROM OrderBook jt JOIN FETCH jt.book b WHERE jt.id.orderId = :orderId AND jt.isActive = true")
 public class OrderBook {
 
 	// istanza inner class senza argomenti

@@ -28,10 +28,12 @@ export class InboxCancelledComponent implements OnInit {
   }
 
   openDetail(oid: number) {
+    
     if (this.ordersDetails[oid] === undefined) this.fetchOrderById(oid);
   }
 
   fetchOrderById(oid: number) {
+   
     this.service.getOrderBooksByOrderId(oid).subscribe({
       next: (jt: OrderBook[]) => {
         this.msg = "";
@@ -65,6 +67,7 @@ export class InboxCancelledComponent implements OnInit {
   }
 
   fetchOrders() {
+    
     this.service.countTotalOrdersStateCanceled().subscribe({
       next: (num: number) => {
         this.ok = "";

@@ -12,12 +12,15 @@
 
     <summary>
 
-      <b>
-        {{order.createdAt | date: 'dd/MM/yyyy HH:mm:ss'}} - ( State: 
-        <span style="color: brown;">
-          {{order.state}}
-        </span>)
-    </b>
+        <b><span style="color: rgb(102, 0, 255);">#{{order.id}}</span> {{order.createdAt | date:  'dd/MM/yyyy'}} <span style="color: brown;">{{order.createdAt | date:  'HH:mm:ss':'GMT'}}</span> - (State: <span style="color: brown;">{{order.state}}</span>)</b>
+
+       
+          <b style="text-align: end;">
+             - (Reason: 
+            <span style="color: brown;">
+              {{order.reason}}
+          </span>)
+        </b>
 
     </summary>
 
@@ -50,30 +53,24 @@
             <td></td>
             <td></td>
             <td></td>
-            <td>Total: {{ ordersDetails[order.id]?.total | currency:'USD' }}</td>
+            <td><del style="color: brown;">Total: {{ ordersDetails[order.id]?.total | currency:'USD' }}</del></td>
           </tr>
         </tbody>
       </table>
 
     </div>
 
-  <div style="text-align: center;">
-    <b>
-      Reason: 
-      <span style="color: brown;">
-        {{order.reason}} 
-    </span>
-  </b>
-  </div>
+
 
 
   <div style="text-align: center;">
     <b>
-      by user: 
+      Order cancelled by 
       <span style="color: brown;">
         {{order.user.email}}
-
     </span>
+    (role:
+      <span style="color: brown;">{{order.user.type}})</span>
   </b>
   </div>
 

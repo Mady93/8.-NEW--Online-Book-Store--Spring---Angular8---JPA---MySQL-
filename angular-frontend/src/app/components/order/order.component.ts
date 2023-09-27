@@ -3,9 +3,10 @@ import { OrderBook } from 'src/app/model/OrderBook';
 import { Order } from 'src/app/model/Order';
 import { AuthService } from 'src/app/service/auth.service';
 import { HttpClientService } from 'src/app/service/http-client.service';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpClient } from '@angular/common/http';
 import { Book } from 'src/app/model/Book';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-order',
@@ -152,7 +153,9 @@ export class OrderComponent implements OnInit {
         this.ordersDetails[oid].orders = jt;
         this.ordersDetails[oid].total = total;
 
-        if (jt.length == 0) this.deleteOrder(oid);
+        //if (jt.length == 0) this.deleteOrder(oid);
+
+      
 
       },
       error: (err: HttpErrorResponse) => {
@@ -257,6 +260,7 @@ export class OrderComponent implements OnInit {
 
   updateQuantity(ob: OrderBook) {
 
+    
     let nob: OrderBook = new OrderBook();
     nob.book.id = ob.book.id;
     nob.order.id = ob.order.id;
@@ -284,12 +288,13 @@ export class OrderComponent implements OnInit {
 
         setTimeout(() => {
           this.msg = '';
+          this.fetchOrderBookByOrderid(ob.order.id);
         }, 2000);
 
       },
       complete: () => { }
     });
-
+    
   }
 
 
@@ -362,8 +367,14 @@ export class OrderComponent implements OnInit {
     
   }
 
-
-
+// estrarre solo l'ora per mostrarla come indicizzazione
+  extractHourFromDate(date: Date): string {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    
+    return `${hours}:${minutes}:${seconds}`;
+  }
 
 
 }
